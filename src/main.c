@@ -1,1 +1,6 @@
-//Entry of the program
+#include <stdio.h>
+
+int main()
+{
+    ;
+}
