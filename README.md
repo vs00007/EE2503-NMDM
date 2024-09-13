@@ -14,7 +14,7 @@ Sure, done.
 5. The free function MUST zero out the given pointer.
 6. Write straightforward code, we can always optimize later.
 7. Avoid repeating similar code more than 2 times, instead make it it's own function(if it makes sense logically).
-8. Variable and Function names must be descriptive.
+8. Important Variables and Function names must be descriptive.
 9. all #defines must be capital case.
 10. Prefix functions with name of their group of functions.
 11. Every header file should start with a #pragma once.
