@@ -1,0 +1,1 @@
+## Document the design process as you go. Please don't wait till you finish writing the code to write documentation.

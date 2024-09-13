@@ -1,0 +1,1 @@
+// define any globally useful functions here.
