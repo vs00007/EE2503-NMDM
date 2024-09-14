@@ -6,8 +6,9 @@
         "stdio.h": "c",
         "vector": "c",
         "utils.h": "c",
-        "linarg.h": "c",
-        "functional": "c"
+        "linalg.h": "c",
+        "functional": "c",
+        "linalg.h": "c"
     },
     "files.exclude": {
         "**/.git": true,
