@@ -1,57 +1,57 @@
 #include <stdio.h>
-#include <include/larg.h>
+#include "include/linarg.h"
 
-void test_larg_vec_impl()
+void test_linarg_vec_impl()
 {
-    Vec a = larg_vecInitZerosA(3);
-    printf("a = "); larg_vecPrint(a); printf("\n");
+    Vec a = linarg_vecInitZerosA(3);
+    printf("a = "); linarg_vecPrint(a); printf("\n");
 
-    Vec b = larg_vecInitOnesA(3);
-    printf("b = "); larg_vecPrint(b); printf("\n");
+    Vec b = linarg_vecInitOnesA(3);
+    printf("b = "); linarg_vecPrint(b); printf("\n");
 
-    Vec c = larg_vecConstruct((double[]){0.3, 0.1, 2}, 3);
-    printf("c = "); larg_vecPrint(c); printf("\n");
+    Vec c = linarg_vecConstruct((double[]){0.3, 0.1, 2}, 3);
+    printf("c = "); linarg_vecPrint(c); printf("\n");
 
     printf("\n");
 
-    Vec res = larg_vecInitZerosA(3);
+    Vec res = linarg_vecInitZerosA(3);
 
     double val = 0.0;
 
-    larg_vecAdd(a, b, &res); printf("a + b = "); larg_vecPrint(res); printf("\n");
-    larg_vecAdd(b, c, &res); printf("b + c = "); larg_vecPrint(res); printf("\n");
-    larg_vecAdd(a, c, &res); printf("a + c = "); larg_vecPrint(res); printf("\n");
+    linarg_vecAdd(a, b, &res); printf("a + b = "); linarg_vecPrint(res); printf("\n");
+    linarg_vecAdd(b, c, &res); printf("b + c = "); linarg_vecPrint(res); printf("\n");
+    linarg_vecAdd(a, c, &res); printf("a + c = "); linarg_vecPrint(res); printf("\n");
     printf("\n");
-    larg_vecScale(2.0, a, &res); printf("2*a = "); larg_vecPrint(res); printf("\n");
-    larg_vecScale(2.0, b, &res); printf("2*b = "); larg_vecPrint(res); printf("\n");
-    larg_vecScale(2.0, c, &res); printf("2*c = "); larg_vecPrint(res); printf("\n");
+    linarg_vecScale(2.0, a, &res); printf("2*a = "); linarg_vecPrint(res); printf("\n");
+    linarg_vecScale(2.0, b, &res); printf("2*b = "); linarg_vecPrint(res); printf("\n");
+    linarg_vecScale(2.0, c, &res); printf("2*c = "); linarg_vecPrint(res); printf("\n");
     printf("\n");
 
-    val = larg_vecDot(a, b); printf("a.b = %f\n", val);
-    val = larg_vecDot(b, c); printf("b.c = %f\n", val);
-    val = larg_vecDot(a, c); printf("a.c = %f\n", val);
+    val = linarg_vecDot(a, b); printf("a.b = %f\n", val);
+    val = linarg_vecDot(b, c); printf("b.c = %f\n", val);
+    val = linarg_vecDot(a, c); printf("a.c = %f\n", val);
     printf("\n");
-    val = larg_vecMagnitude(a); printf("||a|| = %f\n", val);
-    val = larg_vecMagnitude(b); printf("||b|| = %f\n", val);
-    val = larg_vecMagnitude(c); printf("||c|| = %f\n", val);
+    val = linarg_vecMagnitude(a); printf("||a|| = %f\n", val);
+    val = linarg_vecMagnitude(b); printf("||b|| = %f\n", val);
+    val = linarg_vecMagnitude(c); printf("||c|| = %f\n", val);
     printf("\n");
-    val = larg_vecMax(a); printf("max a = %f\n", val);
-    val = larg_vecMax(b); printf("max b = %f\n", val);
-    val = larg_vecMax(c); printf("max c = %f\n", val);
+    val = linarg_vecMax(a); printf("max a = %f\n", val);
+    val = linarg_vecMax(b); printf("max b = %f\n", val);
+    val = linarg_vecMax(c); printf("max c = %f\n", val);
     printf("\n");
-    val = larg_vecMin(a); printf("min a = %f\n", val);
-    val = larg_vecMin(b); printf("min b = %f\n", val);
-    val = larg_vecMin(c); printf("min c = %f\n", val);
+    val = linarg_vecMin(a); printf("min a = %f\n", val);
+    val = linarg_vecMin(b); printf("min b = %f\n", val);
+    val = linarg_vecMin(c); printf("min c = %f\n", val);
 
     // free all memory
-    larg_freeVecX(&a);
-    larg_freeVecX(&b);
-    larg_freeVecX(&res);
+    linarg_freeVecX(&a);
+    linarg_freeVecX(&b);
+    linarg_freeVecX(&res);
 }
 
 int main()
 {
-    test_larg_vec_impl();
+    test_linarg_vec_impl();
     return 0;
 }
 

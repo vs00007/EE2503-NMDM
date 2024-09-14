@@ -2,7 +2,12 @@
     "editor.suggest.localityBonus": true,
     "files.associations": {
         "iostream": "cpp",
-        "*.hpp": "cpp"
+        "*.hpp": "cpp",
+        "stdio.h": "c",
+        "vector": "c",
+        "utils.h": "c",
+        "linarg.h": "c",
+        "functional": "c"
     },
     "files.exclude": {
         "**/.git": true,
