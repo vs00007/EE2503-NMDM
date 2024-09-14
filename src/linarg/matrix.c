@@ -8,7 +8,7 @@
 #define LA_UNPACK(matrix) ((double (*)[matrix.cols]) matrix.mat)
 
 #define LA_UNPACK_ROW(matrix, row) linalg_mat2DRow(matrix, row)
-#define LA_UNPACK_COL(matrix, col) linalg_mat2DRow(matrix, row)
+#define LA_UNPACK_COL(matrix, col) linalg_mat2DCol(matrix, col)
 
 // initialzie the matrix on the heap with some initial value
 Mat2d linalg_mat2DInitA(double value, size_t rows, size_t cols)
@@ -138,7 +138,7 @@ double linalg_mat2DMax(Mat2d a)
 double linalg_mat2DMin(Mat2d a)
 {
     LINALG_ASSERT_ERROR(!a.mat, NAN, "input matrix is null!");
-    LINALG_ASSERT_WARN(a.rows*a.cols == 0, -INFINITY, "input matrix is null!");
+    LINALG_ASSERT_WARN(a.rows*a.cols == 0, INFINITY, "input matrix is null!");
 
     double min_value = INFINITY;
 
