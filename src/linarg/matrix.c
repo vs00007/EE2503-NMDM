@@ -5,7 +5,7 @@
 #include <math.h>
 
 // LINALG_UNPACK_MAT(matrix, r, c)[x][y] = value at xth col and yth row
-#define LA_UNPACK(matrix) ((float (*)[matrix.cols]) matrix.mat)
+#define LA_UNPACK(matrix) ((double (*)[matrix.cols]) matrix.mat)
 
 #define LA_UNPACK_ROW(matrix, row) linalg_mat2DRow(matrix, row)
 #define LA_UNPACK_COL(matrix, col) linalg_mat2DRow(matrix, row)
@@ -49,10 +49,10 @@ Mat2d linalg_mat2DConstruct(double* ptr, size_t rows, size_t cols)
 // pretty print a matrix
 void linalg_mat2DPrint(Mat2d a)
 {
-    printf("[");
+    printf("[\n");
     for(size_t i = 0; i < a.rows; i++)
     {
-        printf("\t");
+        printf("%2c", ' ');
         linalg_vecPrint(LA_UNPACK_ROW(a, i));
         if(i != a.rows - 1) printf(",\n");
         else printf("\n");
@@ -103,8 +103,8 @@ int linalg_mat2DAdd(Mat2d a, Mat2d b, Mat2d* result)
 {
     LINALG_ASSERT_ERROR(!result, LINALG_ERROR, "result matrix is null!");
     LINALG_ASSERT_ERROR(!result->mat, LINALG_ERROR, "result matrix is null!");
-    LINALG_ASSERT_ERROR(a.rows != b.rows || b.cols != a.cols, LINALG_ERROR, "attempt to add mat(%xx%x) and mat(%xx%x)", a.cols, a.rows, b.cols, b.rows);
-    LINALG_ASSERT_ERROR(a.rows != result->rows || b.cols != result->cols, LINALG_ERROR, "result matrix is mat(%xx%x) but inputs are mat(%xx%x)", result->cols, result->rows, b.cols, b.rows);
+    LINALG_ASSERT_ERROR(a.rows != b.rows || b.cols != a.cols, LINALG_ERROR, "attempt to add mat(%zux%zu) and mat(%zux%zu)", a.cols, a.rows, b.cols, b.rows);
+    LINALG_ASSERT_ERROR(a.rows != result->rows || b.cols != result->cols, LINALG_ERROR, "result matrix is mat(%zux%zu) but inputs are mat(%zux%zu)", result->cols, result->rows, b.cols, b.rows);
 
     for(size_t i = 0; i < a.rows*a.cols; i++) result->mat[i] = a.mat[i] + b.mat[i];
 
@@ -115,7 +115,7 @@ int linalg_mat2DScale(double a, Mat2d b, Mat2d* result)
 {
     LINALG_ASSERT_ERROR(!result, LINALG_ERROR, "result matrix is null!");
     LINALG_ASSERT_ERROR(!result->mat, LINALG_ERROR, "result matrix is null!");
-    LINALG_ASSERT_ERROR(b.rows != result->rows || b.cols != result->cols, LINALG_ERROR, "result matrix is mat(%xx%x) but inputs are mat(%xx%x)", result->cols, result->rows, b.cols, b.rows);
+    LINALG_ASSERT_ERROR(b.rows != result->rows || b.cols != result->cols, LINALG_ERROR, "result matrix is mat(%zux%zu) but inputs are mat(%zux%zu)", result->cols, result->rows, b.cols, b.rows);
 
     for(size_t i = 0; i < b.rows*b.cols; i++) result->mat[i] = a * b.mat[i];
 
@@ -140,7 +140,7 @@ double linalg_mat2DMin(Mat2d a)
     LINALG_ASSERT_ERROR(!a.mat, NAN, "input matrix is null!");
     LINALG_ASSERT_WARN(a.rows*a.cols == 0, -INFINITY, "input matrix is null!");
 
-    double min_value = -INFINITY;
+    double min_value = INFINITY;
 
     for(size_t i = 0; i < a.rows*a.cols; i++) min_value = min_value < a.mat[i] ? min_value : a.mat[i];
 

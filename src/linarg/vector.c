@@ -182,7 +182,7 @@ double linalg_vecMin(Vec a)
 }
 
 // free the vector on the heap
-void linalg_freeVecX(Vec* vec)
+void linalg_freeVec(Vec* vec)
 {
     // skip if null
     if(!vec->x) return;

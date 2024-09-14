@@ -26,7 +26,7 @@ typedef struct Mat2d {
 ### `LA_UNPACK(matrix)`
 Unpacks the matrix data and allows direct access to its elements using array notation. It converts the `mat` field into a 2D array based on the number of rows.
 ```c
-#define LA_UNPACK(matrix) ((float (*)[matrix.rows]) matrix.mat)
+#define LA_UNPACK(matrix) ((double (*)[matrix.rows]) matrix.mat)
 ```
 
 ### `LA_UNPACK_ROW(matrix, row)`
