@@ -5,7 +5,7 @@
 #include <math.h>
 
 // LINALG_UNPACK_MAT(matrix, r, c)[x][y] = value at xth col and yth row
-#define LA_UNPACK(matrix) ((float (*)[matrix.rows]) matrix.mat)
+#define LA_UNPACK(matrix) ((float (*)[matrix.cols]) matrix.mat)
 
 #define LA_UNPACK_ROW(matrix, row) linalg_mat2DRow(matrix, row)
 #define LA_UNPACK_COL(matrix, col) linalg_mat2DRow(matrix, row)
@@ -66,7 +66,7 @@ void linalg_mat2DPrint(Mat2d a)
 Vec linalg_mat2DRow(Mat2d matrix, size_t row)
 {
     // rows are stored continuously in buffer
-    Vec vrow = {&(LA_UNPACK(matrix)[0][row]), matrix.cols, 1};
+    Vec vrow = {&(LA_UNPACK(matrix)[row][0]), matrix.cols, 1};
     return vrow;
 }
 // get a column as vector
@@ -75,7 +75,7 @@ Vec linalg_mat2DRow(Mat2d matrix, size_t row)
 Vec linalg_mat2DCol(Mat2d matrix, size_t col)
 {
     // cols are not stored continuously in buffer, each value is stored at a offset of matrix.cols
-    Vec vcol = {&(LA_UNPACK(matrix)[col][0]), matrix.rows, matrix.cols};
+    Vec vcol = {&(LA_UNPACK(matrix)[0][col]), matrix.rows, matrix.cols};
     return vcol;
 }
 
@@ -86,7 +86,7 @@ double linalg_mat2DGet(Mat2d a, size_t row, size_t col)
     LINALG_ASSERT_ERROR(row >= a.rows, NAN, "out of bounds matrix row access!");
     LINALG_ASSERT_ERROR(col >= a.cols, NAN, "out of bounds matrix col access!");
 
-    return LA_UNPACK(a)[col][row];
+    return LA_UNPACK(a)[row][col];
 }
 // gets the nth value in a matrix(by ref)
 // checks for out-of-bounds( returns nullptr is performed )
@@ -95,7 +95,7 @@ double* linalg_mat2DRef(Mat2d a, size_t row, size_t col)
     LINALG_ASSERT_ERROR(row >= a.rows, NULL, "out of bounds matrix row access!");
     LINALG_ASSERT_ERROR(col >= a.cols, NULL, "out of bounds matrix col access!");
 
-    return &(LA_UNPACK(a)[col][row]);
+    return &(LA_UNPACK(a)[row][col]);
 }
 
 // add 2 matrixs and get result into another matrix, prints error if input is invalid
