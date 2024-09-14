@@ -164,7 +164,3 @@ double linalg_mat2DMin(Mat2d a);
 
 // free the matrix on the heap
 void linalg_freeMat2D(Mat2d* mat);
-
-
-
-
