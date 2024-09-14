@@ -1,0 +1,63 @@
+\begin{titlepage}
+
+\begin{center}
+
+%% Print the title
+{\makeatletter
+\largetitlestyle\fontsize{45}{45}\selectfont\@title
+\makeatother}
+
+%% Print the subtitle
+{\makeatletter
+\ifdefvoid{\@subtitle}{}{\bigskip\titlestyle\fontsize{20}{20}\selectfont\@subtitle}
+\makeatother}
+
+\bigskip
+\bigskip
+
+by
+
+\bigskip
+\bigskip
+
+%% Print the name of the author
+{\makeatletter
+\largetitlestyle\fontsize{25}{25}\selectfont\@author
+\makeatother}
+
+\bigskip
+\bigskip
+
+%% Print table with names; easily add columns if necessary or remove the table completely
+\setlength\extrarowheight{2pt}
+\begin{tabular}{c|c}
+    Soham Prabhakar More & EE23BTECH11223\\ 
+    Mihir Divyansh Eachempati & EE23BTECH11017\\
+    Siddhartha Vemula & EE23BTECH11063\\  
+    Kaustubh Khachane & EE23BTECH11032\\  
+    Prajwal M & EE23BTECH11217\\  
+    Manoj Kumar Ambatipudi & EE23BTECH11040 
+\end{tabular}
+
+\vfill
+
+%% Print some more information at the bottom
+\begin{tabular}{ll}
+    Instructor: & Oves Mohd Hussain Badami \\
+    Project Duration: & Sep, 2024 - Nov, 2024 \\
+    Faculty: & Faculty of Electrical Engineering IITH
+\end{tabular}
+
+\bigskip
+\bigskip
+
+\end{center}
+
+% %% Insert the TU Delft logo at the bottom of the page
+% \begin{tikzpicture}[remember picture, overlay]
+%     \node[above=10mm] at (current page.south) {%
+%         \includegraphics{figures/logo-black}
+%     };
+% \end{tikzpicture}
+
+\end{titlepage}
