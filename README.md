@@ -83,3 +83,6 @@ will run the executable and,
 will run the test cases.
 
 
+## Pro Tips 
+
+1. If you are facing any floating pint errors while running, and you suspect it could be from linalg, put a breakpoint near the printf statement in [this file](src/linarg/common.c), and run the debugger. Call Stack in the debug window will show the Traceback of the error.
