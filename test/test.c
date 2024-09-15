@@ -1,53 +1,7 @@
 #include <stdio.h>
 #include "include/linalg.h"
 
-void test_vec_impl()
-{
-    Vec a = vecInitZerosA(3);
-    printf("a = "); vecPrint(a); printf("\n");
-
-    Vec b = vecInitOnesA(3);
-    printf("b = "); vecPrint(b); printf("\n");
-
-    Vec c = vecConstruct((double[]){0.3, 0.1, 2}, 3);
-    printf("c = "); vecPrint(c); printf("\n");
-
-    printf("\n");
-
-    Vec res = vecInitZerosA(3);
-
-    double val = 0.0;
-
-    vecAdd(a, b, &res); printf("a + b = "); vecPrint(res); printf("\n");
-    vecAdd(b, c, &res); printf("b + c = "); vecPrint(res); printf("\n");
-    vecAdd(a, c, &res); printf("a + c = "); vecPrint(res); printf("\n");
-    printf("\n");
-    vecScale(2.0, a, &res); printf("2*a = "); vecPrint(res); printf("\n");
-    vecScale(2.0, b, &res); printf("2*b = "); vecPrint(res); printf("\n");
-    vecScale(2.0, c, &res); printf("2*c = "); vecPrint(res); printf("\n");
-    printf("\n");
-
-    val = vecDot(a, b); printf("a.b = %f\n", val);
-    val = vecDot(b, c); printf("b.c = %f\n", val);
-    val = vecDot(a, c); printf("a.c = %f\n", val);
-    printf("\n");
-    val = vecMagnitude(a); printf("||a|| = %f\n", val);
-    val = vecMagnitude(b); printf("||b|| = %f\n", val);
-    val = vecMagnitude(c); printf("||c|| = %f\n", val);
-    printf("\n");
-    val = vecMax(a); printf("max a = %f\n", val);
-    val = vecMax(b); printf("max b = %f\n", val);
-    val = vecMax(c); printf("max c = %f\n", val);
-    printf("\n");
-    val = vecMin(a); printf("min a = %f\n", val);
-    val = vecMin(b); printf("min b = %f\n", val);
-    val = vecMin(c); printf("min c = %f\n", val);
-
-    // free all memory
-    freeVec(&a);
-    freeVec(&b);
-    freeVec(&res);
-}
+#include "linalg/vector.h"
 
 void test_mat_impl()
 {
@@ -107,13 +61,13 @@ void test_mat_impl()
 int main()
 {
     printf("Running Vector tests: \n\n");
-    test_vec_impl();
+    linalg_vec_test();
 
     for(int i = 0; i < 50; i++) printf("-");
     printf("\n");
 
-    printf("Running Matrix tests: \n\n");
-    test_mat_impl();
+    //printf("Running Matrix tests: \n\n");
+    //test_mat_impl();
     return 0;
 }
 

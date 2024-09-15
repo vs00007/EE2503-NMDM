@@ -13,7 +13,8 @@
 #define LINALG_REPORT_ERROR(...) \
         printf("Error: "); \
         error_handler(__FILE__, __func__, __LINE__); \
-        printf(__VA_ARGS__); 
+        printf(__VA_ARGS__); \
+        printf("\n");
 
 // call this macro to handle warnings
 // all linalg errors are routed through this macro,
@@ -22,7 +23,8 @@
 #define LINALG_REPORT_WARN(...) \
         printf("Warning: "); \
         error_handler(__FILE__, __func__, __LINE__); \
-        printf(__VA_ARGS__);
+        printf(__VA_ARGS__); \
+        printf("\n");
 
 // if condition is true, then report an error and return ret.
 // leave ret blank for void functions
