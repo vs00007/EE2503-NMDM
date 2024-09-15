@@ -60,14 +60,8 @@ void test_mat_impl()
 
 int main()
 {
-    printf("Running Vector tests: \n\n");
+    printf("Running tests:\n");
     linalg_vec_test();
-
-    for(int i = 0; i < 50; i++) printf("-");
-    printf("\n");
-
-    //printf("Running Matrix tests: \n\n");
-    //test_mat_impl();
     return 0;
 }
 
