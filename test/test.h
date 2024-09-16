@@ -62,6 +62,7 @@ int run_all_tests()
 {
     printf("Running tests:\n");
     linalg_vec_test();
+    linalg_matrix_test();
     return 0;
 }
 
