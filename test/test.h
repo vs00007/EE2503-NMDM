@@ -58,7 +58,7 @@ void test_mat_impl()
     freeMat2D(&res);
 }
 
-int main()
+int run_all_tests()
 {
     printf("Running tests:\n");
     linalg_vec_test();

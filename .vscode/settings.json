@@ -8,7 +8,8 @@
         "utils.h": "c",
         "linalg.h": "c",
         "functional": "c",
-        "random": "c"
+        "random": "c",
+        "test.h": "c"
     },
     "files.exclude": {
         "**/.git": true,

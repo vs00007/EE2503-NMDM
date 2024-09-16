@@ -17,6 +17,11 @@
 // initialzie the vector on the heap with some initial value
 Vec vecInitA(double value, size_t len)
 {
+    if(len == 0)
+    {
+        LINALG_REPORT_ERROR("invalid zero length vector requested!");
+        return (Vec){ NULL, 0, 0 };
+    }
     Vec x = { (double*)calloc(len, sizeof(double)), len, 1 };
     LINALG_ASSERT_ERROR(!x.x, x, "unkown error occured when allocation memory!");
     for(size_t i = 0; i < x.len; i++) x.x[i] = value;
@@ -36,6 +41,16 @@ Vec vecInitOnesA(size_t len)
 // make a copy of a vector on heap
 Vec vecCopyA(Vec vector)
 {
+    if(vector.len == 0)
+    {
+        LINALG_REPORT_ERROR("invalid zero length vector requested!");
+        return (Vec){ NULL, 0, 0 };
+    }
+    else if(vector.x == NULL)
+    {
+        LINALG_REPORT_ERROR("invalid source pointer!");
+        return (Vec){ NULL, 0, 0 };
+    }
     Vec x = { (double*)calloc(vector.len, sizeof(double)), vector.len, 1 };
     LINALG_ASSERT_ERROR(!x.x, x, "unkown error occured when allocation memory!");
     for(size_t i = 0; i < x.len; i++) x.x[i] = LA_VIDX(vector, i);
