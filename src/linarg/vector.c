@@ -211,6 +211,28 @@ double vecMin(Vec a)
 
     return result;
 }
+// sum all values in a vector
+double vecSum(Vec a)
+{
+    LINALG_ASSERT_ERROR(!a.x, NAN, "input vector is null!");
+    LINALG_ASSERT_WARN(a.len == 0, 0, "sum of a zero dimention vector");
+
+    double result = 0;
+    for(size_t i = 0; i < a.len; i++) result += LA_VIDX(a, i);
+
+    return result;
+}
+// return the product of all values in a vector
+double vecProd(Vec a)
+{
+    LINALG_ASSERT_ERROR(!a.x, NAN, "input vector is null!");
+    LINALG_ASSERT_WARN(a.len == 0, 1, "sum of a zero dimention vector");
+
+    double result = 1;
+    for(size_t i = 0; i < a.len; i++) result *= LA_VIDX(a, i);
+
+    return result;
+}
 
 // free the vector on the heap
 void freeVec(Vec* vec)

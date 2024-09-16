@@ -82,7 +82,7 @@ void vecPrint(Vec a);
 double vecGet(Vec a, size_t n);
 // gets the nth value in a vector(by ref)
 // handles buffer offsets
-// checks for out-of-bounds( returns nullptr is performed )
+// checks for out-of-bounds( returns nullptr for out-of-bound access)
 double* vecRef(Vec a, size_t n);
 
 // add 2 vectors and get result into another vector, prints error if input is invalid
@@ -168,8 +168,14 @@ int mat2DScale(double a, Mat2d b, Mat2d* result);
 
 // compute result = Ax. prints error if the input is invalid
 int mat2DTransform(Mat2d A, Vec x, Vec* result);
-// compute result = Ax(allocates Vec). prints error if the input is invalid
+// compute result = Ax(allocates result Vec). prints error if the input is invalid
 Vec mat2DTransformA(Mat2d A, Vec x);
+
+// compute result = A*B. prints error if the input is invalid
+int mat2DMul(Mat2d A, Mat2d B, Mat2d* result);
+
+// compute result = A^T. prints error if the input is invalid
+int mat2DTranspose(Mat2d A, Mat2d* result);
 
 // maximum value in the matrix, prints error if input is invalid
 double mat2DMax(Mat2d a);

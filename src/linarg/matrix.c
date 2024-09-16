@@ -7,6 +7,8 @@
 // LINALG_UNPACK_MAT(matrix, r, c)[x][y] = value at xth col and yth row
 #define LA_UNPACK(matrix) ((double (*)[matrix.cols]) matrix.mat)
 
+#define LA_UNPACK_PTR(matrix) ((double (*)[matrix->cols]) matrix->mat)
+
 #define LA_UNPACK_ROW(matrix, row) mat2DRow(matrix, row)
 #define LA_UNPACK_COL(matrix, col) mat2DCol(matrix, col)
 
@@ -163,8 +165,9 @@ int mat2DTransform(Mat2d A, Vec x, Vec* result)
         for(size_t j = 0; j < A.cols; j++) val += LA_UNPACK(A)[i][j] * VEC_INDEX(x, j);
         VEC_INDEX(*result, i) = val;
     }
-}
 
+    return LINALG_OK;
+}
 // compute result = Ax. prints error if the input is invalid
 Vec mat2DTransformA(Mat2d A, Vec x)
 {
@@ -181,6 +184,46 @@ Vec mat2DTransformA(Mat2d A, Vec x)
     }
 
     return result;
+}
+
+// compute result = A*B. prints error if the input is invalid
+int mat2DMul(Mat2d A, Mat2d B, Mat2d* result)
+{
+    LINALG_ASSERT_ERROR(!result, LINALG_ERROR, "result matrix is null!");
+    LINALG_ASSERT_ERROR(!result->mat, LINALG_ERROR, "result matrix is null!");
+    LINALG_ASSERT_ERROR(A.cols != B.rows, LINALG_ERROR, "invalid operation: multiplication between mat(%zux%zu) and mat(%zux%zu)", A.rows, A.cols, B.rows, B.cols);
+    LINALG_ASSERT_ERROR(A.rows != result->rows || B.cols != result->cols, LINALG_ERROR, 
+                        "invalid operation: multiplication between mat(%zux%zu) and mat(%zux%zu) stored in mat(%zux%zu)", A.rows, A.cols, B.rows, B.cols, result->rows, result->cols);
+
+    for(size_t i = 0; i < A.rows; i++)
+    {
+        for(size_t j = 0; j < B.cols; j++)
+        {
+            double res = 0;
+            for(size_t k = 0; k < B.rows; k++) res += LA_UNPACK(A)[i][k] * LA_UNPACK(B)[k][j];
+            LA_UNPACK_PTR(result)[i][j] = res;
+        }
+    }
+
+    return LINALG_OK;
+}
+
+// compute result = A^T. prints error if the input is invalid
+int mat2DTranspose(Mat2d A, Mat2d* result)
+{
+    LINALG_ASSERT_ERROR(!result, LINALG_ERROR, "result matrix is null!");
+    LINALG_ASSERT_ERROR(!result->mat, LINALG_ERROR, "result matrix is null!");
+    LINALG_ASSERT_ERROR(A.cols != result->rows || A.rows != result->cols, LINALG_ERROR, "invalid operation: multiplication between mat(%zux%zu) and mat(%zux%zu)", A.rows, A.cols, result->rows, result->cols);
+
+    for(size_t i = 0; i < A.rows; i++)
+    {
+        for(size_t j = 0; j < A.cols; j++)
+        {
+            LA_UNPACK_PTR(result)[j][i] = LA_UNPACK(A)[i][j];
+        }
+    }
+
+    return LINALG_OK;
 }
 
 // maximum value in the matrix, prints error if input is invalid
