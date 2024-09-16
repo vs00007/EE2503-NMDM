@@ -168,6 +168,8 @@ int mat2DScale(double a, Mat2d b, Mat2d* result);
 
 // compute result = Ax. prints error if the input is invalid
 int mat2DTransform(Mat2d A, Vec x, Vec* result);
+// compute result = Ax(allocates Vec). prints error if the input is invalid
+Vec mat2DTransformA(Mat2d A, Vec x);
 
 // maximum value in the matrix, prints error if input is invalid
 double mat2DMax(Mat2d a);

@@ -165,6 +165,24 @@ int mat2DTransform(Mat2d A, Vec x, Vec* result)
     }
 }
 
+// compute result = Ax. prints error if the input is invalid
+Vec mat2DTransformA(Mat2d A, Vec x)
+{
+    Vec badVec = {NULL, 0, 0};
+    LINALG_ASSERT_ERROR(A.cols != x.len, badVec, "invalid vector: mat(%zux%zu) applied over vec(%zu)", A.rows, A.cols, x.len);
+
+    Vec result = vecInitZerosA(A.rows);
+
+    for(size_t i = 0; i < A.rows; i++)
+    {
+        double val = 0;
+        for(size_t j = 0; j < A.cols; j++) val += LA_UNPACK(A)[i][j] * VEC_INDEX(x, j);
+        VEC_INDEX(result, i) = val;
+    }
+
+    return result;
+}
+
 // maximum value in the matrix, prints error if input is invalid
 double mat2DMax(Mat2d a)
 {
