@@ -48,7 +48,7 @@ Vec vecCopyA(Vec vector)
     }
     else if(vector.x == NULL)
     {
-        LINALG_REPORT_ERROR("invalid source pointer!");
+        LINALG_REPORT_ERROR("invalid source pointer(null)!");
         return (Vec){ NULL, 0, 0 };
     }
     Vec x = { (double*)calloc(vector.len, sizeof(double)), vector.len, 1 };

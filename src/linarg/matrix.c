@@ -13,6 +13,11 @@
 // initialzie the matrix on the heap with some initial value
 Mat2d mat2DInitA(double value, size_t rows, size_t cols)
 {
+    if(rows == 0 || cols == 0)
+    {
+        LINALG_REPORT_ERROR("invalid zero row or col matrix requested!");
+        return (Mat2d){ NULL, 0, 0 };
+    }
     Mat2d mat = { (double*)calloc(rows*cols, sizeof(double)), rows, cols };
     LINALG_ASSERT_ERROR(!mat.mat, mat, "unkown error occured when allocation memory!");
     for(size_t i = 0; i < mat.cols*mat.rows; i++) mat.mat[i] = value;
@@ -33,6 +38,16 @@ Mat2d mat2DInitOnesA(size_t rows, size_t cols)
 // make a copy of a matrix on heap
 Mat2d mat2DCopyA(Mat2d matrix)
 {
+    if(matrix.rows == 0 || matrix.cols == 0)
+    {
+        LINALG_REPORT_ERROR("invalid zero row or col matrix requested!");
+        return (Mat2d){ NULL, 0, 0 };
+    }
+    else if(matrix.mat == NULL)
+    {
+        LINALG_REPORT_ERROR("invalid matrix pointer(null)!");
+        return (Mat2d){ NULL, 0, 0 };
+    }
     Mat2d mat = { (double*)calloc(matrix.rows*matrix.cols, sizeof(double)), matrix.rows, matrix.cols };
     LINALG_ASSERT_ERROR(!mat.mat, mat, "unkown error occured when allocation memory!");
     for(size_t i = 0; i < mat.cols*mat.rows; i++) mat.mat[i] = matrix.mat[i];
