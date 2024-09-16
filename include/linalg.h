@@ -173,6 +173,8 @@ Vec mat2DTransformA(Mat2d A, Vec x);
 
 // compute result = A*B. prints error if the input is invalid
 int mat2DMul(Mat2d A, Mat2d B, Mat2d* result);
+// compute result = A*B(allocates memory). prints error if the input is invalid
+Mat2d mat2DMulA(Mat2d A, Mat2d B);
 
 // compute result = A^T. prints error if the input is invalid
 int mat2DTranspose(Mat2d A, Mat2d* result);

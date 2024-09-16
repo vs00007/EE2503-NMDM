@@ -207,6 +207,26 @@ int mat2DMul(Mat2d A, Mat2d B, Mat2d* result)
 
     return LINALG_OK;
 }
+// compute result = A*B(allocates memory). prints error if the input is invalid
+Mat2d mat2DMulA(Mat2d A, Mat2d B)
+{
+    Mat2d bad_mat = {NULL, 0, 0};
+    LINALG_ASSERT_ERROR(A.cols != B.rows, bad_mat, "invalid operation: multiplication between mat(%zux%zu) and mat(%zux%zu)", A.rows, A.cols, B.rows, B.cols);
+
+    Mat2d result = mat2DInitZerosA(A.rows, B.cols);
+
+    for(size_t i = 0; i < A.rows; i++)
+    {
+        for(size_t j = 0; j < B.cols; j++)
+        {
+            double res = 0;
+            for(size_t k = 0; k < B.rows; k++) res += LA_UNPACK(A)[i][k] * LA_UNPACK(B)[k][j];
+            LA_UNPACK(result)[i][j] = res;
+        }
+    }
+
+    return result;
+}
 
 // compute result = A^T. prints error if the input is invalid
 int mat2DTranspose(Mat2d A, Mat2d* result)
