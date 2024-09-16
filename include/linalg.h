@@ -176,6 +176,10 @@ int mat2DMul(Mat2d A, Mat2d B, Mat2d* result);
 // compute result = A*B(allocates memory). prints error if the input is invalid
 Mat2d mat2DMulA(Mat2d A, Mat2d B);
 
+// calculate result = A^k for k > 0; 
+// UNIMPLEMENTED
+int mat2DSqPowU(Mat2d A, unsigned int k, Mat2d* result);
+
 // compute result = A^T. prints error if the input is invalid
 int mat2DTranspose(Mat2d A, Mat2d* result);
 
