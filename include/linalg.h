@@ -53,6 +53,7 @@ void error_handler(const char* file, const char* function, size_t line_no);
 
 // Vector implimentation
 
+// a column vector
 typedef struct Vec {
     double* x;
     size_t len;
@@ -164,6 +165,9 @@ int mat2DAdd(Mat2d a, Mat2d b, Mat2d* result);
 int mat2DSub(Mat2d a, Mat2d b, Mat2d* result);
 // multiply scalar value to matrixs and get result into another matrix, prints error if input is invalid
 int mat2DScale(double a, Mat2d b, Mat2d* result);
+
+// compute result = Ax. prints error if the input is invalid
+int mat2DTransform(Mat2d A, Vec x, Vec* result);
 
 // maximum value in the matrix, prints error if input is invalid
 double mat2DMax(Mat2d a);

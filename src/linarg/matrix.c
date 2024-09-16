@@ -149,6 +149,22 @@ int mat2DScale(double a, Mat2d b, Mat2d* result)
     return LINALG_OK;
 }
 
+// compute result = Ax. prints error if the input is invalid
+int mat2DTransform(Mat2d A, Vec x, Vec* result)
+{
+    LINALG_ASSERT_ERROR(!result, LINALG_ERROR, "result matrix is null!");
+    LINALG_ASSERT_ERROR(!result->x, LINALG_ERROR, "result matrix is null!");
+    LINALG_ASSERT_ERROR(A.cols != x.len, LINALG_ERROR, "invalid vector: mat(%zux%zu) applied over vec(%zu)", A.rows, A.cols, x.len);
+    LINALG_ASSERT_ERROR(A.rows != result->len, LINALG_ERROR, "invalid vector: mat(%zux%zu) applied over vec(%zu) is put in vec(%zu)", A.rows, A.cols, x.len, result->len);
+
+    for(size_t i = 0; i < A.rows; i++)
+    {
+        double val = 0;
+        for(size_t j = 0; j < A.cols; j++) val += LA_UNPACK(A)[i][j] * VEC_INDEX(x, j);
+        VEC_INDEX(*result, i) = val;
+    }
+}
+
 // maximum value in the matrix, prints error if input is invalid
 double mat2DMax(Mat2d a)
 {
