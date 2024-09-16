@@ -1,6 +1,6 @@
 #include <assert.h>
 #include <math.h>
-#include "linalg.h"  // Assuming this is where the matrix functions are defined
+#include "linalg.h"
 
 void test_mat2DInitA() {
     Mat2d mat = mat2DInitA(5.0, 3, 4);
