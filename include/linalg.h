@@ -51,7 +51,7 @@
 // This function is called in the LINALG_ERROR_TRAP macro
 void error_handler(const char* file, const char* function, size_t line_no);
 
-// Vector implimentation
+// Vector implementation
 
 // a column vector
 typedef struct Vec {
@@ -108,6 +108,9 @@ double vecMin(Vec a);
 double vecSum(Vec a);
 // return the product of all values in a vector
 double vecProd(Vec a);
+// check if the voltage is const or varying
+int isVecVar(Vec a);
+
 
 // free the vector on the heap
 void freeVec(Vec* vec);

@@ -185,7 +185,7 @@ double vecNorm(Vec a, double p)
 double vecMax(Vec a)
 {
     LINALG_ASSERT_ERROR(!a.x, NAN, "input vector is null!");
-    LINALG_ASSERT_WARN(a.len == 0, INFINITY, "max of a zero dimention vector");
+    LINALG_ASSERT_WARN(a.len == 0, INFINITY, "max of a zero dimension vector");
 
     double result = -INFINITY;
 
@@ -200,7 +200,7 @@ double vecMax(Vec a)
 double vecMin(Vec a)
 {
     LINALG_ASSERT_ERROR(!a.x, NAN, "input vector is null!");
-    LINALG_ASSERT_WARN(a.len == 0, -INFINITY, "min of a zero dimention vector");
+    LINALG_ASSERT_WARN(a.len == 0, -INFINITY, "min of a zero dimension vector");
 
     double result = INFINITY;
 
@@ -215,7 +215,7 @@ double vecMin(Vec a)
 double vecSum(Vec a)
 {
     LINALG_ASSERT_ERROR(!a.x, NAN, "input vector is null!");
-    LINALG_ASSERT_WARN(a.len == 0, 0, "sum of a zero dimention vector");
+    LINALG_ASSERT_WARN(a.len == 0, 0, "sum of a zero dimension vector");
 
     double result = 0;
     for(size_t i = 0; i < a.len; i++) result += LA_VIDX(a, i);
@@ -226,12 +226,24 @@ double vecSum(Vec a)
 double vecProd(Vec a)
 {
     LINALG_ASSERT_ERROR(!a.x, NAN, "input vector is null!");
-    LINALG_ASSERT_WARN(a.len == 0, 1, "sum of a zero dimention vector");
+    LINALG_ASSERT_WARN(a.len == 0, 1, "product of a zero dimension vector");
 
     double result = 1;
     for(size_t i = 0; i < a.len; i++) result *= LA_VIDX(a, i);
 
     return result;
+}
+// check if the voltage is const or varying
+int isVecVar(Vec a)
+{
+    LINALG_ASSERT_ERROR(!a.x, NAN, "input vector is null!");
+    LINALG_ASSERT_WARN(a.len == 0, 1, "checking a zero dimension vector");
+
+    double mean = (vecSum(a))/((double)a.len);
+    double dev = 0;
+    for(size_t i = 0; i < a.len; i++) dev += fabs(LA_VIDX(a, i) - mean);
+
+    return (dev < 1e-5) ? 1 : 0 ;
 }
 
 // free the vector on the heap

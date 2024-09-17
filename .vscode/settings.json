@@ -9,7 +9,8 @@
         "linalg.h": "c",
         "functional": "c",
         "random": "c",
-        "test.h": "c"
+        "test.h": "c",
+        "pde.h": "c"
     },
     "files.exclude": {
         "**/.git": true,
