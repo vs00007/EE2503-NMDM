@@ -1,1 +1,2 @@
-// code for solving the master equation 
+#include <include/linalg.h>
+#include <include/ode.h>
