@@ -40,7 +40,7 @@ Vectors are stored as contiguous arrays of `double` values, with an optional off
 Gets the value at `index` from a `Vec` instance by dereferencing.
 Checks for out of bound access.
 ```c
-#define VEC_INDEX(vector, index) *linalg_vecRef(vector, index)
+#define VEC_INDEX(vector, index) *vecRef(vector, index)
 ```
 
 ## Functions
@@ -48,7 +48,7 @@ Here is the documentation for each function in the provided code:
 
 ---
 
-### `Vec linalg_vecInitA(double value, size_t len)`
+### `Vec vecInitA(double value, size_t len)`
 Initializes a vector on the heap and fills it with a specified value.
 
 #### Parameters:
@@ -60,12 +60,12 @@ Initializes a vector on the heap and fills it with a specified value.
 
 #### Example:
 ```c
-Vec a = linalg_vecInitA(1.0, 3);  // Initializes [1.0, 1.0, 1.0]
+Vec a = vecInitA(1.0, 3);  // Initializes [1.0, 1.0, 1.0]
 ```
 
 ---
 
-### `Vec linalg_vecInitZerosA(size_t len)`
+### `Vec vecInitZerosA(size_t len)`
 Initializes a vector on the heap and fills it with zeros.
 
 #### Parameters:
@@ -76,12 +76,12 @@ Initializes a vector on the heap and fills it with zeros.
 
 #### Example:
 ```c
-Vec a = linalg_vecInitZerosA(3);  // Initializes [0.0, 0.0, 0.0]
+Vec a = vecInitZerosA(3);  // Initializes [0.0, 0.0, 0.0]
 ```
 
 ---
 
-### `Vec linalg_vecInitOnesA(size_t len)`
+### `Vec vecInitOnesA(size_t len)`
 Initializes a vector on the heap and fills it with ones.
 
 #### Parameters:
@@ -92,12 +92,12 @@ Initializes a vector on the heap and fills it with ones.
 
 #### Example:
 ```c
-Vec a = linalg_vecInitOnesA(3);  // Initializes [1.0, 1.0, 1.0]
+Vec a = vecInitOnesA(3);  // Initializes [1.0, 1.0, 1.0]
 ```
 
 ---
 
-### `Vec linalg_vecCopyA(Vec vector)`
+### `Vec vecCopyA(Vec vector)`
 Creates a copy of a given vector on the heap.
 
 #### Parameters:
@@ -108,12 +108,12 @@ Creates a copy of a given vector on the heap.
 
 #### Example:
 ```c
-Vec a = linalg_vecCopyA(b);  // Creates a copy of vector `b`.
+Vec a = vecCopyA(b);  // Creates a copy of vector `b`.
 ```
 
 ---
 
-### `Vec linalg_vecConstruct(double* ptr, size_t len)`
+### `Vec vecConstruct(double* ptr, size_t len)`
 Constructs a vector from an existing pointer, without allocating memory.
 
 #### Parameters:
@@ -126,12 +126,12 @@ Constructs a vector from an existing pointer, without allocating memory.
 #### Example:
 ```c
 double data[] = {1.0, 2.0, 3.0};
-Vec a = linalg_vecConstruct(data, 3);
+Vec a = vecConstruct(data, 3);
 ```
 
 ---
 
-### `void linalg_vecPrint(Vec a)`
+### `void vecPrint(Vec a)`
 Prints the vector in a readable format.
 
 #### Parameters:
@@ -139,12 +139,12 @@ Prints the vector in a readable format.
 
 #### Example:
 ```c
-linalg_vecPrint(a);  // Prints [1.0, 2.0, 3.0]
+vecPrint(a);  // Prints [1.0, 2.0, 3.0]
 ```
 
 ---
 
-### `double linalg_vecGet(Vec a, size_t n)`
+### `double vecGet(Vec a, size_t n)`
 Gets the value at the nth index in a vector, checking for out-of-bounds access.
 
 #### Parameters:
@@ -156,12 +156,12 @@ Gets the value at the nth index in a vector, checking for out-of-bounds access.
 
 #### Example:
 ```c
-double val = linalg_vecGet(a, 2);
+double val = vecGet(a, 2);
 ```
 
 ---
 
-### `double* linalg_vecRef(Vec a, size_t n)`
+### `double* vecRef(Vec a, size_t n)`
 Gets a reference to the value at the nth index in a vector, checking for out-of-bounds access.
 
 #### Parameters:
@@ -173,12 +173,12 @@ Gets a reference to the value at the nth index in a vector, checking for out-of-
 
 #### Example:
 ```c
-double* val_ptr = linalg_vecRef(a, 2);
+double* val_ptr = vecRef(a, 2);
 ```
 
 ---
 
-### `int linalg_vecAdd(Vec a, Vec b, Vec* result)`
+### `int vecAdd(Vec a, Vec b, Vec* result)`
 Adds two vectors element-wise and stores the result in a third vector.
 
 #### Parameters:
@@ -191,12 +191,12 @@ Adds two vectors element-wise and stores the result in a third vector.
 
 #### Example:
 ```c
-linalg_vecAdd(a, b, &result);
+vecAdd(a, b, &result);
 ```
 
 ---
 
-### `int linalg_vecScale(double a, Vec b, Vec* result)`
+### `int vecScale(double a, Vec b, Vec* result)`
 Multiplies a vector by a scalar and stores the result in another vector.
 
 #### Parameters:
@@ -209,12 +209,12 @@ Multiplies a vector by a scalar and stores the result in another vector.
 
 #### Example:
 ```c
-linalg_vecScale(2.0, b, &result);  // Scales vector `b` by 2.0
+vecScale(2.0, b, &result);  // Scales vector `b` by 2.0
 ```
 
 ---
 
-### `int linalg_vecNormalize(Vec a, Vec* result)`
+### `int vecNormalize(Vec a, Vec* result)`
 Normalizes a vector (makes it a unit vector) and stores the result in another vector.
 
 #### Parameters:
@@ -226,12 +226,12 @@ Normalizes a vector (makes it a unit vector) and stores the result in another ve
 
 #### Example:
 ```c
-linalg_vecNormalize(a, &result);
+vecNormalize(a, &result);
 ```
 
 ---
 
-### `double linalg_vecDot(Vec a, Vec b)`
+### `double vecDot(Vec a, Vec b)`
 Calculates the dot product of two vectors.
 
 #### Parameters:
@@ -243,12 +243,12 @@ Calculates the dot product of two vectors.
 
 #### Example:
 ```c
-double dot_product = linalg_vecDot(a, b);
+double dot_product = vecDot(a, b);
 ```
 
 ---
 
-### `double linalg_vecMagnitude(Vec a)`
+### `double vecMagnitude(Vec a)`
 Calculates the L2 norm (magnitude) of a vector.
 
 #### Parameters:
@@ -259,12 +259,12 @@ Calculates the L2 norm (magnitude) of a vector.
 
 #### Example:
 ```c
-double magnitude = linalg_vecMagnitude(a);
+double magnitude = vecMagnitude(a);
 ```
 
 ---
 
-### `double linalg_vecNorm(Vec a, double p)`
+### `double vecNorm(Vec a, double p)`
 Calculates the L_p norm of a vector. Prints a warning if `p < 1`.
 
 #### Parameters:
@@ -276,12 +276,12 @@ Calculates the L_p norm of a vector. Prints a warning if `p < 1`.
 
 #### Example:
 ```c
-double norm = linalg_vecNorm(a, 2.0);  // Calculates L2 norm
+double norm = vecNorm(a, 2.0);  // Calculates L2 norm
 ```
 
 ---
 
-### `double linalg_vecMax(Vec a)`
+### `double vecMax(Vec a)`
 Finds the maximum value in a vector.
 
 #### Parameters:
@@ -292,12 +292,12 @@ Finds the maximum value in a vector.
 
 #### Example:
 ```c
-double max_value = linalg_vecMax(a);
+double max_value = vecMax(a);
 ```
 
 ---
 
-### `double linalg_vecMin(Vec a)`
+### `double vecMin(Vec a)`
 Finds the minimum value in a vector.
 
 #### Parameters:
@@ -308,12 +308,12 @@ Finds the minimum value in a vector.
 
 #### Example:
 ```c
-double min_value = linalg_vecMin(a);
+double min_value = vecMin(a);
 ```
 
 ---
 
-### `void linalg_freeVecX(Vec* vec)`
+### `void freeVecX(Vec* vec)`
 Frees the memory allocated for a vector.
 
 #### Parameters:
@@ -321,16 +321,16 @@ Frees the memory allocated for a vector.
 
 #### Example:
 ```c
-linalg_freeVecX(&a);  // Frees the memory allocated for vector `a`
+freeVecX(&a);  // Frees the memory allocated for vector `a`
 ```
 
 ## Usage Examples
 
 ```c
-Vec a = linalg_vecInitOnesA(5);
-Vec b = linalg_vecInitZerosA(5);
-linalg_vecAdd(a, b, &result);
-linalg_vecPrint(result);
-linalg_freeVecX(&a);
-linalg_freeVecX(&b);
+Vec a = vecInitOnesA(5);
+Vec b = vecInitZerosA(5);
+vecAdd(a, b, &result);
+vecPrint(result);
+freeVecX(&a);
+freeVecX(&b);
 ```

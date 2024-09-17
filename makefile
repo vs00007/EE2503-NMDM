@@ -11,12 +11,12 @@ CFLAGS := -Wall -Wextra -Iinclude -fdiagnostics-color=always -std=c17 $(INCLUDES
 BUILD_DIR := build
 
 DEBUG_LIBS := -lm
-DEBUG_CFLAGS := $(CFLAGS) 
+DEBUG_CFLAGS := $(CFLAGS) -g
 DEBUG_LINKFLAGS := $(LINKFLAGS) -g
 DEBUG_DIR := $(BUILD_DIR)/debug
 
 TEST_LIBS := -lm
-TEST_CFLAGS := $(CFLAGS) 
+TEST_CFLAGS := $(CFLAGS) -DRUN_TESTS -g
 TEST_LINKFLAGS := $(LINKFLAGS) -g
 TEST_DIR := $(BUILD_DIR)/test
 
@@ -40,7 +40,7 @@ RELEASE_SRC_C := $(filter-out $(EXCLUDE),$(call rwildcard,,*.c))
 RELEASE_OBJ_C := $(patsubst %.c, $(RELEASE_DIR)/objs/%.o, $(RELEASE_SRC_C))
 RELEASE_DEPENDS := $(patsubst %.c,$(RELEASE_DIR)/objs/%.d,$(RELEASE_SRC_C))
 
-TEST_EXCLUDE := src/main.c
+TEST_EXCLUDE := 
 TEST_SRC_C := $(filter-out $(TEST_EXCLUDE),$(call rwildcard,,*.c))
 TEST_OBJ_C := $(patsubst %.c, $(TEST_DIR)/objs/%.o, $(TEST_SRC_C))
 TEST_DEPENDS := $(patsubst %.c,$(TEST_DIR)/objs/%.d,$(TEST_SRC_C))
@@ -61,6 +61,7 @@ $(DEBUG_DIR)/prog: $(DEBUG_OBJ_C)
 	@echo "Linking Project(Debug)"
 	@$(LD) $(DEBUG_LINKFLAGS) -o $@ $^ $(DEBUG_LIBS)
 	@echo "Created " $@
+	@cp $@ $(BUILD_DIR)/prog
 
 -include $(DEBUG_DEPENDS)
 
@@ -86,6 +87,7 @@ $(TEST_DIR)/prog: $(TEST_OBJ_C)
 	@echo "Linking Project(Debug)"
 	@$(LD) $(TEST_LINKFLAGS) -o $@ $^ $(TEST_LIBS)
 	@echo "Created " $@
+	@cp $@ $(BUILD_DIR)/prog
 
 -include $(TEST_DEPENDS)
 

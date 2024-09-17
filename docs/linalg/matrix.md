@@ -32,13 +32,13 @@ Unpacks the matrix data and allows direct access to its elements using array not
 ### `LA_UNPACK_ROW(matrix, row)`
 Unpacks a specific row of the matrix and returns a vector representing that row.
 ```c
-#define LA_UNPACK_ROW(matrix, row) linalg_mat2DRow(matrix, row)
+#define LA_UNPACK_ROW(matrix, row) mat2DRow(matrix, row)
 ```
 
 ### `LA_UNPACK_COL(matrix, row)`
 Unpacks a specific col of the matrix and returns a vector representing that col.
 ```c
-#define LA_UNPACK_COL(matrix, row) linalg_mat2DCol(matrix, row)
+#define LA_UNPACK_COL(matrix, row) mat2DCol(matrix, row)
 ```
 
 ## Functions
@@ -47,7 +47,7 @@ Here is the documentation for each function in the provided code:
 
 ---
 
-### `Mat2d linalg_mat2DInitA(double value, size_t rows, size_t cols)`
+### `Mat2d mat2DInitA(double value, size_t rows, size_t cols)`
 Initializes a matrix on the heap, filling each element with the specified value.
 
 #### Parameters:
@@ -60,12 +60,12 @@ Initializes a matrix on the heap, filling each element with the specified value.
 
 #### Example:
 ```c
-Mat2d mat = linalg_mat2DInitA(2.0, 3, 3);  // Initializes a 3x3 matrix with all elements as 2.0
+Mat2d mat = mat2DInitA(2.0, 3, 3);  // Initializes a 3x3 matrix with all elements as 2.0
 ```
 
 ---
 
-### `Mat2d linalg_mat2DInitZerosA(size_t rows, size_t cols)`
+### `Mat2d mat2DInitZerosA(size_t rows, size_t cols)`
 Initializes a matrix on the heap with all elements set to zero.
 
 #### Parameters:
@@ -77,12 +77,12 @@ Initializes a matrix on the heap with all elements set to zero.
 
 #### Example:
 ```c
-Mat2d mat = linalg_mat2DInitZerosA(3, 3);  // Initializes a 3x3 matrix of zeros
+Mat2d mat = mat2DInitZerosA(3, 3);  // Initializes a 3x3 matrix of zeros
 ```
 
 ---
 
-### `Mat2d linalg_mat2DInitOnesA(size_t rows, size_t cols)`
+### `Mat2d mat2DInitOnesA(size_t rows, size_t cols)`
 Initializes a matrix on the heap with all elements set to one.
 
 #### Parameters:
@@ -94,12 +94,12 @@ Initializes a matrix on the heap with all elements set to one.
 
 #### Example:
 ```c
-Mat2d mat = linalg_mat2DInitOnesA(3, 3);  // Initializes a 3x3 matrix of ones
+Mat2d mat = mat2DInitOnesA(3, 3);  // Initializes a 3x3 matrix of ones
 ```
 
 ---
 
-### `Mat2d linalg_mat2DCopyA(Mat2d matrix)`
+### `Mat2d mat2DCopyA(Mat2d matrix)`
 Creates a copy of a given matrix on the heap.
 
 #### Parameters:
@@ -110,12 +110,12 @@ Creates a copy of a given matrix on the heap.
 
 #### Example:
 ```c
-Mat2d copy = linalg_mat2DCopyA(mat);  // Creates a copy of matrix `mat`
+Mat2d copy = mat2DCopyA(mat);  // Creates a copy of matrix `mat`
 ```
 
 ---
 
-### `Mat2d linalg_mat2DConstruct(double* ptr, size_t rows, size_t cols)`
+### `Mat2d mat2DConstruct(double* ptr, size_t rows, size_t cols)`
 Constructs a matrix from an existing pointer, without allocating memory.
 
 #### Parameters:
@@ -129,12 +129,12 @@ Constructs a matrix from an existing pointer, without allocating memory.
 #### Example:
 ```c
 double data[] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
-Mat2d mat = linalg_mat2DConstruct(data, 2, 3);  // Constructs a 2x3 matrix from `data`
+Mat2d mat = mat2DConstruct(data, 2, 3);  // Constructs a 2x3 matrix from `data`
 ```
 
 ---
 
-### `void linalg_mat2DPrint(Mat2d a)`
+### `void mat2DPrint(Mat2d a)`
 Prints the matrix in a readable format.
 
 #### Parameters:
@@ -142,12 +142,12 @@ Prints the matrix in a readable format.
 
 #### Example:
 ```c
-linalg_mat2DPrint(mat);  // Prints the matrix
+mat2DPrint(mat);  // Prints the matrix
 ```
 
 ---
 
-### `Vec linalg_mat2DRow(Mat2d matrix, size_t row)`
+### `Vec mat2DRow(Mat2d matrix, size_t row)`
 Returns a vector representing a specific row of the matrix. The vector is a reference, not a copy.
 
 So, this **must** only be used till matrix is not freed.
@@ -161,12 +161,12 @@ So, this **must** only be used till matrix is not freed.
 
 #### Example:
 ```c
-Vec row_vec = linalg_mat2DRow(mat, 1);  // Gets the second row as a vector
+Vec row_vec = mat2DRow(mat, 1);  // Gets the second row as a vector
 ```
 
 ---
 
-### `Vec linalg_mat2DCol(Mat2d matrix, size_t col)`
+### `Vec mat2DCol(Mat2d matrix, size_t col)`
 Returns a vector representing a specific column of the matrix. The vector is a reference, not a copy.
 
 So, this **must** only be used till matrix is not freed.
@@ -180,12 +180,12 @@ So, this **must** only be used till matrix is not freed.
 
 #### Example:
 ```c
-Vec col_vec = linalg_mat2DCol(mat, 1);  // Gets the second column as a vector
+Vec col_vec = mat2DCol(mat, 1);  // Gets the second column as a vector
 ```
 
 ---
 
-### `double linalg_mat2DGet(Mat2d a, size_t row, size_t col)`
+### `double mat2DGet(Mat2d a, size_t row, size_t col)`
 Gets the value at the specified row and column, checking for out-of-bounds access.
 
 #### Parameters:
@@ -198,12 +198,12 @@ Gets the value at the specified row and column, checking for out-of-bounds acces
 
 #### Example:
 ```c
-double val = linalg_mat2DGet(mat, 1, 1);  // Gets the value at (1, 1)
+double val = mat2DGet(mat, 1, 1);  // Gets the value at (1, 1)
 ```
 
 ---
 
-### `double* linalg_mat2DRef(Mat2d a, size_t row, size_t col)`
+### `double* mat2DRef(Mat2d a, size_t row, size_t col)`
 Gets a reference to the value at the specified row and column, checking for out-of-bounds access.
 
 #### Parameters:
@@ -216,12 +216,12 @@ Gets a reference to the value at the specified row and column, checking for out-
 
 #### Example:
 ```c
-double* ref = linalg_mat2DRef(mat, 1, 1);  // Gets a reference to the value at (1, 1)
+double* ref = mat2DRef(mat, 1, 1);  // Gets a reference to the value at (1, 1)
 ```
 
 ---
 
-### `int linalg_mat2DAdd(Mat2d a, Mat2d b, Mat2d* result)`
+### `int mat2DAdd(Mat2d a, Mat2d b, Mat2d* result)`
 Adds two matrices element-wise and stores the result in a third matrix.
 
 #### Parameters:
@@ -234,12 +234,12 @@ Adds two matrices element-wise and stores the result in a third matrix.
 
 #### Example:
 ```c
-linalg_mat2DAdd(a, b, &result);  // Adds matrices `a` and `b`, stores result in `result`
+mat2DAdd(a, b, &result);  // Adds matrices `a` and `b`, stores result in `result`
 ```
 
 ---
 
-### `int linalg_mat2DScale(double a, Mat2d b, Mat2d* result)`
+### `int mat2DScale(double a, Mat2d b, Mat2d* result)`
 Multiplies a matrix by a scalar and stores the result in another matrix.
 
 #### Parameters:
@@ -252,12 +252,12 @@ Multiplies a matrix by a scalar and stores the result in another matrix.
 
 #### Example:
 ```c
-linalg_mat2DScale(2.0, mat, &result);  // Scales matrix `mat` by 2.0
+mat2DScale(2.0, mat, &result);  // Scales matrix `mat` by 2.0
 ```
 
 ---
 
-### `double linalg_mat2DMax(Mat2d a)`
+### `double mat2DMax(Mat2d a)`
 Finds the maximum value in a matrix.
 
 #### Parameters:
@@ -268,12 +268,12 @@ Finds the maximum value in a matrix.
 
 #### Example:
 ```c
-double max_value = linalg_mat2DMax(mat);  // Finds the maximum value in the matrix
+double max_value = mat2DMax(mat);  // Finds the maximum value in the matrix
 ```
 
 ---
 
-### `double linalg_mat2DMin(Mat2d a)`
+### `double mat2DMin(Mat2d a)`
 Finds the minimum value in a matrix.
 
 #### Parameters:
@@ -284,12 +284,12 @@ Finds the minimum value in a matrix.
 
 #### Example:
 ```c
-double min_value = linalg_mat2DMin(mat);  // Finds the minimum value in the matrix
+double min_value = mat2DMin(mat);  // Finds the minimum value in the matrix
 ```
 
 ---
 
-### `void linalg_freeMat2D(Mat2d* mat)`
+### `void freeMat2D(Mat2d* mat)`
 Frees the memory allocated
 
  for a matrix.
@@ -299,13 +299,13 @@ Frees the memory allocated
 
 #### Example:
 ```c
-linalg_freeMat2D(&mat);  // Frees the memory allocated for matrix `mat`
+freeMat2D(&mat);  // Frees the memory allocated for matrix `mat`
 ```
 
 ## Usage Examples
 
 ```c
-Mat2d mat = linalg_mat2DInitOnesA(3, 3);
-linalg_mat2DPrint(mat);
-linalg_freeMat2D(&mat);
+Mat2d mat = mat2DInitOnesA(3, 3);
+mat2DPrint(mat);
+freeMat2D(&mat);
 ```
