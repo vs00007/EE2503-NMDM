@@ -233,6 +233,42 @@ double vecProd(Vec a)
 
     return result;
 }
+// get the range of vector, i.e max - min
+double vecRange(Vec a)
+{
+    LINALG_ASSERT_ERROR(!a.x, NAN, "input vector is null!");
+    LINALG_ASSERT_WARN(a.len == 0, 0, "input is a zero dimension vector");
+
+    double max_val = -INFINITY;
+    double min_val = INFINITY;
+
+    for(size_t i = 0; i < a.len; i++)
+    {
+        max_val = max_val > LA_VIDX(a, i) ? max_val : LA_VIDX(a, i);
+        min_val = min_val < LA_VIDX(a, i) ? min_val : LA_VIDX(a, i);
+    }
+
+    return max_val - min_val;
+}
+// get the (relative) range of vector, i.e (max - min) / min( |max|, |min| )
+double vecRangeRelative(Vec a)
+{
+    LINALG_ASSERT_ERROR(!a.x, NAN, "input vector is null!");
+    LINALG_ASSERT_WARN(a.len == 0, 0, "input is a zero dimension vector");
+
+    double max_val = -INFINITY;
+    double min_val = INFINITY;
+    double abs_min = INFINITY;
+
+    for(size_t i = 0; i < a.len; i++)
+    {
+        max_val = max_val > LA_VIDX(a, i) ? max_val : LA_VIDX(a, i);
+        min_val = min_val < LA_VIDX(a, i) ? min_val : LA_VIDX(a, i);
+        abs_min = abs_min < fabs(LA_VIDX(a, i)) ? min_val : fabs(LA_VIDX(a, i));
+    }
+
+    return (max_val - min_val) / abs_min;
+}
 // get the standard deviation of the vector
 double vecStandardDeviation(Vec a)
 {

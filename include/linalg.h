@@ -108,6 +108,10 @@ double vecMin(Vec a);
 double vecSum(Vec a);
 // return the product of all values in a vector
 double vecProd(Vec a);
+// get the range of vector, i.e max - min
+double vecRange(Vec a);
+// get the (relative) range of vector, i.e (max - min) / min( |max|, |min| )
+double vecRangeRelative(Vec a);
 // get the standard deviation of the vector
 double vecStandardDeviation(Vec a);
 
