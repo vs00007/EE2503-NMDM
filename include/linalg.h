@@ -108,8 +108,8 @@ double vecMin(Vec a);
 double vecSum(Vec a);
 // return the product of all values in a vector
 double vecProd(Vec a);
-// check if the voltage is const or varying
-int isVecVar(Vec a);
+// get the standard deviation of the vector
+double vecStandardDeviation(Vec a);
 
 
 // free the vector on the heap

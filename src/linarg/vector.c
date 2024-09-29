@@ -6,12 +6,12 @@
 
 // gets value at index from vector by reference(dereferenced)
 // allows for syntax like: LA_VIDX(a, 2) = 5;
-// DOES NOT CHECK FOR OUT OF BOUNDS
+// DOES NOT CHECK FOR OUT OF BOUNDS ACCESS
 #define LA_VIDX(vector, index) *(vector.x + vector.offset * index)
 
 // gets value at index from vector(ptr) by reference(dereferenced)
 // allows for syntax like: LA_VIDX(a, 2) = 5;
-// DOES NOT CHECK FOR OUT OF BOUNDS
+// DOES NOT CHECK FOR OUT OF BOUNDS ACCESS
 #define LA_VIDX_PTR(vector, index) *(vector->x + vector->offset * index)
 
 // initialzie the vector on the heap with some initial value
@@ -233,17 +233,17 @@ double vecProd(Vec a)
 
     return result;
 }
-// check if the voltage is const or varying
-int isVecVar(Vec a)
+// get the standard deviation of the vector
+double vecStandardDeviation(Vec a)
 {
     LINALG_ASSERT_ERROR(!a.x, NAN, "input vector is null!");
-    LINALG_ASSERT_WARN(a.len == 0, 1, "checking a zero dimension vector");
+    LINALG_ASSERT_WARN(a.len == 0, 0, "checking a zero dimension vector");
 
-    double mean = (vecSum(a))/((double)a.len);
+    double mean = vecSum(a)/(double)a.len;
     double dev = 0;
     for(size_t i = 0; i < a.len; i++) dev += fabs(LA_VIDX(a, i) - mean);
 
-    return (dev < 1e-5) ? 1 : 0 ;
+    return dev / (double)a.len;
 }
 
 // free the vector on the heap
