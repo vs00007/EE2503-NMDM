@@ -96,7 +96,7 @@ will run the test cases.
 | *I*nterpolation, *F*ile Management | Prajwal |
 | *M*atrix Stuff, *A*lgorithm Research | Soham |
 | Poisson's Eqn | Mihir |
-| Steady State | Manoj |
-| Initial Value | Siddhartha |
-| Coefficient | Kaustubh |
+| Steady State Solver| Manoj |
+| Initial Value Problem (Master's Equation)| Siddhartha |
+| Coefficient Generator | Kaustubh |
 
