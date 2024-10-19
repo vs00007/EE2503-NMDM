@@ -168,7 +168,7 @@ int mat2DTransform(Mat2d A, Vec x, Vec* result)
 
     return LINALG_OK;
 }
-// compute result = Ax. prints error if the input is invalid
+// compute result = Ax. prints error if the input is invalid(allocates memory)
 Vec mat2DTransformA(Mat2d A, Vec x)
 {
     Vec badVec = {NULL, 0, 0};

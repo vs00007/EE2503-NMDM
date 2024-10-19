@@ -108,9 +108,14 @@ double vecMin(Vec a);
 double vecSum(Vec a);
 // return the product of all values in a vector
 double vecProd(Vec a);
-// check if the voltage is const or varying
-int isVecVar(Vec a);
-
+// get the range of vector, i.e max - min
+// NOTE: if you need to check if vector is (relatively) constant, use vecRangeRelative instead
+double vecRange(Vec a);
+// get the (relative) range of vector, i.e (max - min) / min( |max|, |min| )
+double vecRangeRelative(Vec a);
+// get the standard deviation of the vector
+// NOTE: if you need to check if vector is (relatively) constant, use vecRangeRelative instead
+double vecStandardDeviation(Vec a);
 
 // free the vector on the heap
 void freeVec(Vec* vec);

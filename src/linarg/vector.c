@@ -6,12 +6,12 @@
 
 // gets value at index from vector by reference(dereferenced)
 // allows for syntax like: LA_VIDX(a, 2) = 5;
-// DOES NOT CHECK FOR OUT OF BOUNDS
+// DOES NOT CHECK FOR OUT OF BOUNDS ACCESS
 #define LA_VIDX(vector, index) *(vector.x + vector.offset * index)
 
 // gets value at index from vector(ptr) by reference(dereferenced)
 // allows for syntax like: LA_VIDX(a, 2) = 5;
-// DOES NOT CHECK FOR OUT OF BOUNDS
+// DOES NOT CHECK FOR OUT OF BOUNDS ACCESS
 #define LA_VIDX_PTR(vector, index) *(vector->x + vector->offset * index)
 
 // initialzie the vector on the heap with some initial value
@@ -233,17 +233,53 @@ double vecProd(Vec a)
 
     return result;
 }
-// check if the voltage is const or varying
-int isVecVar(Vec a)
+// get the range of vector, i.e max - min
+double vecRange(Vec a)
 {
     LINALG_ASSERT_ERROR(!a.x, NAN, "input vector is null!");
-    LINALG_ASSERT_WARN(a.len == 0, 1, "checking a zero dimension vector");
+    LINALG_ASSERT_WARN(a.len == 0, 0, "input is a zero dimension vector");
 
-    double mean = (vecSum(a))/((double)a.len);
+    double max_val = -INFINITY;
+    double min_val = INFINITY;
+
+    for(size_t i = 0; i < a.len; i++)
+    {
+        max_val = max_val > LA_VIDX(a, i) ? max_val : LA_VIDX(a, i);
+        min_val = min_val < LA_VIDX(a, i) ? min_val : LA_VIDX(a, i);
+    }
+
+    return max_val - min_val;
+}
+// get the (relative) range of vector, i.e (max - min) / min( |max|, |min| )
+double vecRangeRelative(Vec a)
+{
+    LINALG_ASSERT_ERROR(!a.x, NAN, "input vector is null!");
+    LINALG_ASSERT_WARN(a.len == 0, 0, "input is a zero dimension vector");
+
+    double max_val = -INFINITY;
+    double min_val = INFINITY;
+    double abs_min = INFINITY;
+
+    for(size_t i = 0; i < a.len; i++)
+    {
+        max_val = max_val > LA_VIDX(a, i) ? max_val : LA_VIDX(a, i);
+        min_val = min_val < LA_VIDX(a, i) ? min_val : LA_VIDX(a, i);
+        abs_min = abs_min < fabs(LA_VIDX(a, i)) ? min_val : fabs(LA_VIDX(a, i));
+    }
+
+    return (max_val - min_val) / abs_min;
+}
+// get the standard deviation of the vector
+double vecStandardDeviation(Vec a)
+{
+    LINALG_ASSERT_ERROR(!a.x, NAN, "input vector is null!");
+    LINALG_ASSERT_WARN(a.len == 0, 0, "checking a zero dimension vector");
+
+    double mean = vecSum(a)/(double)a.len;
     double dev = 0;
     for(size_t i = 0; i < a.len; i++) dev += fabs(LA_VIDX(a, i) - mean);
 
-    return (dev < 1e-5) ? 1 : 0 ;
+    return dev / (double)a.len;
 }
 
 // free the vector on the heap
