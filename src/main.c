@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <include/linalg.h>
+#include <include/poisson.h>
 
 int main()
 {
@@ -9,7 +10,5 @@ int main()
     run_all_tests();
     return 0;
 #endif
-
-    //
 
 }

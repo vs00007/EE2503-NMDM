@@ -94,6 +94,7 @@ $(TEST_DIR)/prog: $(TEST_OBJ_C)
 $(TEST_DIR)/objs/%.o: %.c makefile
 	@mkdir -p $(@D)
 	@echo "[Test] Compiling: " $<
+	@echo $(TEST_SRC_C)
 	@$(CC) $(TEST_CFLAGS) -c -o $@ $<
 
 clean:
