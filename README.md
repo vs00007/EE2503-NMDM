@@ -91,12 +91,13 @@ will run the test cases.
 
 ## Tasks to do for this project
 
-| Task | Assigned To |
-|:-----|:------------|
-| *I*nterpolation, *F*ile Management | Prajwal |
-| *M*atrix Stuff, *A*lgorithm Research | Soham |
-| Poisson's Eqn | Mihir |
-| Steady State Solver| Manoj |
-| Initial Value Problem (Master's Equation)| Siddhartha |
-| Coefficient Generator | Kaustubh |
+| Task |   | Status |
+|:---------|:---------------:|:-----------|
+| Interpolation, File Management | Prajwal | TODO |
+| Matrix Stuff, Algorithm Research | Soham | TODO |
+| *Poisson's Eqn* | *Mihir* | (Done) | 
+| Steady State Solver| Manoj | TODO |
+| Initial Value Problem (Master's Equation)| Siddhartha | TODO |
+| Coefficient Generator | Kaustubh | TODO |
+
 

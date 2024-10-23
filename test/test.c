@@ -11,6 +11,7 @@ int run_all_tests()
     linalg_vec_test();
     linalg_matrix_test();
     test_poisson();
+    test_getGridV();
     return 0;
 }
 

@@ -13,7 +13,9 @@
         "pde.h": "c",
         "poisson.h": "c",
         "stdbool.h": "c",
-        "math.h": "c"
+        "math.h": "c",
+        "test_poisson.h": "c",
+        "steady_STATE.C": "cpp"
     },
     "files.exclude": {
         "**/.git": true,
