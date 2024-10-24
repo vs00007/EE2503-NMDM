@@ -75,6 +75,17 @@ void vecPrint(Vec a)
     printf("%f]", LA_VIDX(a, a.len - 1));
 }
 
+void printVecUnits(Vec f_n, char a)
+{
+    // Blatantly copied printVec functiion, adapted to print the values with units
+    printf("[");
+    for(size_t i = 0; i < f_n.len - 1; i++)
+    {
+        printf("%.10f%c, ", LA_VIDX(f_n, i), a);
+    }
+    printf("%.10f%c]\n", LA_VIDX(f_n, f_n.len - 1), a);
+}
+
 // gets the nth value in a vector
 // handles buffer offsets
 // checks for out-of-bounds
