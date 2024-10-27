@@ -11,7 +11,8 @@
 
 
 #define Q 1.602176634e-19
-#define K 1 / (4 * M_PI * 8.85418782e-12)
+#define M_PI 3.14159265358979323846
+#define K 1 / (4 * M_PI * 8.85418782e-12) //Please fix this Mihir
 #define EPS0 8.85418782e-12
 #define TOL 1e-10
 
