@@ -81,6 +81,9 @@ Vec vecConstruct(double* ptr, size_t len);
 // pretty print a vector
 void vecPrint(Vec a);
 
+// blatantly copied vecPrint which can print units (Only a single char)
+void printVecUnits(Vec f_n, char a);
+
 // gets the nth value in a vector(by value)
 // handles buffer offsets
 // checks for out-of-bounds

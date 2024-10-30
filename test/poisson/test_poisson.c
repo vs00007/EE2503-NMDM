@@ -4,21 +4,68 @@
 
 #define LA_VIDX(vector, index) *(vector.x + vector.offset * index)
 #define EPSILON 1e-6
-
-void printVecUnits(Vec f_n, char a)
-{
-    // Blatantly copied printVec functiion, adapted to print the values with units
-    printf("[");
-    for(size_t i = 0; i < f_n.len - 1; i++)
-    {
-        printf("%.10f%c, ", LA_VIDX(f_n, i), a);
-    }
-    printf("%.10f%c]\n", LA_VIDX(f_n, f_n.len - 1), a);
-}
+#define NUM_TESTS 100
 
 int compareDoubles(double a, double b, double epsilon)
 {
     return fabs(a - b) < epsilon;
+}
+
+int qsort_compare(const void *a, const void *b) {
+    return (*(double*)a > *(double*)b) - (*(double*)a < *(double*)b);
+}
+
+void randF(Vec param, double min, double max, int sort)
+{
+    if (param.len == 0)
+    {
+        printf("ERROR: Length of input vector is 0.\n");
+        return;
+    }
+    
+    for (size_t i = 0; i < param.len; i++)
+    {
+        param.x[i] = min + (max - min) * ((double)rand() / RAND_MAX);
+    }
+
+    if (sort)
+    {
+        qsort(param.x, param.len, sizeof(double), qsort_compare);
+    }
+}
+
+Vec getV(size_t len)
+{
+    Vec f_n = vecInitZerosA(len);
+    randF(f_n, 1e-9, 1.0, 0);
+
+    Vec d = vecInitZerosA(len);
+    randF(d, 1e-9, 1e-6, 1);
+
+    Vec result = vecInitZerosA(len);
+
+    Vec sample_x = vecInitZerosA(len);
+
+    for (size_t i = 0; i < len; i ++)
+    {
+        sample_x.x[i] = 1e-9 + (1e-6 - 1e-9) * i / len;
+        result.x[i] = poissonSolve(f_n, d, sample_x.x[i]);
+    }
+
+
+    printf("Charges: ");
+    printVecUnits(f_n, 'q');
+
+    printf("Distances: ");
+    printVecUnits(d, 'm');
+
+    printf("Resultant Voltage: ");
+    printVecUnits(result, 'V');
+
+    return result;
+
+    freeVec(&f_n);
+    freeVec(&d);
 }
 
 void test_poisson()
@@ -237,52 +284,98 @@ void test_poisson()
     printf("\nPoisson Solver Test Summary: %d out of %d tests passed.\n", test_passed, total_tests);
 }
 
-
-int qsort_compare(const void *a, const void *b) {
-    return (*(double*)a > *(double*)b) - (*(double*)a < *(double*)b);
-}
-
-void randF(Vec param, double min, double max, int sort)
+void test_getGridV()
 {
-    if (param.len == 0)
+    printf("\nTesting getGridV function:\n");
+
+    // Test case 1: Normal case
     {
-        printf("ERROR: Length of input vector is 0.\n");
-        return;
-    }
-    
-    for (size_t i = 0; i < param.len; i++)
-    {
-        param.x[i] = min + (max - min) * ((double)rand() / RAND_MAX);
+        Vec f_n = vecInitA(0.0, 3);
+        Vec d = vecInitA(0.0, 3);
+        
+        f_n.x[0] = 1.0;  f_n.x[1] = -2.0;  f_n.x[2] = 1.5;
+        d.x[0] = 1.0;    d.x[1] = 2.0;     d.x[2] = 3.0;
+        
+        Vec result = getGridV(f_n, d);
+        
+        printf("Test case 1 - Normal case:\n");
+        printf("Input charges: ");
+        printVecUnits(f_n, 'q');
+        printf("Input distances: ");
+        printVecUnits(d, 'm');
+        printf("Result: ");
+        printVecUnits(result, 'V');
+        
+        // Basic validation
+        if (!isnan(result.x[0]) && !isinf(result.x[0])) {
+            printf("Test case 1 passed.\n");
+        } else {
+            printf("Test case 1 failed.\n");
+        }
+        
+        freeVec(&result);
     }
 
-    if (sort)
+    // Test case 2: Edge case - single charge
     {
-        qsort(param.x, param.len, sizeof(double), qsort_compare);
+        Vec f_n = vecInitA(1.0, 1);
+        Vec d = vecInitA(1.0, 1);
+        
+        Vec result = getGridV(f_n, d);
+        
+        printf("Test case 2 - Single charge:\n");
+        printf("Input charge: ");
+        printVecUnits(f_n, 'q');
+        printf("Input distance: ");
+        printVecUnits(d, 'm');
+        printf("Result: ");
+        printVecUnits(result, 'V');
+        
+        if (!isnan(result.x[0]) && !isinf(result.x[0])) {
+            printf("Test case 2 passed.\n");
+        } else {
+            printf("Test case 2 failed.\n");
+        }
+        
+        freeVec(&result);
+    }
+
+    // Test case 3: Invalid input
+    {
+        Vec f_n = vecInitA(0.0, 2);
+        Vec d = vecInitA(0.0, 3);  // Mismatched lengths
+        
+        Vec result = getGridV(f_n, d);
+        
+        printf("Test case 3 - Invalid input:\n");
+        if (result.x == NULL && result.len == 0) {
+            printf("Test case 3 passed (correctly handled invalid input).\n");
+        } else {
+            printf("Test case 3 failed (did not correctly handle invalid input).\n");
+        }
+        
+        // No need to free result as it should be a null vector
     }
 }
 
-Vec getV()
-{
-    static int seeded = 0;
-    if (!seeded)
-    {
-        srand(rand()*time(NULL));
-        seeded = 1;
-    }
+// void test_poisson_full()
+// {
+//     static int seeded = 0;
+//     if (!seeded)
+//     {
+//         srand(rand()*time(NULL));
+//         seeded = 1;
+//     }
 
-    size_t len = (rand() % 25) + 1;
+//     size_t len = (rand() % 15) + 1;
+//     Vec V = vecInitZerosA(len);
 
-    Vec f_n = vecInitZerosA(len);
-    randF(f_n, 1e-9, 1.0, 0);
+//     for (size_t i = 0; i < NUM_TESTS; i ++)
+//     {
+//         printf("TEST %zu : \n", i);
+//         V = getV(len);
+//     }    
+//     freeVec(&V);
+// }
 
-    Vec d = vecInitZerosA(len);
-    randF(d, 1e-9, 1e-6, 1);
 
-    Vec result = vecInitZerosA(len);
-
-    
-
-    return result;
-    freeVec(&f_n);
-    freeVec(&d);
-}

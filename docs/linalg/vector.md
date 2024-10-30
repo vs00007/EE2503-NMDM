@@ -143,6 +143,19 @@ vecPrint(a);  // Prints [1.0, 2.0, 3.0]
 ```
 
 ---
+### `void vecPrintUnits(Vec a, char u)`
+Prints the vector in a readable format.
+
+#### Parameters:
+- `Vec a`: The vector to be printed.
+- `char u`: The units (Only one letter)
+
+#### Example:
+```c
+vecPrintUnits(a, 'm');  // Prints [1.0m, 2.0m, 3.0m,]
+```
+
+---
 
 ### `double vecGet(Vec a, size_t n)`
 Gets the value at the nth index in a vector, checking for out-of-bounds access.
