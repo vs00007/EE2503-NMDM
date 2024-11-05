@@ -73,6 +73,11 @@ Vec vecCopyA(Vec vector);
 // construct a vector from a pointer(does not allocate)
 Vec vecConstruct(double* ptr, size_t len);
 
+// Concept allow allocation on stack, using alloca(increase stack size?)
+// advantages: 
+// -> automatic free
+// -> faster execution
+
 // pretty print a vector
 void vecPrint(Vec a);
 
