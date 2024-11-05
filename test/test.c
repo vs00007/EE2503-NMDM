@@ -5,6 +5,7 @@
 #include <test/test.h>
 #include <test/poisson/test_poisson.h>
 #include <test/fileHandling/fileTest.h>
+#include <test/input_testing/test_toml_input.h>
 
 int run_all_tests()
 {
@@ -13,7 +14,8 @@ int run_all_tests()
     // linalg_matrix_test();
     // test_poisson();
     // test_getGridV();
+    // testFile();
+    test_toml();
 
-    testFile();
     return 0;
 }

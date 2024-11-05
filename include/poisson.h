@@ -10,9 +10,10 @@
 #include <linalg.h>
 
 
+// To Prajwal : M_PI is defined in math.h - Mihir
+
 #define Q 1.602176634e-19
-#define M_PI 3.14159265358979323846
-#define K 1 / (4 * M_PI * 8.85418782e-12) //Please fix this Mihir
+#define K 1 / (4 * M_PI * 8.85418782e-12)
 #define EPS0 8.85418782e-12
 #define TOL 1e-10
 
@@ -22,6 +23,10 @@ typedef struct OxParams
     double V_L;
     double eps_r;
     double L;
+    double nu_0;
+    double m_eff;
+    double relx_dist;
+    double mobility;
 } OxParams;
 
 int validateInput(const Vec f_n, const Vec d, double x);

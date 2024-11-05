@@ -16,7 +16,10 @@
         "math.h": "c",
         "test_poisson.h": "c",
         "steady_STATE.C": "cpp",
-        "config.h": "c"
+        "config.h": "c",
+        "inputs.h": "c",
+        "toml.h": "c",
+        "iomanip": "cpp"
     },
     "files.exclude": {
         "**/.git": true,
