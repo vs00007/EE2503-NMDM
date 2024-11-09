@@ -153,12 +153,14 @@ int parse_toml_file(const char* filename, OxParams* params, Vec* locations, Vec*
         return -1;
     }
 
-    params->relx_dist = strtod(raw_d_relx, &endptr);
+    params->gamma_0 = strtod(raw_d_relx, &endptr);
     if (*endptr != '\0') {
         fprintf(stderr, "Invalid value for relaxation distance\n");
         toml_free(conf);
         return -1;
     }
+
+    params->num_traps = locations->len;
 
     toml_free(conf);
     return 0;
