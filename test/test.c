@@ -4,7 +4,7 @@
 #include <include/poisson.h>
 #include <test/test.h>
 #include <test/poisson/test_poisson.h>
-#include <test/fileHandling/fileTest.h>
+// #include <test/fileHandling/fileTest.h>
 #include <test/input_testing/test_toml_input.h>
 
 int run_all_tests()
@@ -15,7 +15,8 @@ int run_all_tests()
     // test_poisson();
     // test_getGridV();
     // testFile();
-    test_toml();
+    // test_toml();
+    testMeshGen();
 
     return 0;
 }

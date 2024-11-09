@@ -379,3 +379,16 @@ void test_getGridV()
 // }
 
 
+void testMeshGen()
+{
+    SimParams simparams;
+    simparams.body_step = 0.2;
+    simparams.trap_step = 0.0005;
+    simparams.trap_tol = 0.05;
+    Vec d = vecInitZerosA(10);
+    for (size_t i = 1; i < d.len; i++)
+    {
+        d.x[i] = (double)i;
+    }
+    generateMesh(d, simparams);
+}

@@ -29,6 +29,13 @@ typedef struct OxParams
     double mobility;
 } OxParams;
 
+typedef struct SimParams
+{
+    double body_step;
+    double trap_tol;
+    double trap_step;
+}SimParams;
+
 int validateInput(const Vec f_n, const Vec d, double x);
 
 int validateTwoVecs(const Vec f_n, const Vec d);
@@ -40,3 +47,7 @@ double poissonSolve(const Vec f_n, const Vec d, double x);
 Vec getGridV(Vec f_n, Vec d);
 
 Vec getGridE(Vec f_n, Vec d, OxParams params);
+
+/* Numerical Solver */
+
+Vec generateMesh(Vec d, SimParams simp);

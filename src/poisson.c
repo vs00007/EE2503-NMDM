@@ -197,3 +197,26 @@ Vec getGridE(Vec f_n, Vec d, OxParams params)
     
     return result;
 }
+
+/*================================================================================
+                            Numerical Poisson Solver
+================================================================================*/
+
+Vec generateMesh(Vec d, SimParams simp)
+{
+    size_t mesh_size = 0;
+    for(size_t i = 0; i < d.len - 1; i ++)
+    {
+        if (fabs(d.x[i] - d.x[i + 1]) >= 2*simp.trap_tol)
+        {
+            size_t num_bulk = (size_t)ceil((fabs(d.x[i] - d.x[i + 1]) - 2*simp.trap_tol)/simp.body_step);
+            size_t num_trap = 2*ceil(simp.trap_tol/simp.trap_step);
+            mesh_size += num_bulk + num_trap;
+        }
+        else if (fabs(d.x[i] - d.x[i + 1]) < 2*simp.trap_tol)
+        {
+            mesh_size += (size_t)ceil(fabs(d.x[i] - d.x[i + 1]))/simp.trap_step;
+        }
+    }
+    printf("Mesh size = %zu", mesh_size);
+}
