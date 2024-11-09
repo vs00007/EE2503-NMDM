@@ -4,7 +4,7 @@
 #include <include/poisson.h>
 #include <test/test.h>
 #include <test/poisson/test_poisson.h>
-#include <test/fileHandling/fileTest.h>
+#include <test/fileHandling-deprecated/fileTest.h>
 #include <test/input_testing/test_toml_input.h>
 
 int run_all_tests()
