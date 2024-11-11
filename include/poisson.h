@@ -160,3 +160,6 @@ Vec generateMesh(Vec d, OxParams oxparams);
  * @return Vector h containing step size x_i - x_{i-1}
  */
 Vec generateStepSize(Vec mesh_vec, OxParams params);
+
+
+Mat2d generateJacobian(Vec mesh, OxParams params);

@@ -123,7 +123,6 @@ Vec getGridE(Vec f_n, Vec d, OxParams params)
                             Numerical Poisson Solver                              
 ================================================================================*/
 
-
 void stackToVec(DynStack* mesh, Vec *mesh_vec)
 {
     mesh_vec->x = mesh->data;
@@ -211,5 +210,14 @@ Vec generateStepSize(Vec mesh_vec, OxParams params)
 
 Mat2d generateJacobian(Vec mesh, OxParams params)
 {
+    Mat2d jcob = mat2DInitZerosA(mesh.len, mesh.len);
     
+    Vec h = generateStepSize(mesh, params);
+
+    
+
+    for (size_t i = 0; i < mesh.len; i ++)
+    {
+        ;
+    }
 }

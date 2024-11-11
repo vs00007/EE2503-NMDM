@@ -128,7 +128,10 @@ double vecStandardDeviation(Vec a);
 // free the vector on the heap
 void freeVec(Vec* vec);
 
-// Matrix implimentation
+/*=========================*/
+// Matrix implementation
+/*=========================*/
+
 
 // Matrix is stored in 1d array
 // 0*col ... 1*cols-1: 1st row
@@ -136,6 +139,7 @@ void freeVec(Vec* vec);
 // 2*col ... 3*cols-1: 3nd row
 // so on
 // (row-1)*col ... row*cols-1: last row
+
 typedef struct Mat2d
 {
     double* mat;
