@@ -1,6 +1,7 @@
 #pragma once
+#include"testmaster.h"
 #include<include/linalg.h>
-#include<include/master.h>
+// #include<include/master.h>
 #include<stdio.h>
 #include<math.h>
 #include<stdlib.h>
@@ -225,46 +226,40 @@ void solver(double h, double t_initial, double t_final, Vec y_initial, double TO
     }
 }
 
-// int main(){
-    // FILE * f1 = fopen("coupled1.txt", "w");
-    // FILE * f2 = fopen("coupled2.txt", "w");
-    // double h = 0.01;
+int testmaster(){
+    FILE * f1 = fopen("coupled1.txt", "w");
+    FILE * f2 = fopen("coupled2.txt", "w");
+    double h = 0.01;
+    double t_initial = 0;
+    double t_final = 2;
+    Vec y_initial = vecInitOnesA(2);
+    Vec t_res = vecInitZerosA(2);
     // double h2 = 0.01;
-    // double t_initial = 0;
-    // double t_final = 2;
-    // double y_initial[2] = {1.0, 1.0};
-    // Vec t_res = (Vec) calloc (N, sizeof(double));
-    // Vec t2_res = (Vec) calloc (N, sizeof(double));
-    // Vec y1_res = (Vec) calloc (N, sizeof(double));
-    // Vec y2_res = (Vec) calloc (N, sizeof(double));
-    // solver(h, t_initial, t_final, y_initial, 1e-16, t_res, y1_res, y2_res);
-    // int end1 = N-1;
-    // int end2 = N-1;
-    // while(t_res[end1] == 0){
-        // end1--;
-    // }
-    // end1++;
-    // for(int i = 0; i < end1 - 1; i++){
-        // fprintf(f1, "%lf ", t_res[i]);
-    // }
-    // fprintf(f1, "%lf\n", t_res[end1 - 1]);
-    // for(int i = 0; i < end1 - 1; i++){
-        // fprintf(f1, "%lf ", y1_res[i]);
-    // }
-    // fprintf(f1, "%lf\n", y1_res[end1 - 1]);
-// 
-    // while(t_res[end2] == 0){
-        // end2--;
-    // }
-    // end2++;
-    // for(int i = 0; i < end2 - 1; i++){
-        // fprintf(f2, "%lf ", t_res[i]);
-    // }
-    // fprintf(f2, "%lf\n", t_res[end2 - 1]);
-    // for(int i = 0; i < end2 - 1; i++){
-        // fprintf(f2, "%lf ", y2_res[i]);
-    // }
-    // fprintf(f2, "%lf", y2_res[end2 - 1]);
-    // fclose(f1);
-    // fclose(f2);
-// }
+    Mat2d res = mat2DInitZerosA(2, N);
+    // solver(h, t_initial, t_final, y_initial, 1e-16, t_res, res);
+    int end1 = N-1;
+    int end2 = N-1;
+    while(VEC_INDEX(t_res, end1) == 0){
+        end1--;
+    }
+    end1++;
+    for(int i = 0; i < end1 - 1; i++){
+        fprintf(f1, "%lf ", VEC_INDEX(t_res, i));
+    }
+    fprintf(f1, "%lf\n", VEC_INDEX(t_res, end1 - 1));
+    Vec y1 = mat2DRow(res, 0);
+    Vec y2 = mat2DRow(res, 1);
+    for(int i = 0; i < end1 - 1; i++){
+        fprintf(f1, "%lf ", VEC_INDEX(y1, i));
+    }
+    fprintf(f1, "%lf\n", VEC_INDEX(y1, end1 - 1));
+    for(int i = 0; i < end1 - 1; i++){
+        fprintf(f2, "%lf ", VEC_INDEX(t_res, i));
+    }
+    for(int i = 0; i < end1 - 1; i++){
+        fprintf(f2, "%lf ", VEC_INDEX(y2, i));
+    }
+    fprintf(f2, "%lf", VEC_INDEX(y2, end1 - 1));
+    fclose(f1);
+    fclose(f2);
+}
