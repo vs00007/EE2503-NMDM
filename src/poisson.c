@@ -125,7 +125,8 @@ Vec getGridE(Vec f_n, Vec d, OxParams params)
 
 void stackToVec(DynStack* mesh, Vec *mesh_vec)
 {
-    mesh_vec->x = mesh->data;
+    *mesh_vec = *(Vec *)dynStackGet(*mesh, 0);
+    // mesh_vec->x = mesh->data;
 }
 
 int validateVec(const Vec d, const OxParams params)
@@ -153,56 +154,62 @@ Vec generateMesh(Vec d, OxParams oxparams)
     }
 
     DynStack mesh = dynStackInit(sizeof(double));
-    size_t chunk_size = 100;
+    size_t chunk_size = 10;
     double mesh_point = 0;
     
     // Piecewise mesh creation. Adds all points to the mesh
+
+    // from 0 to d[n]
+    double d_0 = d.x[0];
+    for(size_t i = 0; i < chunk_size; i++)
     {
-        // from 0 to d[n]
-        double d_0 = d.x[0];
-        for(size_t i = 0; i < chunk_size; i++)
-        {
-            mesh_point = (double)(i * d_0) / chunk_size; 
-            dynStackPush(&mesh, &mesh_point);
-        }
-
-        // Everywhere else
-        for (size_t i = 0; i < d.len - 1; i++)
-        {
-            double d_i = fabs(d.x[i] - d.x[i + 1]);
-            for (size_t j = 0; j < chunk_size; j++)
-            {
-                mesh_point = d.x[i] + (double)(j * d_i) / chunk_size;
-                dynStackPush(&mesh, &mesh_point);
-            }
-        }
-
-        // from d[n] to L
-        double d_n = fabs(d.x[d.len - 1] - oxparams.L);
-        for(size_t i = 0; i < chunk_size; i++)
-        {
-            mesh_point = d.x[d.len - 1] + (double)(i * d_n) / chunk_size; 
-            dynStackPush(&mesh, &mesh_point);
-        }
-
-        // Last point
-        mesh_point = oxparams.L;
+        mesh_point = (double)(i * d_0) / chunk_size; 
         dynStackPush(&mesh, &mesh_point);
     }
 
+    // Everywhere else
+    for (size_t i = 0; i < d.len - 1; i++)
+    {
+        double d_i = fabs(d.x[i] - d.x[i + 1]);
+        for (size_t j = 0; j < chunk_size; j++)
+        {
+            mesh_point = d.x[i] + (double)(j * d_i) / chunk_size;
+            dynStackPush(&mesh, &mesh_point);
+        }
+    }
+
+    // from d[n] to L
+    double d_n = fabs(d.x[d.len - 1] - oxparams.L);
+    for(size_t i = 0; i < chunk_size; i++)
+    {
+        mesh_point = d.x[d.len - 1] + (double)(i * d_n) / chunk_size; 
+        dynStackPush(&mesh, &mesh_point);
+    }
+
+    // Last point
+    mesh_point = oxparams.L;
+    dynStackPush(&mesh, &mesh_point);
+
+    // for (size_t i = 0; i < mesh.len; i ++)
+    // {
+    //     printf("%g\n", *(double *)dynStackGet(mesh, i));
+    // }
+
     Vec mesh_vec = vecInitZerosA(mesh.len);
     stackToVec(&mesh, &mesh_vec);
-    freeDynStack(&mesh);
+
+    // freeDynStack(&mesh);
 
     return mesh_vec;
 }
 
-Vec generateStepSize(Vec mesh_vec, OxParams params)
+Vec generateStepSize(Vec mesh_vec)
 {
     Vec h = vecInitZerosA(mesh_vec.len - 1);
+    vecPrint(mesh_vec);
     for(size_t i = 1; i < mesh_vec.len; i ++)
     {
-        VEC_INDEX(h, i - 1) = VEC_INDEX(mesh_vec, i) - VEC_INDEX(mesh_vec, i - 1);
+        *vecRef(h, i - 1) = vecGet(mesh_vec, i) - vecGet(mesh_vec, i - 1);
     }
 
     return h;
@@ -212,12 +219,20 @@ Mat2d generateJacobian(Vec mesh, OxParams params)
 {
     Mat2d jcob = mat2DInitZerosA(mesh.len, mesh.len);
     
-    Vec h = generateStepSize(mesh, params);
-
-    
-
-    for (size_t i = 0; i < mesh.len; i ++)
+    Vec h = generateStepSize(mesh);
+  
+    for (size_t i = 1; i < mesh.len - 1; i ++)
     {
-        ;
+        double avg_step = 0;
+        avg_step = 0.5 * (vecGet(h, i) + vecGet(h, i - 1));
+
+        double term_i_minus_1 = 1 / (vecGet(h, i - 1) * avg_step);
+        double term_i_plus_1 = 1 / (vecGet(h, i) * avg_step);
+        double term_i = 1 / (vecGet(h, i) * vecGet(h, i - 1));
+        printf("%lf, %lf, %lf\n", term_i, term_i_minus_1, term_i_plus_1);
+        *mat2DRef(jcob, i, i - 1) = term_i_minus_1;
+        *mat2DRef(jcob, i, i) = term_i;
+        *mat2DRef(jcob, i, i + 1) = term_i_plus_1;
     }
+    mat2DPrint(jcob);
 }

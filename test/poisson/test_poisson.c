@@ -388,8 +388,11 @@ void testMeshGen()
     {
         d.x[i] = (double)(i + 1);
     }
-    // vecPrint(d);
+    vecPrint(d);
+    printf("\n");
     Vec mesh = generateMesh(d, params);
-    Vec h = generateStepSize(mesh, params);
-    vecPrint(h);
+    vecPrint(mesh);
+    // Vec h = generateStepSize(mesh);
+    // vecPrint(h);
+    // Mat2d jcob = generateJacobian(mesh, params);
 }

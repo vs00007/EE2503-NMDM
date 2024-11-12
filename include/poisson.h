@@ -159,7 +159,7 @@ Vec generateMesh(Vec d, OxParams oxparams);
  * @param params Oxide parameters
  * @return Vector h containing step size x_i - x_{i-1}
  */
-Vec generateStepSize(Vec mesh_vec, OxParams params);
+Vec generateStepSize(Vec mesh_vec);
 
 
 Mat2d generateJacobian(Vec mesh, OxParams params);

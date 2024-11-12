@@ -139,7 +139,6 @@ void freeVec(Vec* vec);
 // 2*col ... 3*cols-1: 3nd row
 // so on
 // (row-1)*col ... row*cols-1: last row
-
 typedef struct Mat2d
 {
     double* mat;
