@@ -125,8 +125,7 @@ Vec getGridE(Vec f_n, Vec d, OxParams params)
 
 void stackToVec(DynStack* mesh, Vec *mesh_vec)
 {
-    *mesh_vec = *(Vec *)dynStackGet(*mesh, 0);
-    // mesh_vec->x = mesh->data;
+    mesh_vec->x = (double *)mesh->data;
 }
 
 int validateVec(const Vec d, const OxParams params)
@@ -144,7 +143,7 @@ int validateVec(const Vec d, const OxParams params)
     return 1;
 }
 
-Vec generateMesh(Vec d, OxParams oxparams)
+Vec generateMesh(Vec d, OxParams oxparams, size_t chunk_size)
 {
     // Check Input 
     if (!validateVec(d, oxparams))
@@ -154,7 +153,6 @@ Vec generateMesh(Vec d, OxParams oxparams)
     }
 
     DynStack mesh = dynStackInit(sizeof(double));
-    size_t chunk_size = 10;
     double mesh_point = 0;
     
     // Piecewise mesh creation. Adds all points to the mesh
@@ -197,7 +195,6 @@ Vec generateMesh(Vec d, OxParams oxparams)
 
     Vec mesh_vec = vecInitZerosA(mesh.len);
     stackToVec(&mesh, &mesh_vec);
-
     // freeDynStack(&mesh);
 
     return mesh_vec;
@@ -206,7 +203,7 @@ Vec generateMesh(Vec d, OxParams oxparams)
 Vec generateStepSize(Vec mesh_vec)
 {
     Vec h = vecInitZerosA(mesh_vec.len - 1);
-    vecPrint(mesh_vec);
+    // vecPrint(mesh_vec);
     for(size_t i = 1; i < mesh_vec.len; i ++)
     {
         *vecRef(h, i - 1) = vecGet(mesh_vec, i) - vecGet(mesh_vec, i - 1);
@@ -215,12 +212,15 @@ Vec generateStepSize(Vec mesh_vec)
     return h;
 }
 
-Mat2d generateJacobian(Vec mesh, OxParams params)
+MatTD generateJacobian(Vec mesh)
 {
-    Mat2d jcob = mat2DInitZerosA(mesh.len, mesh.len);
+    MatTD jcob = matTDinitA(mesh.len);
     
     Vec h = generateStepSize(mesh);
   
+    *vecRef(jcob.main, 0) = 1;
+    *vecRef(jcob.main, mesh.len - 1) = 1;
+
     for (size_t i = 1; i < mesh.len - 1; i ++)
     {
         double avg_step = 0;
@@ -229,10 +229,79 @@ Mat2d generateJacobian(Vec mesh, OxParams params)
         double term_i_minus_1 = 1 / (vecGet(h, i - 1) * avg_step);
         double term_i_plus_1 = 1 / (vecGet(h, i) * avg_step);
         double term_i = 1 / (vecGet(h, i) * vecGet(h, i - 1));
-        printf("%lf, %lf, %lf\n", term_i, term_i_minus_1, term_i_plus_1);
-        *mat2DRef(jcob, i, i - 1) = term_i_minus_1;
-        *mat2DRef(jcob, i, i) = term_i;
-        *mat2DRef(jcob, i, i + 1) = term_i_plus_1;
+
+        *vecRef(jcob.main, i) = term_i;
+        *vecRef(jcob.sub, i) = term_i_minus_1;
+        *vecRef(jcob.sup, i) = term_i_plus_1;
     }
-    mat2DPrint(jcob);
+
+    vecPrint(jcob.sup);
+    printf("\n");
+    vecPrint(jcob.main);
+    printf("\n");
+    vecPrint(jcob.sub);
+    printf("\n");
+
+    return jcob;
+}
+
+Vec constructB(Vec f_n, Vec d, Vec mesh, size_t chunk)
+{
+    vecPrint(mesh);
+    printNL();
+    Vec b = vecInitZerosA(mesh.len);
+    size_t idx = 0;
+    vecPrint(d);
+    printNL();
+    vecPrint(f_n);
+    for (size_t i = 0; i < mesh.len; i ++)
+    {
+        idx = i / chunk;
+        if ((vecGet(d, idx) - vecGet(mesh, i)) < 1e-16) *vecRef(b, i) = vecGet(f_n, idx);
+    }
+    printNL();
+    vecPrint(b);
+    return b;
+}
+
+Vec numSolveV(MatTD mat, Vec b)
+{
+
+    // printf("\nLen of superDiag : %zu\nLen of main diag : %zu\nLen of subDiag : %zu", mat.sup.len, mat.main.len, mat.sub.len);
+
+    Vec mod_d = vecCopyA(b);
+    Vec mod_sup = vecCopyA(mat.sup);
+    Vec sol = vecInitZerosA(b.len);
+
+    *vecRef(mod_sup, 0) = vecGet(mat.sup, 0) / vecGet(mat.main, 0);
+    *vecRef(mod_d, 0) = vecGet(b, 0) / vecGet(mat.main, 0);
+
+    for (size_t i = 1; i < b.len; i ++)
+    {
+        double num_sup = vecGet(mat.sup, i);
+        double den = vecGet(mat.main, i) - vecGet(mat.sub, i) * vecGet(mod_sup, i - 1);
+        *vecRef(mod_sup, i) = num_sup / den;
+
+        double num_sol = vecGet(b, i) - vecGet(mat.sub, i) * vecGet(mod_d, i - 1);
+        *vecRef(mod_d, i) = num_sol / den;
+    }
+
+    *vecRef(sol, sol.len - 1) = vecGet(mod_d, b.len - 1);
+
+    for (int j = sol.len - 2; j >=0; j --)
+    {
+        *vecRef(sol, j) = vecGet(mod_d, j) - vecGet(mod_sup, j) * vecGet(sol, j + 1);
+    }
+
+    freeVec(&mod_d);
+    freeVec(&mod_sup);
+
+    return sol;
+}
+
+
+
+void printNL()
+{
+    printf("\n");
 }

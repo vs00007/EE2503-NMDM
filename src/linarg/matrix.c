@@ -282,3 +282,29 @@ void freeMat2D(Mat2d* mat)
 }
 
 
+
+MatTD matTDinitA(size_t len)
+{
+    if(len == 0)
+    {
+        LINALG_REPORT_ERROR("invalid zero length vector requested!");
+        return (MatTD){{NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+    }
+    Vec a = { (double*)calloc(len, sizeof(double)), len, 1 };
+    Vec b = { (double*)calloc(len, sizeof(double)), len, 1 };
+    Vec c = { (double*)calloc(len, sizeof(double)), len, 1 };
+
+    MatTD mat;
+    mat.main = b;
+    mat.sub = a;
+    mat.sup = c;
+
+    MatTD bad_mat = (MatTD){{NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+    // LINALG_ASSERT_ERROR((!b.x || !a.x || !c.x), (MatTD){NULL, NULL, NULL}, "unkown error occured when allocation memory!"); 
+
+    for(size_t i = 0; i < a.len; i++) a.x[i] = 0;
+    for(size_t i = 0; i < b.len; i++) b.x[i] = 0;
+    for(size_t i = 0; i < c.len; i++) c.x[i] = 0;
+
+    return mat;
+}
