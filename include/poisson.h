@@ -149,7 +149,7 @@ int validateVec(const Vec d, const OxParams params);
  * - Each pair of consecutive charges
  * - Last charge and end of oxide (L)
  */
-Vec generateMesh(Vec d, OxParams oxparams);
+Vec generateMesh(Vec d, OxParams oxparams, size_t chunk_size);
 
 
 /**
@@ -161,5 +161,10 @@ Vec generateMesh(Vec d, OxParams oxparams);
  */
 Vec generateStepSize(Vec mesh_vec);
 
+Vec constructB(Vec f_n, Vec d, Vec mesh, size_t chunk);
 
-Mat2d generateJacobian(Vec mesh, OxParams params);
+MatTD generateJacobian(Vec mesh);
+
+Vec numSolveV(MatTD mat, Vec b);
+
+void printNL();

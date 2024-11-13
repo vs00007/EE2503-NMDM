@@ -1,5 +1,7 @@
 #include <include/linalg.h>
 #include <include/poisson.h>
+#include <assert.h>
+#include <test/poisson/test_poisson.h>
 #include <time.h>
 
 #define LA_VIDX(vector, index) *(vector.x + vector.offset * index)
@@ -381,18 +383,80 @@ void test_getGridV()
 
 void testMeshGen()
 {
-    OxParams params;
-    params.L = 3;
-    Vec d = vecInitZerosA(2);
-    for (size_t i = 0; i < d.len; i++)
-    {
-        d.x[i] = (double)(i + 1);
+    {    
+        OxParams params;
+        params.L = 3;
+        Vec d = vecInitZerosA(2);
+        for (size_t i = 0; i < d.len; i++)
+        {
+            d.x[i] = (double)(i + 0.5);
+        }
+        // vecPrint(d);
+        // printf("\n");
+
+        size_t chunk_size = 3;
+        Vec mesh = generateMesh(d, params, chunk_size);
+
+        Vec f_n = vecInitZerosA(mesh.len);
+        randF(f_n, 1e-9, 1.0, 0);
+
+
+        vecScale(1.0 / 3 * 1e-6, mesh, &mesh);
+        vecPrint(mesh);
+
+        Vec b = constructB(f_n, d, mesh, chunk_size);
+        printNL();
+        vecPrint(b);
+
+        // vecPrint(mesh);
+        // Vec h = generateStepSize(mesh);
+        // vecPrint(h);
+        // printf("\n");
+        // MatTD jcob = generateJacobian(mesh);
+
+        // Vec vals  = vecInitZerosA(mesh.len);
+        // *vecRef(vals, 0) = 1.0;
+        // for (size_t i = 0; i < mesh.len; i ++)
+        // {
+        //     size_t idx = i/(chunk_size + 1);
+        //     if (!(vecGet(vals, i) - vecGet(d, idx))) *vecRef(vals, i) = vecGet(d, idx);
+        // }
+        // vecPrint(vals);
+        // printf("\n");
+
+        // Vec sol = numSolveV(jcob, vals);
+        // vecPrint(sol);
     }
-    vecPrint(d);
-    printf("\n");
-    Vec mesh = generateMesh(d, params);
-    vecPrint(mesh);
-    // Vec h = generateStepSize(mesh);
-    // vecPrint(h);
-    // Mat2d jcob = generateJacobian(mesh, params);
+
+}
+
+void testSolver()
+{
+
+    // Class problem just to make sure it works
+
+    MatTD mat = matTDinitA(6);
+    size_t dim = 6;
+
+    *vecRef(mat.main, 0) = 1;
+    *vecRef(mat.main, dim - 1) = 1;
+
+    for (size_t i = 1; i < dim - 1; i ++)
+    {
+        *vecRef(mat.main, i) = -2;
+        *vecRef(mat.sup, i) = 1;
+        *vecRef(mat.sub, i) = 1;
+    }
+    Vec b = vecInitZerosA(dim);
+    for (size_t i = 0; i < dim; i ++)
+    {
+        *vecRef(b, i) = 0;
+    }
+    *vecRef(b, 0) = 1.0;
+    *vecRef(b, 2) = 3.0;
+    *vecRef(b, 3) = 4.0;
+    *vecRef(b, 4) = 5.0;
+
+    Vec sol = numSolveV(mat, b);
+    vecPrint(sol);
 }

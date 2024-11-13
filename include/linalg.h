@@ -209,3 +209,14 @@ double mat2DMin(Mat2d a);
 
 // free the matrix on the heap
 void freeMat2D(Mat2d* mat);
+
+
+// Tridiagonal Matrix 
+typedef struct MatTD
+{
+    Vec sub;
+    Vec main;
+    Vec sup;
+}MatTD;
+
+MatTD matTDinitA(size_t len);
