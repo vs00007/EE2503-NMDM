@@ -1,18 +1,6 @@
 #include <include/linalg.h>
 #include <include/poisson.h>
 
-/**
- * @brief Calculates electrostatic potential in vacuum due to point charges
- *
- * This function calculates the potential using vacuum permittivity (ε₀).
- * For actual material potential, divide result by relative permittivity (εᵣ).
- *
- * @param f_n Vector of charges (in units of elementary charge)
- * @param d Vector of positions (in meters)
- * @param x Position at which to calculate potential (in meters)
- * @return Potential in volts (assuming vacuum permittivity)
- */
-
 double analyticalPoissonSol(const Vec f_n, const Vec d, double x)
 {
     double sum = 0.0;
@@ -32,20 +20,6 @@ double analyticalPoissonSol(const Vec f_n, const Vec d, double x)
     return K * Q * sum;
 }
 
-/**
- * @brief Validates input vectors and position for Poisson solver
- *
- * @param f_n Vector of charges
- * @param d Vector of positions
- * @param x Position to evaluate
- * @return 1 if inputs are valid, 0 otherwise
- * 
- * Checks:
- * - Vectors have same non-zero length
- * - Position x is not NaN
- * - No NaN values in vectors
- */
-
 int validateInput(const Vec f_n, const Vec d, double x)
 {
     if (f_n.len != d.len || f_n.len == 0) {
@@ -62,18 +36,6 @@ int validateInput(const Vec f_n, const Vec d, double x)
     return 1;
 }
 
-/**
- * @brief Validates two vectors for compatibility
- *
- * @param f_n First vector
- * @param d Second vector
- * @return 1 if vectors are compatible, 0 otherwise
- * 
- * Checks:
- * - Vectors have same non-zero length
- * - No NaN values in vectors
- */
-
 int validateTwoVecs(const Vec f_n, const Vec d)
 {
     if (f_n.len != d.len || f_n.len == 0) {
@@ -87,18 +49,7 @@ int validateTwoVecs(const Vec f_n, const Vec d)
     return 1;
 }
 
-/**
- * @brief Safe wrapper for analyticalPoissonSol with input validation
- *
- * @param f_n Vector of charges
- * @param d Vector of positions
- * @param x Position to evaluate
- * @return Potential in volts, or NAN if inputs invalid
- * 
- * Sets errno to EINVAL if inputs are invalid
- */
-
-double poissonSolve(const Vec f_n, const Vec d, double x)
+double poissonSolveAnalytical(const Vec f_n, const Vec d, double x)
 {
     if (!validateInput(f_n, d, x)) {
         errno = EINVAL;
@@ -107,18 +58,6 @@ double poissonSolve(const Vec f_n, const Vec d, double x)
 
     return analyticalPoissonSol(f_n, d, x);
 }
-
-/**
- * @brief Calculates potentials at each charge location
- *
- * @param f_n Vector of charges
- * @param d Vector of positions
- * @return Vector of potentials at each charge location
- *        Returns NULL vector if inputs invalid
- * 
- * Notes:
- * - Uses vacuum permittivity (ε₀)
- */
 
 Vec getGridV(Vec f_n, Vec d)
 {
@@ -134,7 +73,7 @@ Vec getGridV(Vec f_n, Vec d)
 
     for (size_t i = 0; i < len; i++)
     {
-        result.x[i] = poissonSolve(f_n, d, d.x[i]);
+        result.x[i] = poissonSolveAnalytical(f_n, d, d.x[i]);
     }
 
     printf("Resultant Voltages: ");
@@ -142,24 +81,6 @@ Vec getGridV(Vec f_n, Vec d)
 
     return result;
 }
-
-/**
- * @brief Calculates energy levels at each charge location
- *
- * @param f_n Vector of charges
- * @param d Vector of positions
- * @param params Oxide parameters (thickness, permittivity, potentials)
- * @return Vector of energies at each charge location
- *        Returns NULL vector if inputs invalid
- * 
- * Calculation steps:
- * 1. Calculate vacuum potential
- * 2. Convert to material potential using εᵣ
- * 3. Add linear potential from applied bias
- * 
- * Notes:
- * - Energies include both electrostatic and applied potential
- */
 
 Vec getGridE(Vec f_n, Vec d, OxParams params)
 {
@@ -185,7 +106,7 @@ Vec getGridE(Vec f_n, Vec d, OxParams params)
     for (size_t i = 0; i < len; i++)
     {
         // Get vacuum potential
-        result.x[i] = poissonSolve(f_n, d, d.x[i]);
+        result.x[i] = poissonSolveAnalytical(f_n, d, d.x[i]);
         // Convert to device potential
         result.x[i] /= params.eps_r;
         // Add Linear potential drop due to Applied Bias
@@ -196,4 +117,122 @@ Vec getGridE(Vec f_n, Vec d, OxParams params)
     printVecUnits(result, 'E');
     
     return result;
+}
+
+/*================================================================================
+                            Numerical Poisson Solver                              
+================================================================================*/
+
+void stackToVec(DynStack* mesh, Vec *mesh_vec)
+{
+    *mesh_vec = *(Vec *)dynStackGet(*mesh, 0);
+    // mesh_vec->x = mesh->data;
+}
+
+int validateVec(const Vec d, const OxParams params)
+{
+    if (d.len == 0 || params.L <= 0) {
+        return 0;  
+    }
+    if (d.x[0] < 0 || d.x[d.len - 1] > params.L)
+        return 0;
+    for (size_t i = 0; i < d.len; i++) {
+        if (isnan(d.x[i])) {
+            return 0; 
+        }
+    }
+    return 1;
+}
+
+Vec generateMesh(Vec d, OxParams oxparams)
+{
+    // Check Input 
+    if (!validateVec(d, oxparams))
+    {
+        printf("Input Invalid.\n");
+        return (Vec){NULL, 0, 0};
+    }
+
+    DynStack mesh = dynStackInit(sizeof(double));
+    size_t chunk_size = 10;
+    double mesh_point = 0;
+    
+    // Piecewise mesh creation. Adds all points to the mesh
+
+    // from 0 to d[n]
+    double d_0 = d.x[0];
+    for(size_t i = 0; i < chunk_size; i++)
+    {
+        mesh_point = (double)(i * d_0) / chunk_size; 
+        dynStackPush(&mesh, &mesh_point);
+    }
+
+    // Everywhere else
+    for (size_t i = 0; i < d.len - 1; i++)
+    {
+        double d_i = fabs(d.x[i] - d.x[i + 1]);
+        for (size_t j = 0; j < chunk_size; j++)
+        {
+            mesh_point = d.x[i] + (double)(j * d_i) / chunk_size;
+            dynStackPush(&mesh, &mesh_point);
+        }
+    }
+
+    // from d[n] to L
+    double d_n = fabs(d.x[d.len - 1] - oxparams.L);
+    for(size_t i = 0; i < chunk_size; i++)
+    {
+        mesh_point = d.x[d.len - 1] + (double)(i * d_n) / chunk_size; 
+        dynStackPush(&mesh, &mesh_point);
+    }
+
+    // Last point
+    mesh_point = oxparams.L;
+    dynStackPush(&mesh, &mesh_point);
+
+    // for (size_t i = 0; i < mesh.len; i ++)
+    // {
+    //     printf("%g\n", *(double *)dynStackGet(mesh, i));
+    // }
+
+    Vec mesh_vec = vecInitZerosA(mesh.len);
+    stackToVec(&mesh, &mesh_vec);
+
+    // freeDynStack(&mesh);
+
+    return mesh_vec;
+}
+
+Vec generateStepSize(Vec mesh_vec)
+{
+    Vec h = vecInitZerosA(mesh_vec.len - 1);
+    vecPrint(mesh_vec);
+    for(size_t i = 1; i < mesh_vec.len; i ++)
+    {
+        *vecRef(h, i - 1) = vecGet(mesh_vec, i) - vecGet(mesh_vec, i - 1);
+    }
+
+    return h;
+}
+
+Mat2d generateJacobian(Vec mesh, OxParams params)
+{
+    Mat2d jcob = mat2DInitZerosA(mesh.len, mesh.len);
+    
+    Vec h = generateStepSize(mesh);
+  
+    for (size_t i = 1; i < mesh.len - 1; i ++)
+    {
+        double avg_step = 0;
+        avg_step = 0.5 * (vecGet(h, i) + vecGet(h, i - 1));
+
+        double term_i_minus_1 = 1 / (vecGet(h, i - 1) * avg_step);
+        double term_i_plus_1 = 1 / (vecGet(h, i) * avg_step);
+        double term_i = 1 / (vecGet(h, i) * vecGet(h, i - 1));
+        printf("%lf, %lf, %lf\n", term_i, term_i_minus_1, term_i_plus_1);
+        *mat2DRef(jcob, i, i - 1) = term_i_minus_1;
+        *mat2DRef(jcob, i, i) = term_i;
+        *mat2DRef(jcob, i, i + 1) = term_i_plus_1;
+    }
+    mat2DPrint(jcob);
 }

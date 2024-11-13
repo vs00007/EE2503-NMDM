@@ -16,3 +16,5 @@ int qsort_compare(const void *a, const void *b);
 Vec getV(size_t len);
 
 void test_getGridV();
+
+void testMeshGen();

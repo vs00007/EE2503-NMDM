@@ -1,1 +1,1 @@
-int testmaster();
+void testmaster();

@@ -128,7 +128,10 @@ double vecStandardDeviation(Vec a);
 // free the vector on the heap
 void freeVec(Vec* vec);
 
-// Matrix implimentation
+/*=========================*/
+// Matrix implementation
+/*=========================*/
+
 
 // Matrix is stored in 1d array
 // 0*col ... 1*cols-1: 1st row

@@ -11,6 +11,7 @@ typedef struct InputData
     Vec probs;
 } InputData;
 
+
 int parse_toml_file(const char* filename, OxParams* params, Vec* locations, Vec* occ_probs);
 
 InputData getInput(char *filename);

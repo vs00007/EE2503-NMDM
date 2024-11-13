@@ -1,27 +1,32 @@
 #pragma once
 #include"testmaster.h"
-#include<include/linalg.h>
+#include "include/linalg.h"
 // #include<include/master.h>
 #include<stdio.h>
 #include<math.h>
 #include<stdlib.h>
-#define N 100000
+const size_t N = 1e8;
 
-struct rk45
+typedef struct rk45
 {
     Vec y_5;
     Vec err;
-};
+}rk45;
 
 
 Vec f(double t, Vec y){
     Vec function = vecInitZerosA(y.len);
-    VEC_INDEX(function, 0) = VEC_INDEX(y, 1) + 2;
-    VEC_INDEX(function, 1) = VEC_INDEX(y, 0) + 3;
+    // *vecRef(function, 0) = vecGet(y, 2) + vecGet(y, 1) + 2;
+    // *vecRef(function, 1) = vecGet(y, 2) + vecGet(y, 0) + 3;
+    // *vecRef(function, 2) = vecGet(y, 0) + vecGet(y, 1) + vecGet(y, 2) +  1;(
+    *(vecRef(function, 0)) = *vecRef(y, 2) + *vecRef(y, 1) + 2;
+    *(vecRef(function, 1)) = *vecRef(y, 2) + *vecRef(y, 0) + 3;
+    *(vecRef(function, 2)) = *vecRef(y, 0) + *vecRef(y, 1) + 7;
+
     return function;
 }
 
-struct rk45 rkf45_error(double h, double t_i, Vec y_i){
+rk45 rkf45_calculator(double h, double t_i, Vec y_i){
     size_t l = y_i.len;
 
     // double k_0 = h * f(t_i, y_i);
@@ -169,7 +174,7 @@ struct rk45 rkf45_error(double h, double t_i, Vec y_i){
     freeVec(&y_5_3);
     freeVec(&y_5_4);
     freeVec(&y_5_5);
-    struct rk45 res;
+    rk45 res;
     res.y_5 = y_5_1;
     res.err = error;
     return res;
@@ -186,17 +191,18 @@ void solver(double h, double t_initial, double t_final, Vec y_initial, double TO
     for(size_t i = 0; i < l; i++){
         VEC_INDEX(col1, i) = VEC_INDEX(y_initial, i);
     }
-    freeVec(&col1);
+    // freeVec(&col1);
     // int n1 = 0;
     // int n2 = 0;
     size_t n = 0;
-    while (VEC_INDEX(t_res, n) < t_final && n < N - 1){
+    while (VEC_INDEX(t_res, n) < t_final && n < N - 2){
         // h1 = fmin(h1, t_final - t1_res[n1]);
         // h2 = fmin(h2, t_final - t1_res[n2]);
         h = fmin(h, t_final - VEC_INDEX(t_res, n));
         // double y[2] = {y1_res[n], y2_res[n]};
         Vec y = mat2DCol(res, n);
-        struct rk45 tuple = rkf45_error(h, VEC_INDEX(t_res, n), y);
+        // vecPrint(y);
+        rk45 tuple = rkf45_calculator(h, VEC_INDEX(t_res, n), y);
         Vec y5 = tuple.y_5;
         Vec error = tuple.err;
         // double y5_1 = rkf45_order5(h, t_res[n], y, 0);
@@ -219,47 +225,70 @@ void solver(double h, double t_initial, double t_final, Vec y_initial, double TO
         }
 
         h *= 0.9 * fmax(0.5, fmin(2, 0.9 * pow((TOL / errmax), 1.0 / 5)));
-        freeVec(&y);
-        freeVec(&y5);
-        freeVec(&error);
-        freeVec(&col);
+        // freeVec(&y);
+        // freeVec(&y5);
+        // freeVec(&error);
+        // freeVec(&col);
     }
 }
 
-int testmaster(){
-    FILE * f1 = fopen("coupled1.txt", "w");
-    FILE * f2 = fopen("coupled2.txt", "w");
+void testmaster(){
+    FILE * f1 = fopen("test/master/coupled1.txt", "w");
+    FILE * f2 = fopen("test/master/coupled2.txt", "w");
+    FILE * f3 = fopen("test/master/coupled3.txt", "w");
+    size_t n = 3;
+
     double h = 0.01;
     double t_initial = 0;
     double t_final = 2;
-    Vec y_initial = vecInitOnesA(2);
-    Vec t_res = vecInitZerosA(2);
+    // printf("%lf\n%lf\n", t_final, t_initial);
+    Vec y_initial = vecInitOnesA(n);
+    Vec t_res = vecInitZerosA(N);
     // double h2 = 0.01;
-    Mat2d res = mat2DInitZerosA(2, N);
-    // solver(h, t_initial, t_final, y_initial, 1e-16, t_res, res);
-    int end1 = N-1;
-    int end2 = N-1;
-    while(VEC_INDEX(t_res, end1) == 0){
-        end1--;
+    Mat2d res = mat2DInitZerosA(n, N);
+    solver(h, t_initial, t_final, y_initial, 1e-8, t_res, res);
+    
+    // printf("%zu\n", 1);    
+
+    size_t end1 = N-1;
+    // printf("%zu\n", end1);
+    while(vecGet(t_res, end1) == 0.0){
+        end1 = end1 - 1;
     }
     end1++;
-    for(int i = 0; i < end1 - 1; i++){
-        fprintf(f1, "%lf ", VEC_INDEX(t_res, i));
+    for(size_t i = 0; i < end1 - 1; i++){
+        fprintf(f1, "%e ", VEC_INDEX(t_res, i));
     }
-    fprintf(f1, "%lf\n", VEC_INDEX(t_res, end1 - 1));
+    fprintf(f1, "%e\n", VEC_INDEX(t_res, end1 - 1));
     Vec y1 = mat2DRow(res, 0);
     Vec y2 = mat2DRow(res, 1);
-    for(int i = 0; i < end1 - 1; i++){
-        fprintf(f1, "%lf ", VEC_INDEX(y1, i));
+    Vec y3 = mat2DRow(res, 2);
+    for(size_t i = 0; i < end1 - 1; i++){
+        fprintf(f1, "%e ", VEC_INDEX(y1, i));
     }
-    fprintf(f1, "%lf\n", VEC_INDEX(y1, end1 - 1));
-    for(int i = 0; i < end1 - 1; i++){
-        fprintf(f2, "%lf ", VEC_INDEX(t_res, i));
+    fprintf(f1, "%e\n", VEC_INDEX(y1, end1 - 1));
+
+    for(size_t i = 0; i < end1 - 1; i++){
+        fprintf(f2, "%e ", VEC_INDEX(t_res, i));
     }
-    for(int i = 0; i < end1 - 1; i++){
-        fprintf(f2, "%lf ", VEC_INDEX(y2, i));
+    fprintf(f2, "%e\n", VEC_INDEX(t_res, end1 - 1));
+
+    for(size_t i = 0; i < end1 - 1; i++){
+        fprintf(f2, "%e ", VEC_INDEX(y2, i));
     }
-    fprintf(f2, "%lf", VEC_INDEX(y2, end1 - 1));
+    
+    fprintf(f2, "%e", VEC_INDEX(y2, end1 - 1));
+
+    for(size_t i = 0; i < end1 - 1; i++){
+        fprintf(f3, "%e ", VEC_INDEX(t_res, i));
+    }
+    fprintf(f3, "%e\n", VEC_INDEX(t_res, end1 - 1));
+    for(size_t i = 0; i < end1 - 1; i++){
+        fprintf(f3, "%e ", VEC_INDEX(y3, i));
+    }
+    fprintf(f3, "%e", VEC_INDEX(y3, end1 - 1));
+
     fclose(f1);
     fclose(f2);
+    // fclose(f3);
 }

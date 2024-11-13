@@ -17,6 +17,8 @@ int run_all_tests()
     // test_getGridV();
     // testFile();
     // test_toml();
-    int t = testmaster();
+    testmaster();
+    // testMeshGen();
+
     return 0;
 }

@@ -49,7 +49,7 @@ Vec getV(size_t len)
     for (size_t i = 0; i < len; i ++)
     {
         sample_x.x[i] = 1e-9 + (1e-6 - 1e-9) * i / len;
-        result.x[i] = poissonSolve(f_n, d, sample_x.x[i]);
+        result.x[i] = poissonSolveAnalytical(f_n, d, sample_x.x[i]);
     }
 
 
@@ -86,7 +86,7 @@ void test_poisson()
         printVecUnits(d, 'm');
 
         double x = 0.2;
-        double sol = poissonSolve(f_n, d, x);
+        double sol = poissonSolveAnalytical(f_n, d, x);
 
         printf("Exact solution : V(%lfm) = %e\n", x, sol);
 
@@ -116,7 +116,7 @@ void test_poisson()
         printVecUnits(d, 'm');
 
         double x = 2.0;
-        double sol = poissonSolve(f_n, d, x);
+        double sol = poissonSolveAnalytical(f_n, d, x);
 
         printf("Solution: V(%lfm) = %e\n", x, sol);
 
@@ -149,7 +149,7 @@ void test_poisson()
         printVecUnits(d, 'm');
 
         double x = 4.0;
-        double sol = poissonSolve(f_n, d, x);
+        double sol = poissonSolveAnalytical(f_n, d, x);
 
         printf("Solution: V(%lfm) = %e\n", x, sol);
 
@@ -179,7 +179,7 @@ void test_poisson()
         printf("\n1.) Zero charge at some location: ");
         printVecUnits(f_n, 'q');
         double x = 2.0;
-        double sol = poissonSolve(f_n, d, x);
+        double sol = poissonSolveAnalytical(f_n, d, x);
         printf("Solution: V(%lfm) = %e\n", x, sol);
 
         // Validate result
@@ -197,7 +197,7 @@ void test_poisson()
         d.x[0] = 1e6;    d.x[1] = 1e6;
         printf("\nVery large distance: ");
         printVecUnits(d, 'm');
-        sol = poissonSolve(f_n, d, x);
+        sol = poissonSolveAnalytical(f_n, d, x);
         printf("Solution: V(%lfm) = %e\n", x, sol);
 
         // Validate result (should be very close to zero)
@@ -213,7 +213,7 @@ void test_poisson()
         d.x[0] = 1.0;    d.x[1] = 2.0;
         x = 1.0 + 1e-9;
         printf("\nTest point very close to charge: Distance = %e\n", fabs(d.x[0] - x));
-        sol = poissonSolve(f_n, d, x);
+        sol = poissonSolveAnalytical(f_n, d, x);
         printf("Solution: V(%lfm) = %e\n", x, sol);
 
         total_tests++;
@@ -229,7 +229,7 @@ void test_poisson()
         d.x[0] = 1.0;    d.x[1] = 2.0;
         x = 1.0 + 1e-11;
         printf("\nTest point very close to charge: ");
-        sol = poissonSolve(f_n, d, x);
+        sol = poissonSolveAnalytical(f_n, d, x);
         printf("Solution: V(%lfm) = %e\n", x, sol);
 
         // Should ignore the charge at small distance
@@ -254,7 +254,7 @@ void test_poisson()
         Vec f_n = vecInitA(0.0, 0);
         Vec d = vecInitA(0.0, 0);
         double x = 1.0;
-        double sol = poissonSolve(f_n, d, x);
+        double sol = poissonSolveAnalytical(f_n, d, x);
         
         total_tests++;
         if (isnan(sol) || isinf(sol)) {
@@ -267,7 +267,7 @@ void test_poisson()
         // Mismatched vector lengths
         f_n = vecInitA(1.0, 2);
         d = vecInitA(1.0, 3);
-        sol = poissonSolve(f_n, d, x);
+        sol = poissonSolveAnalytical(f_n, d, x);
         
         total_tests++;
         if (isnan(sol) || isinf(sol)) {
@@ -379,3 +379,20 @@ void test_getGridV()
 // }
 
 
+void testMeshGen()
+{
+    OxParams params;
+    params.L = 3;
+    Vec d = vecInitZerosA(2);
+    for (size_t i = 0; i < d.len; i++)
+    {
+        d.x[i] = (double)(i + 1);
+    }
+    vecPrint(d);
+    printf("\n");
+    Vec mesh = generateMesh(d, params);
+    vecPrint(mesh);
+    // Vec h = generateStepSize(mesh);
+    // vecPrint(h);
+    // Mat2d jcob = generateJacobian(mesh, params);
+}
