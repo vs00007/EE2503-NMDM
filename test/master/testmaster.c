@@ -1,14 +1,27 @@
 #pragma once
-// #include<testmaster.h>
-#include<include/master.h>
+#include"testmaster.h"
+#include "include/linalg.h"
+// #include<include/master.h>
+#include<stdio.h>
+#include<math.h>
+#include<stdlib.h>
+const size_t N = 1e8;
+
+typedef struct rk45
+{
+    Vec y_5;
+    Vec err;
+}rk45;
+
 
 Vec f(double t, Vec y){
     Vec function = vecInitZerosA(y.len);
-    // *(vecRef(function, 0)) = *vecRef(y, 2) + *vecRef(y, 1) + 2;
-    // *(vecRef(function, 1)) = *vecRef(y, 2) + *vecRef(y, 0) + 3;
-    // *(vecRef(function, 2)) = *vecRef(y, 0) + *vecRef(y, 1) + 7;
-    
-    // define the rhs function here
+    // *vecRef(function, 0) = vecGet(y, 2) + vecGet(y, 1) + 2;
+    // *vecRef(function, 1) = vecGet(y, 2) + vecGet(y, 0) + 3;
+    // *vecRef(function, 2) = vecGet(y, 0) + vecGet(y, 1) + vecGet(y, 2) +  1;(
+    *(vecRef(function, 0)) = *vecRef(y, 2) + *vecRef(y, 1) + 2;
+    *(vecRef(function, 1)) = *vecRef(y, 2) + *vecRef(y, 0) + 3;
+    *(vecRef(function, 2)) = *vecRef(y, 0) + *vecRef(y, 1) + 7;
 
     return function;
 }
@@ -34,9 +47,9 @@ rk45 rkf45_calculator(double h, double t_i, Vec y_i){
     // double k_2 = h * f(t_i + h * 3 / 8, y_i + k_0 * 3 / 32 + k_1 * 9 / 32);
 
     Vec vec21 = vecInitZerosA(l);
-    vecScale(3.0 / 32.0, k_0, &vec21); 
+    vecScale(3.0 / 32.0, k_0, &vec21); // vec21 = k_0 * 3 / 32
     Vec vec22 = vecInitZerosA(l);
-    vecScale(9.0 / 32, k_1, &vec22);  
+    vecScale(9.0 / 32, k_1, &vec22);  // vec22 = k_1 * 9 / 32
     vecAdd(y_i, vec21, &vec21);
     vecAdd(vec21, vec22, &vec21);
     Vec k_2 = vecInitZerosA(l);
@@ -46,11 +59,11 @@ rk45 rkf45_calculator(double h, double t_i, Vec y_i){
     // double k_3 = h * f(t_i + h * 12 / 13, y_i + k_0 * 1932 / 2197 + k_1 * (-7200) / 2197 + k_2 * 7296 / 2197);
 
     Vec vec31 = vecInitZerosA(l);
-    vecScale(1932.0 / 2197.0, k_0, &vec31); 
+    vecScale(1932.0 / 2197.0, k_0, &vec31); // vec31 = k_0 * 1932 / 2197
     Vec vec32 = vecInitZerosA(l);
-    vecScale((-7200.0) / 2197.0, k_1, &vec32); 
+    vecScale((-7200.0) / 2197.0, k_1, &vec32); // vec32 = k_1 * (-7200) / 2197
     Vec vec33 = vecInitZerosA(l);
-    vecScale(7296.0 / 2197.0, k_2, &vec33); 
+    vecScale(7296.0 / 2197.0, k_2, &vec33); // vec33 = k_2 * 7296 / 2197)
     vecAdd(y_i, vec31, &vec31); 
     vecAdd(vec31, vec32, &vec31); 
     vecAdd(vec31, vec33, &vec31); 
@@ -170,29 +183,40 @@ rk45 rkf45_calculator(double h, double t_i, Vec y_i){
 
 void solver(double h, double t_initial, double t_final, Vec y_initial, double TOL, Vec t_res, Mat2d res){
     size_t l = y_initial.len;
+    // t_res[0] = t_initial;
     VEC_INDEX(t_res, 0) = t_initial;
+    // y1_res[0] = y_initial[0];
+    // y2_res[0] = y_initial[1];
     Vec col1 = mat2DCol(res, 0);
-
-
     for(size_t i = 0; i < l; i++){
         VEC_INDEX(col1, i) = VEC_INDEX(y_initial, i);
     }
-
-
+    // freeVec(&col1);
+    // int n1 = 0;
+    // int n2 = 0;
     size_t n = 0;
     while (VEC_INDEX(t_res, n) < t_final && n < N - 2){
+        // h1 = fmin(h1, t_final - t1_res[n1]);
+        // h2 = fmin(h2, t_final - t1_res[n2]);
         h = fmin(h, t_final - VEC_INDEX(t_res, n));
-
+        // double y[2] = {y1_res[n], y2_res[n]};
         Vec y = mat2DCol(res, n);
-
+        // vecPrint(y);
         rk45 tuple = rkf45_calculator(h, VEC_INDEX(t_res, n), y);
         Vec y5 = tuple.y_5;
         Vec error = tuple.err;
-
+        // double y5_1 = rkf45_order5(h, t_res[n], y, 0);
+        // double y4_1 = rkf45_order4(h, t_res[n], y, 0);
+        // double y5_2 = rkf45_order5(h, t_res[n], y, 1);
+        // double y4_2 = rkf45_order4(h, t_res[n], y, 1);
+        // double error1 = fabs(y5_1 - y4_1);
+        // double error2 = fabs(y5_2 - y4_2);
+        // double errmax = fmax(error1, error2);
         Vec col = mat2DCol(res, n+1);
         double errmax = vecMax(error);
         if(errmax < TOL){
-
+            // y1_res[n+1] = y5_1;
+            // y2_res[n+1] = y5_2;
             for(size_t i = 0; i < l; i++){
                 VEC_INDEX(col, i) = VEC_INDEX(y5, i);
             }
@@ -201,5 +225,70 @@ void solver(double h, double t_initial, double t_final, Vec y_initial, double TO
         }
 
         h *= 0.9 * fmax(0.5, fmin(2, 0.9 * pow((TOL / errmax), 1.0 / 5)));
+        // freeVec(&y);
+        // freeVec(&y5);
+        // freeVec(&error);
+        // freeVec(&col);
     }
+}
+
+void testmaster(){
+    FILE * f1 = fopen("test/master/coupled1.txt", "w");
+    FILE * f2 = fopen("test/master/coupled2.txt", "w");
+    FILE * f3 = fopen("test/master/coupled3.txt", "w");
+    size_t n = 3;
+
+    double h = 0.01;
+    double t_initial = 0;
+    double t_final = 2;
+    // printf("%lf\n%lf\n", t_final, t_initial);
+    Vec y_initial = vecInitOnesA(n);
+    Vec t_res = vecInitZerosA(N);
+    // double h2 = 0.01;
+    Mat2d res = mat2DInitZerosA(n, N);
+    solver(h, t_initial, t_final, y_initial, 1e-8, t_res, res);
+    
+    // printf("%zu\n", 1);    
+
+    size_t end1 = N-1;
+    // printf("%zu\n", end1);
+    while(vecGet(t_res, end1) == 0.0){
+        end1 = end1 - 1;
+    }
+    end1++;
+    for(size_t i = 0; i < end1 - 1; i++){
+        fprintf(f1, "%e ", VEC_INDEX(t_res, i));
+    }
+    fprintf(f1, "%e\n", VEC_INDEX(t_res, end1 - 1));
+    Vec y1 = mat2DRow(res, 0);
+    Vec y2 = mat2DRow(res, 1);
+    Vec y3 = mat2DRow(res, 2);
+    for(size_t i = 0; i < end1 - 1; i++){
+        fprintf(f1, "%e ", VEC_INDEX(y1, i));
+    }
+    fprintf(f1, "%e\n", VEC_INDEX(y1, end1 - 1));
+
+    for(size_t i = 0; i < end1 - 1; i++){
+        fprintf(f2, "%e ", VEC_INDEX(t_res, i));
+    }
+    fprintf(f2, "%e\n", VEC_INDEX(t_res, end1 - 1));
+
+    for(size_t i = 0; i < end1 - 1; i++){
+        fprintf(f2, "%e ", VEC_INDEX(y2, i));
+    }
+    
+    fprintf(f2, "%e", VEC_INDEX(y2, end1 - 1));
+
+    for(size_t i = 0; i < end1 - 1; i++){
+        fprintf(f3, "%e ", VEC_INDEX(t_res, i));
+    }
+    fprintf(f3, "%e\n", VEC_INDEX(t_res, end1 - 1));
+    for(size_t i = 0; i < end1 - 1; i++){
+        fprintf(f3, "%e ", VEC_INDEX(y3, i));
+    }
+    fprintf(f3, "%e", VEC_INDEX(y3, end1 - 1));
+
+    fclose(f1);
+    fclose(f2);
+    // fclose(f3);
 }
