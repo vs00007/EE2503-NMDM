@@ -9,6 +9,7 @@
 
 #include <linalg.h>
 #include <stack.h>
+#include <inputs.h>
 
 #define M_PI 3.14159265358979323846
 #define Q 1.602176634e-19
@@ -161,10 +162,12 @@ Vec generateMesh(Vec d, OxParams oxparams, size_t chunk_size);
  */
 Vec generateStepSize(Vec mesh_vec);
 
-Vec constructB(Vec f_n, Vec d, Vec mesh, size_t chunk);
+Vec constructB(Vec f_n, Vec d, Vec mesh, size_t chunk, OxParams params);
 
 MatTD generateJacobian(Vec mesh);
 
 Vec numSolveV(MatTD mat, Vec b);
+
+Vec poissonWrapper(InputData data, size_t chunk_size);
 
 void printNL();

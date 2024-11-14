@@ -1,3 +1,5 @@
+#pragma once
+
 #include <include/toml-parser/toml.h>
 #include <include/poisson.h>
 #include <stdio.h>

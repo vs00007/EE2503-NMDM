@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <test/poisson/test_poisson.h>
 #include <time.h>
+#include <pyvisual.h>
 
 #define LA_VIDX(vector, index) *(vector.x + vector.offset * index)
 #define EPSILON 1e-6
@@ -383,50 +384,41 @@ void test_getGridV()
 
 void testMeshGen()
 {
-    {    
-        OxParams params;
-        params.L = 3;
-        Vec d = vecInitZerosA(2);
-        for (size_t i = 0; i < d.len; i++)
-        {
-            d.x[i] = (double)(i + 0.5);
-        }
-        // vecPrint(d);
-        // printf("\n");
+    PyVi vis = pyviInitA("visualise/data.pyvi");
 
-        size_t chunk_size = 3;
-        Vec mesh = generateMesh(d, params, chunk_size);
+    OxParams params;
+    params.L = 1;
+    params.V_0 = -1;
+    params.eps_r = 11.7;
 
-        Vec f_n = vecInitZerosA(mesh.len);
-        randF(f_n, 1e-9, 1.0, 0);
-
-
-        vecScale(1.0 / 3 * 1e-6, mesh, &mesh);
-        vecPrint(mesh);
-
-        Vec b = constructB(f_n, d, mesh, chunk_size);
-        printNL();
-        vecPrint(b);
-
-        // vecPrint(mesh);
-        // Vec h = generateStepSize(mesh);
-        // vecPrint(h);
-        // printf("\n");
-        // MatTD jcob = generateJacobian(mesh);
-
-        // Vec vals  = vecInitZerosA(mesh.len);
-        // *vecRef(vals, 0) = 1.0;
-        // for (size_t i = 0; i < mesh.len; i ++)
-        // {
-        //     size_t idx = i/(chunk_size + 1);
-        //     if (!(vecGet(vals, i) - vecGet(d, idx))) *vecRef(vals, i) = vecGet(d, idx);
-        // }
-        // vecPrint(vals);
-        // printf("\n");
-
-        // Vec sol = numSolveV(jcob, vals);
-        // vecPrint(sol);
+    Vec d = vecInitZerosA(100);
+    for (size_t i = 0; i < d.len; i++)
+    {
+        d.x[i] = ((double) (i + 1) / 101);
     }
+
+    // vecScale(1.0/3 *1e-9, d, &d);
+    vecPrint(d);
+    printf("\n");
+
+    size_t chunk_size = 100;
+    Vec mesh = generateMesh(d, params, chunk_size);
+    
+    PyViParameter param = pyviCreateParameter(&vis, "x", mesh);
+    PyViSection * sec = pyviCreateSection(&vis, "Voltage", param);
+
+
+    Vec f_n = vecInitOnesA(d.len);
+    randF(f_n, 1e14, 2e15, 0);
+
+    InputData data = {.params = {.L = 3, .V_0 = 1}};
+
+    data.locs = vecConstruct(&d.x, d.len);
+    data.probs = vecConstruct(&f_n.x, f_n.len);
+
+    Vec sol = poissonWrapper(data, chunk_size);
+    pyviSectionPush(sec, sol);
+    pyviWrite(vis);
 
 }
 

@@ -18,6 +18,8 @@ int run_all_tests()
     // test_toml();
     // test_num_poisson();
     testMeshGen(); 
+    // testSolver();
+
 
     return 0;
 }

@@ -162,6 +162,7 @@ Vec generateMesh(Vec d, OxParams oxparams, size_t chunk_size)
     for(size_t i = 0; i < chunk_size; i++)
     {
         mesh_point = (double)(i * d_0) / chunk_size; 
+        // printf("%g\n", mesh_point);
         dynStackPush(&mesh, &mesh_point);
     }
 
@@ -172,6 +173,7 @@ Vec generateMesh(Vec d, OxParams oxparams, size_t chunk_size)
         for (size_t j = 0; j < chunk_size; j++)
         {
             mesh_point = d.x[i] + (double)(j * d_i) / chunk_size;
+            // printf("%g\n", mesh_point);
             dynStackPush(&mesh, &mesh_point);
         }
     }
@@ -181,6 +183,7 @@ Vec generateMesh(Vec d, OxParams oxparams, size_t chunk_size)
     for(size_t i = 0; i < chunk_size; i++)
     {
         mesh_point = d.x[d.len - 1] + (double)(i * d_n) / chunk_size; 
+        // printf("%g\n", mesh_point);
         dynStackPush(&mesh, &mesh_point);
     }
 
@@ -192,7 +195,6 @@ Vec generateMesh(Vec d, OxParams oxparams, size_t chunk_size)
     // {
     //     printf("%g\n", *(double *)dynStackGet(mesh, i));
     // }
-
     Vec mesh_vec = vecInitZerosA(mesh.len);
     stackToVec(&mesh, &mesh_vec);
     // freeDynStack(&mesh);
@@ -228,39 +230,48 @@ MatTD generateJacobian(Vec mesh)
 
         double term_i_minus_1 = 1 / (vecGet(h, i - 1) * avg_step);
         double term_i_plus_1 = 1 / (vecGet(h, i) * avg_step);
-        double term_i = 1 / (vecGet(h, i) * vecGet(h, i - 1));
+        double term_i = -2 / (vecGet(h, i) * vecGet(h, i - 1));
 
         *vecRef(jcob.main, i) = term_i;
         *vecRef(jcob.sub, i) = term_i_minus_1;
         *vecRef(jcob.sup, i) = term_i_plus_1;
     }
 
-    vecPrint(jcob.sup);
-    printf("\n");
-    vecPrint(jcob.main);
-    printf("\n");
-    vecPrint(jcob.sub);
-    printf("\n");
+    // vecPrint(jcob.sup);
+    // printf("\n");
+    // vecPrint(jcob.main);
+    // printf("\n");
+    // vecPrint(jcob.sub);
+    // printf("\n");
 
     return jcob;
 }
 
-Vec constructB(Vec f_n, Vec d, Vec mesh, size_t chunk)
+Vec constructB(Vec f_n, Vec d, Vec mesh, size_t chunk, OxParams params)
 {
-    vecPrint(mesh);
-    printNL();
     Vec b = vecInitZerosA(mesh.len);
     size_t idx = 0;
-    vecPrint(d);
-    printNL();
-    vecPrint(f_n);
+
+    // vecPrint(mesh);
+    // printNL();
+    // vecPrint(d);
+    // printNL();
+    // vecPrint(f_n);
+    // printNL();
+
+    *vecRef(b, 0) = params.V_0;
     for (size_t i = 0; i < mesh.len; i ++)
     {
-        idx = i / chunk;
-        if ((vecGet(d, idx) - vecGet(mesh, i)) < 1e-16) *vecRef(b, i) = vecGet(f_n, idx);
+        idx = i / chunk - 1;
+        if (idx > d.len - 1) continue;
+
+        double entry = vecGet(f_n, idx) * Q / ((params.eps_r * EPS0) * (vecGet(mesh, i)));
+        if ((vecGet(d, idx) - vecGet(mesh, i)) == 0) *vecRef(b, i) = entry;
     }
-    printNL();
-    vecPrint(b);
+    // printNL();
+    // printNL();
+    // vecPrint(b);
+    // printNL();
     return b;
 }
 
@@ -299,7 +310,23 @@ Vec numSolveV(MatTD mat, Vec b)
     return sol;
 }
 
+Vec poissonWrapper(InputData data, size_t chunk_size)
+{
+    Vec mesh = generateMesh(data.locs, data.params, chunk_size);
 
+    MatTD jcob = generateJacobian(mesh);
+
+    Vec b = constructB(data.probs, data.locs, mesh, chunk_size, data.params);
+
+    Vec sol = numSolveV(jcob, b);
+
+    freeVec(&mesh);
+    freeVec(&jcob.main);
+    freeVec(&jcob.sub);
+    freeVec(&jcob.sup);
+    freeVec(&b);
+    return sol;
+}
 
 void printNL()
 {

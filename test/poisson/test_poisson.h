@@ -18,3 +18,5 @@ Vec getV(size_t len);
 void test_getGridV();
 
 void testMeshGen();
+
+void testSolver();
