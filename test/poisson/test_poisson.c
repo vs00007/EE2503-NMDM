@@ -391,6 +391,7 @@ void testMeshGen()
     params.L = 1;
     params.V_0 = -1;
     params.eps_r = 11.7;
+    params.chunk_size = 100;
 
     Vec d = vecInitZerosA(100);
     for (size_t i = 0; i < d.len; i++)
@@ -403,7 +404,7 @@ void testMeshGen()
     printf("\n");
 
     size_t chunk_size = 1000;
-    Vec mesh = generateMesh(d, params, chunk_size);
+    Vec mesh = generateMesh(d, params);
     
     printNL();
     vecPrint(mesh);
@@ -416,7 +417,7 @@ void testMeshGen()
     Vec f_n = vecInitOnesA(d.len);
     randF(f_n, 1e9, 2e10, 0);
 
-    InputData data = {.params = {.L = 2, .V_0 = 1, .eps_r = 11.7}};
+    InputData data = {.params = {.L = 2, .V_0 = 1, .eps_r = 11.7, .chunk_size = 100}};
 
     data.locs = vecConstruct(d.x, d.len);
     data.probs = vecConstruct(f_n.x, f_n.len);

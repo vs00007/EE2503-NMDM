@@ -16,7 +16,10 @@ typedef struct OxParams
     double m_eff;
     double gamma_0;
     double mobility;
+    double temp ;
     size_t num_traps;
+    size_t chunk_size ;
+    double electron_affinity ;
 } OxParams;
 
 typedef struct InputData 

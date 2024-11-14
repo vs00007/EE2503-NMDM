@@ -120,7 +120,7 @@ Vec getGridE(Vec f_n, Vec d, OxParams params)
 }
 
 /*================================================================================
-                            Numerical Poisson Solver                              
+                            Numerical Poisson Solver                         
 ================================================================================*/
 
 void stackToVec(DynStack* mesh, Vec *mesh_vec)
@@ -143,9 +143,10 @@ int validateVec(const Vec d, const OxParams params)
     return 1;
 }
 
-Vec generateMesh(Vec d, OxParams oxparams, size_t chunk_size)
+Vec generateMesh(Vec d, OxParams oxparams)
 {
     // Check Input 
+    size_t chunk_size = oxparams.chunk_size ; 
     if (!validateVec(d, oxparams))
     {
         printf("Input Invalid.\n");
@@ -310,9 +311,10 @@ Vec numSolveV(MatTD mat, Vec b)
     return sol;
 }
 
-Vec  poissonWrapper(InputData data, size_t chunk_size)
+Vec  poissonWrapper(InputData data, size_t chunk_size_dummy)
 {
-    Vec mesh = generateMesh(data.locs, data.params, chunk_size);
+    Vec mesh = generateMesh(data.locs, data.params);
+    size_t chunk_size = data.params.chunk_size;
 
     // printNL();
     // vecPrint(mesh);
