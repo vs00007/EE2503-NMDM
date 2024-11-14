@@ -20,6 +20,7 @@ int qsort_compare(const void *a, const void *b) {
 
 void randF(Vec param, double min, double max, int sort)
 {
+    srand(time(NULL));
     if (param.len == 0)
     {
         printf("ERROR: Length of input vector is 0.\n");
@@ -394,29 +395,42 @@ void testMeshGen()
     Vec d = vecInitZerosA(100);
     for (size_t i = 0; i < d.len; i++)
     {
-        d.x[i] = ((double) (i + 1) / 101);
+        d.x[i] = ((double) (i + 1) / 102);
     }
 
     // vecScale(1.0/3 *1e-9, d, &d);
     vecPrint(d);
     printf("\n");
 
-    size_t chunk_size = 100;
+    size_t chunk_size = 1000;
     Vec mesh = generateMesh(d, params, chunk_size);
     
+    printNL();
+    vecPrint(mesh);
+    printNL();
+
     PyViParameter param = pyviCreateParameter(&vis, "x", mesh);
     PyViSection * sec = pyviCreateSection(&vis, "Voltage", param);
 
 
     Vec f_n = vecInitOnesA(d.len);
-    randF(f_n, 1e14, 2e15, 0);
+    randF(f_n, 1e9, 2e10, 0);
 
-    InputData data = {.params = {.L = 3, .V_0 = 1}};
+    InputData data = {.params = {.L = 2, .V_0 = 1, .eps_r = 11.7}};
 
-    data.locs = vecConstruct(&d.x, d.len);
-    data.probs = vecConstruct(&f_n.x, f_n.len);
+    data.locs = vecConstruct(d.x, d.len);
+    data.probs = vecConstruct(f_n.x, f_n.len);
+
+    printNL();
+    vecPrint(data.locs);
+    printNL();
 
     Vec sol = poissonWrapper(data, chunk_size);
+
+    printNL();
+    vecPrint(sol);
+    printNL();
+
     pyviSectionPush(sec, sol);
     pyviWrite(vis);
 

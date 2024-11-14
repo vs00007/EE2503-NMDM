@@ -310,13 +310,31 @@ Vec numSolveV(MatTD mat, Vec b)
     return sol;
 }
 
-Vec poissonWrapper(InputData data, size_t chunk_size)
+Vec  poissonWrapper(InputData data, size_t chunk_size)
 {
     Vec mesh = generateMesh(data.locs, data.params, chunk_size);
 
+    // printNL();
+    // vecPrint(mesh);
+    // printNL();
+
     MatTD jcob = generateJacobian(mesh);
 
+    // printNL();
+    // vecPrint(jcob.main);
+    // printNL();
+    // printNL();
+    // vecPrint(jcob.sup);
+    // printNL();
+    // printNL();
+    // vecPrint(jcob.sub);
+    // printNL();
+
     Vec b = constructB(data.probs, data.locs, mesh, chunk_size, data.params);
+
+    // printNL();
+    // vecPrint(b);
+    // printNL();
 
     Vec sol = numSolveV(jcob, b);
 

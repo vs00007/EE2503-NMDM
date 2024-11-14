@@ -1,5 +1,4 @@
 #pragma once
-// #include<testmaster.h>
 #include<include/master.h>
 
 Vec f(double t, Vec y){
