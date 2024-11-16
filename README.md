@@ -18,7 +18,7 @@ Soham : Sure, done.
 8. Important Variables and Function names must be descriptive.
 9. all #defines must be capital case.
 10. Prefix functions with name of their group of functions.
-11. Every header file should start with a #pragma once.
+11. Every header file should start with a `#pragma once`.
 
 Example:
 ```C

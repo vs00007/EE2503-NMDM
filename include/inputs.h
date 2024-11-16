@@ -1,8 +1,26 @@
+#pragma once
+
 #include <include/toml-parser/toml.h>
-#include <include/poisson.h>
+#include <include/linalg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+typedef struct OxParams 
+{
+    double V_0;
+    double V_L;
+    double eps_r;
+    double L;
+    double nu_0;
+    double m_eff;
+    double gamma_0;
+    double mobility;
+    double temp ;
+    size_t num_traps;
+    size_t chunk_size ;
+    double electron_affinity ;
+} OxParams;
 
 typedef struct InputData 
 {

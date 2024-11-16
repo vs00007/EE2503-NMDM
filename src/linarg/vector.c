@@ -23,7 +23,7 @@ Vec vecInitA(double value, size_t len)
         return (Vec){ NULL, 0, 0 };
     }
     Vec x = { (double*)calloc(len, sizeof(double)), len, 1 };
-    LINALG_ASSERT_ERROR(!x.x, x, "unkown error occured when allocation memory!");
+    LINALG_ASSERT_ERROR(!x.x, x, "unknown error occured when allocation memory!");
     for(size_t i = 0; i < x.len; i++) x.x[i] = value;
     return x;
 }
@@ -70,9 +70,9 @@ void vecPrint(Vec a)
     printf("[");
     for(size_t i = 0; i < a.len - 1; i++)
     {
-        printf("%f, ", LA_VIDX(a, i));
+        printf("%g, ", LA_VIDX(a, i));
     }
-    printf("%f]", LA_VIDX(a, a.len - 1));
+    printf("%g]", LA_VIDX(a, a.len - 1));
 }
 
 void printVecUnits(Vec f_n, char a)

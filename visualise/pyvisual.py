@@ -8,6 +8,7 @@ from typing import List, Dict
 
 import re
 
+
 class PyVi:
     class PyViSection:
         def __init__(self, name, param):
