@@ -1,6 +1,6 @@
 #include <include/linalg.h>
-#include <include/poisson.h>
-#include <include/inputs.h>
+
+// using double precision
 
 static double lagrangeBasis(const Vec gridPoints, size_t i, double x)
 {
@@ -19,7 +19,7 @@ static double lagrangeBasis(const Vec gridPoints, size_t i, double x)
 
 int lagrangeInterpolate(const Vec gridPoints, const Vec values, const Vec interPoints, Vec *result)
 {
-    // Input validation
+    // Input validation (can be removed if already validated)
     LINALG_ASSERT_ERROR(gridPoints.len != values.len, LINALG_ERROR,
                         "Grid points and values must have same length");
     LINALG_ASSERT_ERROR(gridPoints.len < 2, LINALG_ERROR,
@@ -47,6 +47,7 @@ int lagrangeInterpolate(const Vec gridPoints, const Vec values, const Vec interP
     return LINALG_OK;
 }
 
+// keep in mind that this generate uniform mesh points
 Vec generateInterPoints(double start, double end, size_t num_points)
 {
     LINALG_ASSERT_ERROR(num_points < 2, vecInitZerosA(0),

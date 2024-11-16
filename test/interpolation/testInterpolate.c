@@ -1,6 +1,4 @@
 #include <include/inputs.h>
-#include <include/linalg.h>
-#include <include/poisson.h>
 #include <include/interpolate.h>
 
 void test_interpolation() {

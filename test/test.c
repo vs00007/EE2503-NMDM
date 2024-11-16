@@ -7,6 +7,7 @@
 // #include <test/fileHandling/fileTest.h>
 #include<test/master/testmaster.h>
 #include <test/input_testing/test_toml_input.h>
+#include <test/interpolation/testInterpolate.h>
 
 int run_all_tests()
 {
@@ -18,7 +19,8 @@ int run_all_tests()
     // testFile();
     // test_toml();
     // testmaster();
-    testMeshGen();
+    test_interpolation();
+    // testMeshGen();
     // testSolver();
 
 
