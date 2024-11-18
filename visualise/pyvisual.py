@@ -1,13 +1,22 @@
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 from matplotlib.widgets import Button
 from functools import partial
 
+
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_tkagg import (
+    FigureCanvasTkAgg,
+    NavigationToolbar2Tk
+)
+
 from typing import List, Dict
 
 import re
 
+matplotlib.use('TkAgg')
 
 class PyVi:
     class PyViSection:
@@ -167,6 +176,5 @@ class PyVi:
         nextIterButtonLoc = fig.add_axes([0.31, 0.05, 0.2, 0.075])
         nextIterButton = Button(nextIterButtonLoc, label="Next Iter", color='pink', hovercolor='tomato')
         nextIterButton.on_clicked(partial(nxt_iter, self))
-
-        plt.show()
+        return plt
 

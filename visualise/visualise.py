@@ -6,4 +6,6 @@ subprocess.run(['./check'])
 
 pyvi = PyVi("visualise/data.pyvi")
 
-pyvi.display_all_sections()
+sec = pyvi.display_all_sections()
+
+sec.show()

@@ -19,12 +19,6 @@ static double lagrangeBasis(const Vec gridPoints, size_t i, double x)
 
 int lagrangeInterpolate(const Vec gridPoints, const Vec values, const Vec interPoints, Vec *result)
 {
-    // Input validation (can be removed if already validated)
-    LINALG_ASSERT_ERROR(gridPoints.len != values.len, LINALG_ERROR,
-                        "Grid points and values must have same length");
-    LINALG_ASSERT_ERROR(gridPoints.len < 2, LINALG_ERROR,
-                        "Need at least 2 points for interpolation");
-
     if (result->len != interPoints.len)
     {
         *result = vecInitZerosA(interPoints.len);
@@ -50,9 +44,6 @@ int lagrangeInterpolate(const Vec gridPoints, const Vec values, const Vec interP
 // keep in mind that this generate uniform mesh points
 Vec generateInterPoints(double start, double end, size_t num_points)
 {
-    LINALG_ASSERT_ERROR(num_points < 2, vecInitZerosA(0),
-                        "Need at least 2 points for interpolation range");
-
     Vec points = vecInitZerosA(num_points);
     double step = (end - start) / (num_points - 1);
 

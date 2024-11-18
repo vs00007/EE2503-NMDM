@@ -389,22 +389,33 @@ void testMeshGen()
 
     OxParams params;
     params.L = 1;
-    params.V_0 = -1;
+    params.V_0 = 1;
     params.eps_r = 11.7;
     params.chunk_size = 100;
 
-    Vec d = vecInitZerosA(100);
-    for (size_t i = 0; i < d.len; i++)
-    {
-        d.x[i] = ((double) (i + 1) / 102);
-    }
+    Vec d = vecInitZerosA(2);
+    // for (size_t i = 0; i < d.len; i++)
+    // {
+    //     d.x[i] = 0.5;
+    // }
+    *vecRef(d, 0) = 0.33;
+    *vecRef(d, 1) = 0.66;
 
     // vecScale(1.0/3 *1e-9, d, &d);
     vecPrint(d);
     printf("\n");
 
     size_t chunk_size = 1000;
-    Vec mesh = generateMesh(d, params);
+
+
+    Vec f_n = vecInitOnesA(d.len);
+    f_n.x[0] = 0.5;
+    // randF(f_n, 1e9, 2e10, 0);
+
+    InputData data = {.params = {.L = 1e-9, .V_0 = 1, .eps_r = 11.7, .chunk_size = 100}};
+    vecScale(data.params.L, d, &d);
+
+    Vec mesh = generateMesh(d, data.params);
     
     printNL();
     vecPrint(mesh);
@@ -413,24 +424,18 @@ void testMeshGen()
     PyViParameter param = pyviCreateParameter(&vis, "x", mesh);
     PyViSection * sec = pyviCreateSection(&vis, "Voltage", param);
 
-
-    Vec f_n = vecInitOnesA(d.len);
-    randF(f_n, 1e9, 2e10, 0);
-
-    InputData data = {.params = {.L = 2, .V_0 = 1, .eps_r = 11.7, .chunk_size = 100}};
-
-    data.locs = vecConstruct(d.x, d.len);
-    data.probs = vecConstruct(f_n.x, f_n.len);
+    data.locs = d;
+    data.probs = f_n;
 
     printNL();
-    vecPrint(data.locs);
+    vecPrint(data.probs);
     printNL();
 
-    Vec sol = poissonWrapper(data, chunk_size);
+    Vec sol = poissonWrapper(data, data.params.chunk_size);
 
-    printNL();
-    vecPrint(sol);
-    printNL();
+    // printNL();
+    // vecPrint(sol);
+    // printNL();
 
     pyviSectionPush(sec, sol);
     pyviWrite(vis);

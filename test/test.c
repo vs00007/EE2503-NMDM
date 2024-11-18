@@ -19,8 +19,8 @@ int run_all_tests()
     // testFile();
     // test_toml();
     // testmaster();
-    test_interpolation();
-    // testMeshGen();
+    // test_interpolation();
+    testMeshGen();
     // testSolver();
 
 
