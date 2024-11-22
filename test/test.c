@@ -8,6 +8,7 @@
 #include<test/master/testmaster.h>
 #include <test/input_testing/test_toml_input.h>
 #include <test/interpolation/testInterpolate.h>
+#include <test/steady_state/steadystatetest.h>
 
 int run_all_tests()
 {
@@ -20,7 +21,8 @@ int run_all_tests()
     // test_toml();
     // testmaster();
     // test_interpolation();
-    testMeshGen();
+    // testMeshGen();
+    testSteadystate();
     // testSolver();
 
 
