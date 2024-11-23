@@ -1,4 +1,4 @@
-from pyvisual import *
+from App.src.pyvisual import *
 import subprocess
 
 subprocess.run(['make', 'test'])
