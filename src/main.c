@@ -14,10 +14,10 @@ int main()
     // vecPrint(mesh);
 
     PyVi vis = pyviInitA("data/visualise.pyvi");
-    PyViParameter x_vi = pyviCreateParameter(&vis, "d", data.locs);
-    PyViSection *f_n = pyviCreateSection(&vis, "f_n", x_vi);
-    PyViParameter meshvi = pyviCreateParameter(&vis, "mesh", mesh);
-    PyViSection *V_vi = pyviCreateSection(&vis, "Voltage", meshvi);
+    PyViBase x_vi = pyviCreateParameter(&vis, "d", data.locs);
+    PyViSec f_n = pyviCreateSection(&vis, "f_n", x_vi);
+    PyViBase meshvi = pyviCreateParameter(&vis, "mesh", mesh);
+    PyViSec V_vi = pyviCreateSection(&vis, "Voltage", meshvi);
 
     Mat2d R = R_en(data, mesh);
     Vec R1 = mat2DCol(R, 0);
