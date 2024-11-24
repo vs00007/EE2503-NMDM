@@ -17,4 +17,4 @@ nu_0                 = 1e-5
 relaxation_distance  = 5e-10 # In m
 
 [Oxide.SimParams]
-chunk_size = 11
+chunk_size = 1000

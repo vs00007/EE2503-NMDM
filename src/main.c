@@ -69,6 +69,8 @@ int main()
         double error_fn = vecNorm(delta_fn, 2) / vecNorm(data.probs, 2);
         double error_E = mat2DMaxAbs(delta_E) / mat2DMaxAbs(E_nm);
 
+        pyviSectionPush(f_n, data.probs);
+
         if (error_E < TOL && error_fn < TOL)
         {
 
@@ -76,13 +78,13 @@ int main()
             break;
         }
 
-        pyviSectionPush(f_n, data.probs);
-
         if (iter == ITER_MAX - 1) printf("Max Iterations reached!\n");
     }
     pyviWrite(vis);
     printNL();
     vecPrint(data.probs);
+
+    freePyVi(&vis);
     // int status = system("python3 visualise/visualise.py");
 }
 /*
