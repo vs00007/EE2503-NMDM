@@ -1,13 +1,13 @@
 [Oxide]
-length               = 1e-9  # Length in m
+length               = 1e-8  # Length in m
 relative_permitivity = 3.9   # Dimensionless
 v_top                = 1     # in Volts
 v_bottom             = 0     # in Volts
 temperature          = 300   # in Kelvin
-electron_affinity    = 0.9   # in eV\
+electron_affinity    = 1.39   # in eV\
 
 [Oxide.traps]
-locations            = [0.01, 0.1, 0.5, 0.61, 0.71] # Value between 0 and 1 (Relative to the oxide thickness)
+locations            = [0.1, 0.2, 0.5, 0.61, 0.71] # Value between 0 and 1 (Relative to the oxide thickness)
 occ_probs            = [0, 0, 0, 0, 0]              # Please input probabilities between 0 and 1
 
 [Oxide.transport]

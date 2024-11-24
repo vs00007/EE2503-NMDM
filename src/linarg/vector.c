@@ -81,9 +81,9 @@ void printVecUnits(Vec f_n, char a)
     printf("[");
     for(size_t i = 0; i < f_n.len - 1; i++)
     {
-        printf("%.10f%c, ", LA_VIDX(f_n, i), a);
+        printf("%g%c, ", LA_VIDX(f_n, i), a);
     }
-    printf("%.10f%c]\n", LA_VIDX(f_n, f_n.len - 1), a);
+    printf("%g%c]\n", LA_VIDX(f_n, f_n.len - 1), a);
 }
 
 // gets the nth value in a vector

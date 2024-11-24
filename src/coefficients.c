@@ -37,11 +37,8 @@ Mat2d matrix_E_n(InputData input_data, Vec mesh)
 
     Mat2d Mat_E_n = mat2DInitZerosA(len,len);
 
-    Vec fn = input_data.probs;
-    Vec d1 = input_data.locs;
-    OxParams params_1 = input_data.params ;
-
-    Vec E = getGridNumE(input_data, mesh);
+    Vec E = poissonWrapper(input_data, mesh);
+    vecScale(Q, E, &E);
 
     size_t i,j ;
     for(i = 0; i < len ; i++){

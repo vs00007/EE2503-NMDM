@@ -350,12 +350,13 @@ Vec getGridNumE(InputData data, Vec mesh)
     for(size_t i = 0; i < gridV.len; i++)
     {
         // EC = -qV - χ
-        double EC_val = -Q * vecGet(gridV, i) - (data.params.electron_affinity * Q);
+        double EC_val = -Q * (vecGet(gridV, i) - (data.params.electron_affinity));
         *vecRef(EC, i) = EC_val;
     }
+    printVecUnits(EC, 'eV');
+
     return EC;
 }
-
 void printNL()
 {
     printf("\n");
