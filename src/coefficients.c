@@ -124,8 +124,6 @@ Mat2d R_en(InputData input_data, Vec mesh)
     double k = 1 ;
     double q = -1.6e-19 ;
     
-    size_t i = 0 ;
-    double t = 0;
     Vec fn = input_data.probs ;
     Vec d1 = input_data.locs ;
     OxParams params_1 = input_data.params ;
@@ -134,16 +132,16 @@ Mat2d R_en(InputData input_data, Vec mesh)
     //Top electrode
     double V_0 = input_data.params.V_0 ;
 
-    for(i = 0 ; i < len ; i++){
-        t = transmission_param(d.x[i] , input_data , V_0) ;
+    for(size_t i = 0 ; i < len ; i++){
+        double t = 1.0; //transmission_param(d.x[i] , input_data , V_0) ;
         *mat2DRef(mat_R, i, 0) = k*t*kb_T*log(1 + exp(E.x[i] + q*V_0 )) ;
     }
 
     // Bottom electrode
     double V_L = input_data.params.V_L ;
 
-    for(i = 0 ; i < len ; i++){
-        t = transmission_param(d.x[i] , input_data , V_L) ;
+    for(size_t i = 0 ; i < len ; i++){
+        double t = 1.0; //transmission_param(d.x[i] , input_data , V_L) ;
         *mat2DRef(mat_R, i, 1) = k * t * kb_T * log(1 + exp(E.x[i] + q * V_L )) ;
     }
     return mat_R ;

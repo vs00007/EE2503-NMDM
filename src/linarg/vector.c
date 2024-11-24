@@ -207,6 +207,21 @@ double vecMax(Vec a)
 
     return result;
 }
+// maximum abs value in the vector, prints error if input is invalid
+double vecMaxAbs(Vec a)
+{
+    LINALG_ASSERT_ERROR(!a.x, NAN, "input vector is null!");
+    LINALG_ASSERT_WARN(a.len == 0, INFINITY, "max of a zero dimension vector");
+
+    double result = -INFINITY;
+
+    for(size_t i = 0; i < a.len; i++)
+    {
+        result = fabs(result) > LA_VIDX(a, i) ? result : LA_VIDX(a, i);
+    }
+
+    return result;
+}
 // minimum value in the vector
 double vecMin(Vec a)
 {
@@ -291,6 +306,20 @@ double vecStandardDeviation(Vec a)
     for(size_t i = 0; i < a.len; i++) dev += fabs(LA_VIDX(a, i) - mean);
 
     return dev / (double)a.len;
+}
+
+// returns LINALG_OK if vec contains a nan
+int vecContainsNan(Vec a)
+{
+    LINALG_ASSERT_ERROR(!a.x, 0, "input vector is null!");
+    LINALG_ASSERT_WARN(a.len == 0, 0, "checking a zero dimension vector");
+
+    for(size_t i = 0; i < a.len; i++)
+    {
+        if(isnan(LA_VIDX(a, i))) return 1;
+    }
+
+    return 0;
 }
 
 // free the vector on the heap

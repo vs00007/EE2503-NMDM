@@ -110,6 +110,8 @@ double vecMagnitude(Vec a);
 double vecNorm(Vec a, double p);
 // maximum value in the vector, prints error if input is invalid
 double vecMax(Vec a);
+// maximum abs value in the vector, prints error if input is invalid
+double vecMaxAbs(Vec a);
 // minimum value in the vector, prints error if input is invalid
 double vecMin(Vec a);
 // sum all values in a vector
@@ -124,6 +126,9 @@ double vecRangeRelative(Vec a);
 // get the standard deviation of the vector
 // NOTE: if you need to check if vector is (relatively) constant, use vecRangeRelative instead
 double vecStandardDeviation(Vec a);
+
+// returns 1 if vec contains a nan
+int vecContainsNan(Vec a);
 
 // free the vector on the heap
 void freeVec(Vec* vec);
@@ -204,8 +209,13 @@ int mat2DTranspose(Mat2d A, Mat2d* result);
 
 // maximum value in the matrix, prints error if input is invalid
 double mat2DMax(Mat2d a);
+// maximum abs value in the matrix, prints error if input is invalid
+double mat2DMaxAbs(Mat2d a);
 // minimum value in the matrix, prints error if input is invalid
 double mat2DMin(Mat2d a);
+
+// returns 1 if matrix contains nan
+int mat2DContainsNan(Mat2d a);
 
 // free the matrix on the heap
 void freeMat2D(Mat2d* mat);

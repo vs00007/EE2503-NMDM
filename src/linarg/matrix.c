@@ -258,6 +258,18 @@ double mat2DMax(Mat2d a)
 
     return max_value;
 }
+// maximum abs value in the matrix, prints error if input is invalid
+double mat2DMaxAbs(Mat2d a)
+{
+    LINALG_ASSERT_ERROR(!a.mat, NAN, "input matrix is null!");
+    LINALG_ASSERT_WARN(a.rows*a.cols == 0, -INFINITY, "input matrix is null!");
+
+    double max_value = -INFINITY;
+
+    for(size_t i = 0; i < a.rows*a.cols; i++) max_value = max_value > fabs(a.mat[i]) ? max_value : fabs(a.mat[i]);
+
+    return max_value;
+}
 // minimum value in the matrix, prints error if input is invalid
 double mat2DMin(Mat2d a)
 {
@@ -269,6 +281,20 @@ double mat2DMin(Mat2d a)
     for(size_t i = 0; i < a.rows*a.cols; i++) min_value = min_value < a.mat[i] ? min_value : a.mat[i];
 
     return min_value;
+}
+
+// returns 1 if matrix contains nan
+int mat2DContainsNan(Mat2d a)
+{
+    LINALG_ASSERT_ERROR(!a.mat, 0, "input matrix is null!");
+    LINALG_ASSERT_WARN(a.rows*a.cols == 0, 0, "input matrix is null!");
+
+    for(size_t i = 0; i < a.rows*a.cols; i++)
+    {
+        if(isnan(a.mat[i])) return 1;
+    }
+
+    return 0;
 }
 
 // free the matrix on the heap
@@ -299,7 +325,7 @@ MatTD matTDinitA(size_t len)
     mat.sub = a;
     mat.sup = c;
 
-    MatTD bad_mat = (MatTD){{NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
+    //MatTD bad_mat = (MatTD){{NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
     // LINALG_ASSERT_ERROR((!b.x || !a.x || !c.x), (MatTD){NULL, NULL, NULL}, "unkown error occured when allocation memory!"); 
 
     for(size_t i = 0; i < a.len; i++) a.x[i] = 0;

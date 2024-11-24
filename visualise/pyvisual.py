@@ -150,7 +150,7 @@ class PyVi:
             draw_nplot(self)
         
         def prev_plot(self, event):
-            self.i = self.i - 1
+            self.curr_i = self.curr_i - 1
             draw_nplot(self)
 
         def nxt_iter(self : PyVi, event):
