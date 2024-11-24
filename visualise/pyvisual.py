@@ -123,7 +123,7 @@ class PyVi:
         
         p, = plt.plot(self.params[section.param], section.iterations[self.curr_iter], color=ccolor)
 
-        ax.title.set_text(f'{section.name}')
+        ax.title.set_text(f'{section.name} at iteration={self.curr_iter}')
         ax.set_xlabel(f'{section.param}')
         ax.set_ylabel(f'{section.name}')
 
@@ -139,7 +139,7 @@ class PyVi:
             ax.relim()
             ax.autoscale_view(True,True,True)
 
-            ax.title.set_text(f'{section.name}') 
+            ax.title.set_text(f'{section.name} at iteration={self.curr_iter}') 
             ax.set_xlabel(f'{section.param}')
             ax.set_ylabel(f'{section.name}')
 
