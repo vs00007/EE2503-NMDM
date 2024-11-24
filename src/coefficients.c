@@ -15,13 +15,12 @@ double d_nm(size_t n , size_t m , InputData input_data)
 
 Mat2d matrix_d_nm(InputData input_data)
 {
-    size_t len = input_data.params.num_traps ;
-    size_t i,j ;
+    size_t len = input_data.params.num_traps;
     Mat2d Mat_d_nm = mat2DInitZerosA(len,len); 
 
-    for(i=0;i<len;i++)
+    for(size_t i=0;i<len;i++)
     {
-        for(j=0;j<len;j++)
+        for(size_t j=0;j<len;j++)
         {
             *mat2DRef(Mat_d_nm, i, j) = d_nm(i , j , input_data) ;
         }
@@ -40,9 +39,8 @@ Mat2d matrix_E_n(InputData input_data, Vec mesh)
     Vec E = poissonWrapper(input_data, mesh);
     vecScale(Q, E, &E);
 
-    size_t i,j ;
-    for(i = 0; i < len ; i++){
-        for(j = 0; j < len ; j++){
+    for(size_t i = 0; i < len ; i++){
+        for(size_t j = 0; j < len ; j++){
             *mat2DRef(Mat_E_n, i, j) = E.x[i] - E.x[j] ;
         }
     }
@@ -70,12 +68,11 @@ Mat2d matrix_r_nm(InputData input_data , Mat2d mat_E , Mat2d mat_d)
     then pass them to functions instead of using the functions repeatedly in each function*/
 
     size_t len = input_data.params.num_traps ;
-    size_t i , j ; 
 
     Mat2d mat_r = mat2DInitZerosA(len, len);
 
-    for(i = 0; i < len; i++){
-        for(j = 0; j < len; j++){
+    for(size_t i = 0; i < len; i++){
+        for(size_t j = 0; j < len; j++){
             *mat2DRef(mat_r, i, j) = r_nm(input_data, mat_E , mat_d , i,j);
         }
     }
