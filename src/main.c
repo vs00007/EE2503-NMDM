@@ -9,9 +9,10 @@ int main()
     return 0;
 #endif
     InputData data = getInput("data/input-params.toml");
+    printInputData(&data);
     Vec mesh = generateMesh(data.locs, data.params);
-    // printNL();
-    // vecPrint(mesh);
+    printNL();
+    printf("V_top = %g\n", data.params.V_L);
 
     PyVi vis = pyviInitA("data/visualise.pyvi");
     PyViParameter x_vi = pyviCreateParameter(&vis, "d", data.locs);
@@ -33,6 +34,10 @@ int main()
     Mat2d update_E = mat2DInitZerosA(dim, dim);
     size_t iter = 0;
     Vec V = poissonWrapper(data, mesh);
+
+    mat2DPrint(E_nm);
+    mat2DPrint(d_nm);
+
     while (iter ++ < ITER_MAX)
     {
         V = poissonWrapper(data, mesh);
@@ -54,7 +59,7 @@ int main()
         if (error_E < TOL && error_fn < TOL)
         {
 
-            printf("Successful! Iter count : %zu\n", iter);
+            printf("YAY! Steady state converged ... in ... Iter count : %zu\n", iter);
             break;
         }
 
@@ -65,7 +70,7 @@ int main()
     pyviWrite(vis);
     printNL();
     vecPrint(data.probs);
-
+    // int status = system("python3 visualise/visualise.py");
 }
 /*
 * TODO List:

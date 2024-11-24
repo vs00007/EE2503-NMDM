@@ -37,11 +37,8 @@ Mat2d matrix_E_n(InputData input_data, Vec mesh)
 
     Mat2d Mat_E_n = mat2DInitZerosA(len,len);
 
-    Vec fn = input_data.probs;
-    Vec d1 = input_data.locs;
-    OxParams params_1 = input_data.params ;
-
-    Vec E = getGridNumE(input_data, mesh);
+    Vec E = poissonWrapper(input_data, mesh);
+    vecScale(Q, E, &E);
 
     size_t i,j ;
     for(i = 0; i < len ; i++){
@@ -126,9 +123,7 @@ Mat2d R_en(InputData input_data, Vec mesh)
     
     size_t i = 0 ;
     double t = 0;
-    Vec fn = input_data.probs ;
-    Vec d1 = input_data.locs ;
-    OxParams params_1 = input_data.params ;
+
     Vec E = getGridNumE(input_data, mesh);
 
     //Top electrode
@@ -136,7 +131,7 @@ Mat2d R_en(InputData input_data, Vec mesh)
 
     for(i = 0 ; i < len ; i++){
         t = transmission_param(d.x[i] , input_data , V_0) ;
-        *mat2DRef(mat_R, i, 0) = k*t*kb_T*log(1 + exp(E.x[i] + q*V_0 )) ;
+        *mat2DRef(mat_R, i, 0) = k * t * kb_T * log(1 + exp(E.x[i] + q*V_0 )) ;
     }
 
     // Bottom electrode

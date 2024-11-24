@@ -407,7 +407,7 @@ void testMeshGen()
 
 
     Vec f_n = vecInitOnesA(d.len);
-    randF(f_n, 0, 1, 0);
+    randF(f_n, 1e-7, 1e-6, 0);
 
     InputData data = {.params = {.L = 1e-9, .V_0 = 1, .eps_r = 11.7, .chunk_size = 10}};
     // *vecRef(d, 0) = 0.33 * data.params.L;
@@ -453,7 +453,7 @@ void testMeshGen()
 
     pyviSectionPush(sec, sol);
     pyviWrite(vis);
-
+    system("python3 visualise/visualise.py");
     // freeVec(&sol), freeVec(&sol2), freeVec(&mesh), freeVec(&f_n), freeVec(&d);
 }
 
