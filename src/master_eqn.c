@@ -1,4 +1,3 @@
-#pragma once
 #include<include/master.h>
 
 Vec f(double t, Vec y){
