@@ -50,13 +50,13 @@ int parse_toml_file(const char* filename, OxParams* params, Vec* locations, Vec*
         toml_free(conf);
         return -1;
     }
-    params->V_0 = strtod(raw_v_bottom, &endptr);
+    params->V_L = strtod(raw_v_bottom, &endptr);
     if (*endptr != '\0') {
         fprintf(stderr, "Invalid value for v_bottom\n");
         toml_free(conf);
         return -1;
     }
-    params->V_L = strtod(raw_v_top, &endptr);
+    params->V_0 = strtod(raw_v_top, &endptr);
     if (*endptr != '\0') {
         fprintf(stderr, "Invalid value for v_top\n");
         toml_free(conf);
@@ -83,47 +83,30 @@ int parse_toml_file(const char* filename, OxParams* params, Vec* locations, Vec*
     }
 
     toml_array_t* loc_array = toml_array_in(traps, "locations");
-    toml_array_t* prob_array = toml_array_in(traps, "occ_probs");
+  //  toml_array_t* prob_array = toml_array_in(traps, "occ_probs");
 
-    if (!loc_array || !prob_array) {
+    if (!loc_array) {
         fprintf(stderr, "Missing trap arrays\n");
         toml_free(conf);
         return -1;
     }
 
     size_t array_size = toml_array_nelem(loc_array);
-    if (array_size != (size_t)toml_array_nelem(prob_array)) {
-        fprintf(stderr, "Location and probability arrays must have same size\n");
-        toml_free(conf);
-        return -1;
-    }
+    // if (array_size != (size_t)toml_array_nelem(prob_array)) {
+    //     fprintf(stderr, "Location and probability arrays must have same size\n");
+    //     toml_free(conf);
+    //     return -1;
+    // }
 
     *locations = vecInitOnesA(array_size);
-    *occ_probs = vecInitOnesA(array_size);
+    *occ_probs = vecInitZerosA(array_size);
 
     for (size_t i = 0; i < array_size; i++) {
         const char* raw_loc = toml_raw_at(loc_array, i);
-        const char* raw_prob = toml_raw_at(prob_array, i);
-        
-        if (!raw_loc || !raw_prob) {
-            fprintf(stderr, "Error parsing array elements\n");
-            free(locations->x);
-            free(occ_probs->x);
-            toml_free(conf);
-            return -1;
-        }
 
         locations->x[i] = strtod(raw_loc, &endptr);
         if (*endptr != '\0') {
             fprintf(stderr, "Invalid value in locations array\n");
-            free(locations->x);
-            free(occ_probs->x);
-            toml_free(conf);
-            return -1;
-        }
-        occ_probs->x[i] = strtod(raw_prob, &endptr);
-        if (*endptr != '\0') {
-            fprintf(stderr, "Invalid value in occ_probs array\n");
             free(locations->x);
             free(occ_probs->x);
             toml_free(conf);
@@ -169,7 +152,7 @@ int parse_toml_file(const char* filename, OxParams* params, Vec* locations, Vec*
         fprintf(stderr, "Invalid value for relaxation distance\n");
         toml_free(conf);
         return -1;
-    }   
+    }
 
     params->num_traps = locations->len;
 

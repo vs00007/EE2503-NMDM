@@ -265,10 +265,11 @@ Vec constructB(Vec f_n, Vec d, Vec mesh, size_t chunk, OxParams params)
     {
         idx = i / chunk - 1;
         if (idx > d.len - 1) continue;
-        double diff = vecGet(mesh, i) - vecGet(mesh, i - 1);
+        double diff = (vecGet(mesh, i) - vecGet(mesh, i - 1)) ;
         double entry = vecGet(f_n, idx) * Q / ((params.eps_r * EPS0) * pow(diff, 3));
         if ((vecGet(d, idx) - vecGet(mesh, i)) == 0) *vecRef(b, i) = entry;
     }
+    *vecRef(b, b.len - 1) = params.V_L; 
     // printNL();
     // printNL();
     // vecPrint(b);

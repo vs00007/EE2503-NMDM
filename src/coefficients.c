@@ -127,7 +127,7 @@ Mat2d R_en(InputData input_data, Vec mesh)
     double V_0 = input_data.params.V_0 ;
 
     for(size_t i = 0 ; i < len ; i++){
-        double t = 1.0; //transmission_param(d.x[i] , input_data , V_0) ;
+        double t = transmission_param(d.x[i] , input_data , V_0) ;
         *mat2DRef(mat_R, i, 0) = k*t*kb_T*log(1 + exp(E.x[i] + q*V_0 )) ;
     }
 
@@ -135,7 +135,7 @@ Mat2d R_en(InputData input_data, Vec mesh)
     double V_L = input_data.params.V_L ;
 
     for(size_t i = 0 ; i < len ; i++){
-        double t = 1.0; //transmission_param(d.x[i] , input_data , V_L) ;
+        double t = transmission_param(d.x[i] , input_data , V_L) ;
         *mat2DRef(mat_R, i, 1) = k * t * kb_T * log(1 + exp(E.x[i] + q * V_L )) ;
     }
     return mat_R ;

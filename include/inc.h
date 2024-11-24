@@ -11,5 +11,5 @@
 #include <include/steadystate.h>
 #include <include/utils.h>
 
-#define ITER_MAX 100
+#define ITER_MAX 1000
 #define TOL 1e-11
