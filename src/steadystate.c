@@ -19,9 +19,9 @@ void vecMultiply(Vec a, Vec b, Vec* result){
 }
 
 //initializes the i+1, j+1 elements of jacobian matrix
-void jacobian_matrix(Mat2d matrix /*Initialize this matrix to 0*/, Mat2d coeffmatrix/*state to state transmission coefficients*/ , Vec R1 /*electrode 1 coefficients matrix*/, Vec R2 /*electrode 2 coefficients matrix*/,Vec f , int i, int j){
-    Vec one = vecInitOnesA(f.len);//remove this dumb
-    Vec fbar = vecInitZerosA(f.len);//remove this dumb
+void jacobianMatrix(Mat2d matrix /*Initialize this matrix to 0*/, Mat2d coeffmatrix/*state to state transmission coefficients*/ , Vec R1 /*electrode 1 coefficients matrix*/, Vec R2 /*electrode 2 coefficients matrix*/,Vec f , int i, int j){
+    Vec one = vecInitOnesA(f.len); //remove this dumb
+    Vec fbar = vecInitZerosA(f.len); //remove this dumb
     vecSub(one, f, &fbar);
     if(i == j){
         double abbar = vecDot(mat2DRow(coeffmatrix, i), fbar);
@@ -31,7 +31,7 @@ void jacobian_matrix(Mat2d matrix /*Initialize this matrix to 0*/, Mat2d coeffma
     else{
         *mat2DRef(matrix, i, j) = *mat2DRef(coeffmatrix, i, j)*VEC_INDEX(f, i) + *mat2DRef(coeffmatrix, j, i)*VEC_INDEX(fbar, i);
     }
-    freeVec(&one), freeVec(&fbar);//removed them dumb
+    freeVec(&one), freeVec(&fbar); //removed them dumb
 }
 
 //swaps a, b
@@ -42,7 +42,7 @@ void swap(double* a, double* b){
 }
 
 //swaps row1 with row2 for gaussian elimination
-void swap_rows(Mat2d A, Vec b, int row1, int row2){
+void swapRows(Mat2d A, Vec b, int row1, int row2){
     //matrix element swap
     for(size_t l = 0; l < A.rows; l++){
         swap(mat2DRef(A, row1, l), mat2DRef(A, row2, l));
@@ -64,19 +64,19 @@ int find_pivot_row(Mat2d A, int start_row, int column){
 }
 
 //does gaussian elimination
-void gaussian_elimination(Mat2d A/*jacobian matrix*/, Vec b/*coefficient vector*/){
+void gaussianElimination(Mat2d A/*jacobian matrix*/, Vec b/*coefficient vector*/){
     int pivot_row = 0;
     double pivot, factor;
 
     for(size_t i = 0; i < A.rows; i++){
         pivot_row = find_pivot_row(A, i, i);
         if(pivot_row != (int)i){
-            swap_rows(A, b, i, pivot_row);
+            swapRows(A, b, i, pivot_row);
         }
 
         pivot = *mat2DRef(A, i, i);
         if(fabs(pivot) < MIN_ERROR){
-            printf("The matrix is not good dumb fuck idiot. Be a OHIO SIGMA RIZZLER! don't be a NO GYAT BETA!");
+            printf("Bad Matrix!");
             return;
         }
         VEC_INDEX(b, i)/=pivot;
@@ -95,7 +95,7 @@ void gaussian_elimination(Mat2d A/*jacobian matrix*/, Vec b/*coefficient vector*
 }
 
 //does backsubstitutin for gaussian elimination
-void back_substitutionA(Mat2d A, Vec b, Vec* x){
+void backSubsA(Mat2d A, Vec b, Vec* x){
     for(int i = A.cols - 1; i >= 0; i--){
         VEC_INDEX(*x, i) = VEC_INDEX(b, i);
         for(size_t j = i+1; j < A.rows; j++){
@@ -104,15 +104,27 @@ void back_substitutionA(Mat2d A, Vec b, Vec* x){
     }
 }
 
-Vec masterequationcoffA(Vec f, Vec R1, Vec R2, Mat2d coeffmatrix){
+Vec masterEquationCoeffA(Vec f, Vec R1, Vec R2, Mat2d coeffmatrix){
     Vec one = vecInitOnesA(f.len);//remove this dumb
     Vec fbar = vecInitZerosA(f.len);//remove this dumb
     Vec F = vecInitZerosA(f.len);
+
     vecSub(one, f, &fbar);
-    Vec f1 = vecInitZerosA(f.len), f2 = vecInitZerosA(f.len), f3 = vecInitZerosA(f.len), f4 = vecInitZerosA(f.len), f5 = vecInitZerosA(f.len), f6 = vecInitZerosA(f.len), f7 = vecInitZerosA(f.len), f8 = vecInitZerosA(f.len);//don't forget to free this dumb
+
+    Vec f1 = vecInitZerosA(f.len);
+    Vec f2 = vecInitZerosA(f.len);
+    Vec f3 = vecInitZerosA(f.len); 
+    Vec f4 = vecInitZerosA(f.len);
+    Vec f5 = vecInitZerosA(f.len);
+    Vec f6 = vecInitZerosA(f.len);
+    Vec f7 = vecInitZerosA(f.len);
+    Vec f8 = vecInitZerosA(f.len); //don't forget to free this dumb
+    
+    
     vecMultiply(R1, fbar, &f1);
     vecMultiply(R2, f, &f2);
     vecSub(f1, f2, &f8);
+
     Mat2d coeffmatrixTranspose = mat2DInitZerosA(coeffmatrix.cols, coeffmatrix.rows);
     mat2DTranspose(coeffmatrix, &coeffmatrixTranspose);
     mat2DTransform(coeffmatrix, fbar, &f3);
@@ -121,32 +133,33 @@ Vec masterequationcoffA(Vec f, Vec R1, Vec R2, Mat2d coeffmatrix){
     vecMultiply(f4, fbar, &f6);
     vecSub(f6, f5, &f7);
     vecAdd(f7, f8, &F);
+
     freeVec(&f1), freeVec(&f2), freeVec(&f3), freeVec(&f4), freeVec(&f5), freeVec(&f6), freeVec(&f7), freeVec(&f8);
+    freeVec(&one), freeVec(&fbar);
     freeMat2D(&coeffmatrixTranspose);
     return F;
 }
 
 //implements jacobian algorithm
-Vec jacobian_implementationA(Mat2d coeffmatrix, Vec R1, Vec R2){
+Vec jacobianImplementationA(Mat2d coeffmatrix, Vec R1, Vec R2){
     srand(time(NULL));
-    Mat2d matrix = mat2DInitZerosA(coeffmatrix.rows, coeffmatrix.cols);//don't forget to remove it dumb
-    Vec f = vecInitA(0.0000005, matrix.cols);//need it dumb
-    Vec F = vecInitA(0, matrix.cols);//need it dumb but can free it later
-    Vec delta_f = vecInitA(0.0000001, matrix.cols);//free it dumb
+    Mat2d matrix = mat2DInitZerosA(coeffmatrix.rows, coeffmatrix.cols); //don't forget to remove it dumb
+    Vec f = vecInitA(0.0000005, matrix.cols); //need it dumb
+    Vec F = vecInitA(0, matrix.cols); //need it dumb but can free it later
+    Vec delta_f = vecInitA(0.0000001, matrix.cols); //free it dumb
     while(fabs(vecMax(delta_f)) > MIN_ERROR){
         for(size_t i = 0; i < matrix.rows; i++){
             for(size_t j = 0; j < matrix.cols; j++){
-                jacobian_matrix(matrix, coeffmatrix, R1, R2, f, i, j);
+                jacobianMatrix(matrix, coeffmatrix, R1, R2, f, i, j);
             }
         }
-        F = masterequationcoffA(f, R1, R2, coeffmatrix);
-        gaussian_elimination(matrix, F);
-        back_substitutionA(matrix, F, &delta_f);
+        F = masterEquationCoeffA(f, R1, R2, coeffmatrix);
+        gaussianElimination(matrix, F);
+        backSubsA(matrix, F, &delta_f);
         vecSub(f, delta_f, &f);
     }
+    // vecPrint(f);
     freeVec(&F), freeVec(&delta_f);
     freeMat2D(&matrix);
     return f;
 }
-
-

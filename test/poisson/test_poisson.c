@@ -393,28 +393,36 @@ void testMeshGen()
     params.eps_r = 11.7;
     params.chunk_size = 100;
 
-    Vec d = vecInitZerosA(2);
-    // for (size_t i = 0; i < d.len; i++)
-    // {
-    //     d.x[i] = 0.5;
-    // }
-    *vecRef(d, 0) = 0.33;
-    *vecRef(d, 1) = 0.66;
+    Vec d = vecInitZerosA(5);
+    for (size_t i = 0; i < d.len; i++)
+    {
+        d.x[i] = (double)(i + 1) / 6;
+    }
 
     // vecScale(1.0/3 *1e-9, d, &d);
-    vecPrint(d);
-    printf("\n");
+    // vecPrint(d);
+    // printf("\n");
 
-    size_t chunk_size = 1000;
+    // size_t chunk_size = 1000;
 
 
     Vec f_n = vecInitOnesA(d.len);
-    f_n.x[0] = 0.5;
-    // randF(f_n, 1e9, 2e10, 0);
+    randF(f_n, 0, 1, 0);
 
-    InputData data = {.params = {.L = 1e-9, .V_0 = 1, .eps_r = 11.7, .chunk_size = 100}};
+    InputData data = {.params = {.L = 1e-9, .V_0 = 1, .eps_r = 11.7, .chunk_size = 10}};
+    // *vecRef(d, 0) = 0.33 * data.params.L;
+    // *vecRef(d, 1) = 0.66 * data.params.L;
+
+    // printNL();
+    // vecPrint(d);
+    // printNL();
+
     vecScale(data.params.L, d, &d);
 
+    printNL();
+    vecPrint(d);
+    printNL();
+    
     Vec mesh = generateMesh(d, data.params);
     
     printNL();
@@ -423,23 +431,30 @@ void testMeshGen()
 
     PyViParameter param = pyviCreateParameter(&vis, "x", mesh);
     PyViSection * sec = pyviCreateSection(&vis, "Voltage", param);
-
+    // PyViSection * analytical = pyviCreateSection(&vis, "Analytical Solution", param);
     data.locs = d;
     data.probs = f_n;
 
-    printNL();
-    vecPrint(data.probs);
-    printNL();
-
-    Vec sol = poissonWrapper(data, data.params.chunk_size);
-
     // printNL();
-    // vecPrint(sol);
+    // vecPrint(data.probs);
     // printNL();
+    // vecPrint(data.locs);
+    // printNL();
+
+    Vec sol = poissonWrapper(data, mesh);
+    // pyviSectionPush(analytical, solA);
+    Vec sol2 = getGridNumV(data, mesh);
+
+    printNL();
+    vecPrint(sol);
+    printNL();
+    vecPrint(sol2);
+    printNL();
 
     pyviSectionPush(sec, sol);
     pyviWrite(vis);
 
+    // freeVec(&sol), freeVec(&sol2), freeVec(&mesh), freeVec(&f_n), freeVec(&d);
 }
 
 void testSolver()

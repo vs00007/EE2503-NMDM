@@ -21,8 +21,8 @@ int run_all_tests()
     // test_toml();
     // testmaster();
     // test_interpolation();
-    // testMeshGen();
-    testSteadystate();
+    testMeshGen();
+    // testSteadystate();
     // testSolver();
 
 

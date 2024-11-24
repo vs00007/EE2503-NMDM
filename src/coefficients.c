@@ -10,7 +10,7 @@
 
 double d_nm(size_t n , size_t m , InputData input_data) 
 {
-    return fabs(input_data.locs.x[n] - input_data.locs.x[n]) ;
+    return fabs(input_data.locs.x[n] - input_data.locs.x[m]) ;
 }
 
 Mat2d matrix_d_nm(InputData input_data)
@@ -23,7 +23,7 @@ Mat2d matrix_d_nm(InputData input_data)
     {
         for(j=0;j<len;j++)
         {
-            Mat_d_nm.mat[i*len + j] = d_nm(i , j , input_data) ;
+            *mat2DRef(Mat_d_nm, i, j) = d_nm(i , j , input_data) ;
         }
     }
 
@@ -31,22 +31,22 @@ Mat2d matrix_d_nm(InputData input_data)
 }
 
 
-Mat2d matrix_E_n(InputData input_data)
+Mat2d matrix_E_n(InputData input_data, Vec mesh)
 {
     size_t len = input_data.params.num_traps;
 
     Mat2d Mat_E_n = mat2DInitZerosA(len,len);
 
-    Vec fn = input_data.probs ;
-    Vec d1 = input_data.locs ;
+    Vec fn = input_data.probs;
+    Vec d1 = input_data.locs;
     OxParams params_1 = input_data.params ;
 
-    Vec E = getGridE(fn , d1 , params_1);
+    Vec E = getGridNumE(input_data, mesh);
 
     size_t i,j ;
-    for(i=0;i<len ; i++){
-        for(j=0; j<len ; j++){
-            Mat_E_n.mat[i*len + j] = E.x[i] - E.x[j] ;
+    for(i = 0; i < len ; i++){
+        for(j = 0; j < len ; j++){
+            *mat2DRef(Mat_E_n, i, j) = E.x[i] - E.x[j] ;
         }
     }
 
@@ -77,9 +77,9 @@ Mat2d matrix_r_nm(InputData input_data , Mat2d mat_E , Mat2d mat_d)
 
     Mat2d mat_r = mat2DInitZerosA(len, len);
 
-    for(i=0;i<len;i++){
-        for(j=0;j<len;j++){
-            mat_r.mat[len*i + j] = r_nm(input_data, mat_E , mat_d , i,j);
+    for(i = 0; i < len; i++){
+        for(j = 0; j < len; j++){
+            *mat2DRef(mat_r, i, j) = r_nm(input_data, mat_E , mat_d , i,j);
         }
     }
     return mat_r ;
@@ -93,7 +93,7 @@ double transmission_param(double T_b , InputData input_data , double V_electrode
     double E_A = input_data.params.electron_affinity ;
 
     Vec mesh = generateMesh( input_data.locs ,input_data.params);
-    Vec V_x = poissonWrapper(input_data , input_data.params.chunk_size) ;
+    Vec V_x = poissonWrapper(input_data, mesh) ;
     
     size_t i = 0;
     double T_exp= 0 ;
@@ -104,18 +104,18 @@ double transmission_param(double T_b , InputData input_data , double V_electrode
 
     while(mesh.x[i] <= T_b){
         double E = -q*V_x.x[i] + E_A ;
-        if(mesh.x[i] > d_now.x[j+1] && j< (input_data.params.num_traps - 1)){
+        if(mesh.x[i] > d_now.x[ j + 1 ] && j< (input_data.params.num_traps - 1)){
             j++ ;
-            delta = (d_now.x[j+1] - d_now.x[j])/band ;
+            delta = (d_now.x[ j + 1 ] - d_now.x[j])/band ;
         }     
         // E = -qVa everywhere
         T_exp += sqrt(m*(E + q*V_electrode))*delta ;
         i++ ;
     }
-    return exp((-2*T_exp)/h_bar) ;
+    return exp((-2 * T_exp) / h_bar) ;
 }
 
-Mat2d R_en(InputData input_data)
+Mat2d R_en(InputData input_data, Vec mesh)
 {
     double kb_T = 1.38*1e-23*input_data.params.temp ;
     size_t len = input_data.params.num_traps ;
@@ -129,14 +129,14 @@ Mat2d R_en(InputData input_data)
     Vec fn = input_data.probs ;
     Vec d1 = input_data.locs ;
     OxParams params_1 = input_data.params ;
-    Vec E = getGridE(fn , d1 , params_1);
+    Vec E = getGridNumE(input_data, mesh);
 
     //Top electrode
     double V_0 = input_data.params.V_0 ;
 
     for(i = 0 ; i < len ; i++){
         t = transmission_param(d.x[i] , input_data , V_0) ;
-        mat_R.mat[i*2] = k*t*kb_T*log(1 + exp(E.x[i] + q*V_0 )) ;
+        *mat2DRef(mat_R, i, 0) = k*t*kb_T*log(1 + exp(E.x[i] + q*V_0 )) ;
     }
 
     // Bottom electrode
@@ -144,7 +144,7 @@ Mat2d R_en(InputData input_data)
 
     for(i = 0 ; i < len ; i++){
         t = transmission_param(d.x[i] , input_data , V_L) ;
-        mat_R.mat[i*2 + 1] = k*t*kb_T*log(1 + exp(E.x[i] + q*V_L )) ;
+        *mat2DRef(mat_R, i, 1) = k * t * kb_T * log(1 + exp(E.x[i] + q * V_L )) ;
     }
     return mat_R ;
 }

@@ -12,9 +12,9 @@ int testSteadystate(){
 
     Vec R1 = vecInitA(value1, coeffmatrix.cols);
     Vec R2 = vecInitA(value2, coeffmatrix.cols);
-    Vec f = jacobian_implementationA(coeffmatrix, R1, R2);    
+    Vec f = jacobianImplementationA(coeffmatrix, R1, R2);    
     vecPrint(f);
-    Vec F = masterequationcoffA(f, R1, R2, coeffmatrix);
+    Vec F = masterEquationCoeffA(f, R1, R2, coeffmatrix);
     vecPrint(F);
-    return;
+    return 0;
 }

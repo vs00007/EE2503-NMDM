@@ -8,7 +8,7 @@ double analyticalPoissonSol(const Vec f_n, const Vec d, double x)
     {
         double r_i = fabs(d.x[i] - x);
 
-        if (r_i < TOL)
+        if (r_i < 1e-15)
         {
             printf("\nSkipping charge at %e.\n", r_i);
             continue;
@@ -265,8 +265,8 @@ Vec constructB(Vec f_n, Vec d, Vec mesh, size_t chunk, OxParams params)
     {
         idx = i / chunk - 1;
         if (idx > d.len - 1) continue;
-
-        double entry = vecGet(f_n, idx) * Q / ((params.eps_r * EPS0) * (vecGet(mesh, i)));
+        double diff = vecGet(mesh, i) - vecGet(mesh, i - 1);
+        double entry = vecGet(f_n, idx) * Q / ((params.eps_r * EPS0) * pow(diff, 3));
         if ((vecGet(d, idx) - vecGet(mesh, i)) == 0) *vecRef(b, i) = entry;
     }
     // printNL();
@@ -311,41 +311,49 @@ Vec numSolveV(MatTD mat, Vec b)
     return sol;
 }
 
-Vec  poissonWrapper(InputData data, size_t chunk_size_dummy)
+Vec  poissonWrapper(InputData data, Vec mesh)
 {
-    Vec mesh = generateMesh(data.locs, data.params);
-    size_t chunk_size = data.params.chunk_size;
-
-    // printNL();
-    // vecPrint(mesh);
-    // printNL();
-
     MatTD jcob = generateJacobian(mesh);
 
-    // printNL();
-    // vecPrint(jcob.main);
-    // printNL();
-    // printNL();
-    // vecPrint(jcob.sup);
-    // printNL();
-    // printNL();
-    // vecPrint(jcob.sub);
-    // printNL();
-
-    Vec b = constructB(data.probs, data.locs, mesh, chunk_size, data.params);
-
-    // printNL();
-    // vecPrint(b);
-    // printNL();
+    Vec b = constructB(data.probs, data.locs, mesh, data.params.chunk_size, data.params);
 
     Vec sol = numSolveV(jcob, b);
 
-    freeVec(&mesh);
     freeVec(&jcob.main);
     freeVec(&jcob.sub);
     freeVec(&jcob.sup);
     freeVec(&b);
+
     return sol;
+}
+
+Vec getGridNumV(InputData data, Vec mesh)
+{
+    Vec numSol = poissonWrapper(data, mesh);
+    Vec gridV = vecInitA(0, data.locs.len);
+    size_t idx = 0;
+    for (size_t i = 0; i < mesh.len; i ++)
+    {
+        idx = i / data.params.chunk_size - 1;
+        if (idx > data.locs.len - 1) continue;
+        if ((vecGet(data.locs, idx) - vecGet(mesh, i)) == 0) *vecRef(gridV, idx) = vecGet(numSol, i);
+    }
+    freeVec(&numSol);
+    return gridV;
+}
+
+Vec getGridNumE(InputData data, Vec mesh)
+{
+    Vec gridV = getGridNumV(data, mesh);
+    Vec EC = vecInitA(0, gridV.len);
+    
+    for(size_t i = 0; i < gridV.len; i++)
+    {
+        // EC = -qV - χ
+        double EC_val = -Q * vecGet(gridV, i) - (data.params.electron_affinity * Q);
+        *vecRef(EC, i) = EC_val;
+    }
+    return EC;
 }
 
 void printNL()

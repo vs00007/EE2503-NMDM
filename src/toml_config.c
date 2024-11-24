@@ -27,14 +27,17 @@ int parse_toml_file(const char* filename, OxParams* params, Vec* locations, Vec*
     const char* raw_rel_perm = toml_raw_in(oxide, "relative_permitivity");
     const char* raw_v_top = toml_raw_in(oxide, "v_top");
     const char* raw_v_bottom = toml_raw_in(oxide, "v_bottom");
+    const char* raw_temp = toml_raw_in(oxide, "temperature");
+    const char* raw_affinity = toml_raw_in(oxide, "electron_affinity");
 
-    if (!raw_length || !raw_rel_perm || !raw_v_top || !raw_v_bottom) {
+    if (!raw_length || !raw_rel_perm || !raw_v_top || !raw_v_bottom || !raw_temp || !raw_affinity) {
         fprintf(stderr, "Missing required oxide parameters\n");
         toml_free(conf);
         return -1;
     }
 
     char* endptr;
+    
     params->L = strtod(raw_length, &endptr);
     if (*endptr != '\0') {
         fprintf(stderr, "Invalid value for length\n");
@@ -59,6 +62,18 @@ int parse_toml_file(const char* filename, OxParams* params, Vec* locations, Vec*
         toml_free(conf);
         return -1;
     }
+    params->temp = strtod(raw_temp, &endptr);
+    if (*endptr != '\0') {
+        fprintf(stderr, "Invalid value for temperature\n");
+        toml_free(conf);
+        return -1;
+    }
+    params->electron_affinity = strtod(raw_affinity, &endptr);
+    if (*endptr != '\0') {
+        fprintf(stderr, "Invalid value for electron_affinity\n");
+        toml_free(conf);
+        return -1;
+    }
 
     toml_table_t* traps = toml_table_in(oxide, "traps");
     if (!traps) {
@@ -67,7 +82,6 @@ int parse_toml_file(const char* filename, OxParams* params, Vec* locations, Vec*
         return -1;
     }
 
-    // Parse trap arrays
     toml_array_t* loc_array = toml_array_in(traps, "locations");
     toml_array_t* prob_array = toml_array_in(traps, "occ_probs");
 
@@ -77,7 +91,6 @@ int parse_toml_file(const char* filename, OxParams* params, Vec* locations, Vec*
         return -1;
     }
 
-    // Get array sizes
     size_t array_size = toml_array_nelem(loc_array);
     if (array_size != (size_t)toml_array_nelem(prob_array)) {
         fprintf(stderr, "Location and probability arrays must have same size\n");
@@ -85,11 +98,9 @@ int parse_toml_file(const char* filename, OxParams* params, Vec* locations, Vec*
         return -1;
     }
 
-    // Initialize Vecs
     *locations = vecInitOnesA(array_size);
     *occ_probs = vecInitOnesA(array_size);
 
-    // Parse array elements
     for (size_t i = 0; i < array_size; i++) {
         const char* raw_loc = toml_raw_at(loc_array, i);
         const char* raw_prob = toml_raw_at(prob_array, i);
@@ -139,7 +150,7 @@ int parse_toml_file(const char* filename, OxParams* params, Vec* locations, Vec*
         return -1;
     }
 
-    params->m_eff = strtod(raw_m_eff, &endptr);
+    params->m_eff = Me * strtod(raw_m_eff, &endptr);
     if (*endptr != '\0') {
         fprintf(stderr, "Invalid value for effective Mass: m_eff\n");
         toml_free(conf);
@@ -158,9 +169,21 @@ int parse_toml_file(const char* filename, OxParams* params, Vec* locations, Vec*
         fprintf(stderr, "Invalid value for relaxation distance\n");
         toml_free(conf);
         return -1;
-    }
+    }   
 
     params->num_traps = locations->len;
+
+    toml_table_t* simParams = toml_table_in(oxide, "SimParams");
+   
+    const char * raw_chunk_size = toml_raw_in(simParams, "chunk_size");
+   
+    params->chunk_size = strtoul(raw_chunk_size, &endptr, 10);
+
+    if (*endptr != '\0') {
+        fprintf(stderr, "Invalid value for chunk size\n");
+        toml_free(conf);
+        return -1;
+    }  
 
     toml_free(conf);
     return 0;
@@ -183,3 +206,5 @@ InputData getInput(char *filename) {
 
     return data;
 }
+
+

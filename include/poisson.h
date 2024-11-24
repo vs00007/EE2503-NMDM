@@ -12,11 +12,10 @@
 #include <include/inputs.h>
 
 #define M_PI 3.14159265358979323846
-#define Q 1.602176634e-19
 #define M_PI 3.14159265358979323846	/* pi */
 #define K 1 / (4 * M_PI * 8.85418782e-12)
 #define EPS0 8.85418782e-12
-#define TOL 1e-10
+// #define TOL 1e-10
 
 // typedef struct OxParams 
 // {
@@ -172,6 +171,10 @@ MatTD generateJacobian(Vec mesh);
 
 Vec numSolveV(MatTD mat, Vec b);
 
-Vec poissonWrapper(InputData data, size_t chunk_size);
+Vec poissonWrapper(InputData data, Vec mesh);
+
+Vec getGridNumV(InputData data, Vec mesh);
+
+Vec getGridNumE(InputData data, Vec mesh);
 
 void printNL();

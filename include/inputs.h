@@ -6,6 +6,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define Q 1.602176634e-19
+#define Me 9.1093837139e-31
+
 typedef struct OxParams 
 {
     double V_0;
@@ -32,3 +35,5 @@ typedef struct InputData
 int parse_toml_file(const char* filename, OxParams* params, Vec* locations, Vec* occ_probs);
 
 InputData getInput(char *filename);
+
+void printParams(OxParams p);

@@ -33,13 +33,13 @@ This function returns the energies $E_n$ of the traps, if the inputs are valid. 
         return;
     }
 
-    // Print the results
+    // Print the results - only if you want 
     printf("Trap energies calculated successfully.\n");
     printf("Number of traps: %zu\n", E_n.len);
     printf("Energies: ");
     printVecUnits(E_n, 'E'); // E for eV 
 
-    //Whatever you're doing before end
+    //Whatever you're doing afterwards
     freeVec(&E_n);
 
 ```
