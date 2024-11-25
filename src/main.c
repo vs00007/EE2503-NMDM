@@ -15,10 +15,11 @@ int main()
     printf("V_top = %g\n", data.params.V_L);
 
     PyVi vis = pyviInitA("data/visualise.pyvi");
-    PyViParameter x_vi = pyviCreateParameter(&vis, "d", data.locs);
-    PyViSection *f_n = pyviCreateSection(&vis, "f_n", x_vi);
-    PyViParameter meshvi = pyviCreateParameter(&vis, "mesh", mesh);
-    PyViSection *V_vi = pyviCreateSection(&vis, "Voltage", meshvi);
+    PyViBase x_vi = pyviCreateParameter(&vis, "d", data.locs);
+    PyViSec  f_n  = pyviCreateSection(&vis, "f_n", x_vi);
+    
+    PyViBase meshvi = pyviCreateParameter(&vis, "mesh", mesh);
+    PyViSec  V_vi   = pyviCreateSection(&vis, "Voltage", meshvi);
 
     Mat2d R = R_en(data, mesh);
     Vec R1 = mat2DCol(R, 0);
@@ -30,31 +31,45 @@ int main()
     Mat2d d_nm = matrix_d_nm(data);
     Mat2d coefficientMatrix = matrix_r_nm(data, E_nm, d_nm);
 
-    Vec update_fn = vecInitZerosA(dim);
-    Mat2d update_E = mat2DInitZerosA(dim, dim);
-    size_t iter = 0;
+    Vec delta_fn = vecInitZerosA(dim);
+    Mat2d delta_E = mat2DInitZerosA(dim, dim);
     Vec V = poissonWrapper(data, mesh);
-
-    mat2DPrint(E_nm);
-    mat2DPrint(d_nm);
-
-    while (iter ++ < ITER_MAX)
+    for(size_t iter = 0; iter < ITER_MAX; iter++)
     {
         V = poissonWrapper(data, mesh);
         pyviSectionPush(V_vi, V);
-        update_fn = data.probs;
-        update_E = E_nm;
 
+        // set to prev iter values
+        delta_fn = data.probs;
+        delta_E = E_nm;
+
+        // solve for fn
         data.probs = jacobianImplementationA(coefficientMatrix, R1, R2);
         E_nm = matrix_E_n(data, mesh);
-        d_nm = matrix_d_nm(data);
+        
+        // d_m doesn't change?
+        //d_nm = matrix_d_nm(data);
+        
         coefficientMatrix = matrix_r_nm(data, E_nm, d_nm);
         
-        mat2DSub(update_E, E_nm, &update_E);
-        vecSub(update_fn, data.probs, &update_fn);
+        mat2DSub(delta_E, E_nm, &delta_E);
+        vecSub(delta_fn, data.probs, &delta_fn);
 
-        double error_fn = vecNorm(update_fn, 2) / vecNorm(data.probs, 2);
-        double error_E = mat2DMax(update_E) / mat2DMax(E_nm);
+        if(mat2DContainsNan(E_nm))
+        {
+            printf("[Steady-State] Error: E_nm contains nan!\n");
+            break;
+        }
+        if(vecContainsNan(delta_fn))
+        {
+            printf("[Steady-State] Error: f_n contains nan!\n");
+            break;
+        }
+
+        double error_fn = vecNorm(delta_fn, 2) / vecNorm(data.probs, 2);
+        double error_E = mat2DMaxAbs(delta_E) / mat2DMaxAbs(E_nm);
+
+        pyviSectionPush(f_n, data.probs);
 
         if (error_E < TOL && error_fn < TOL)
         {
@@ -63,13 +78,13 @@ int main()
             break;
         }
 
-        pyviSectionPush(f_n, data.probs);
-
         if (iter == ITER_MAX - 1) printf("Max Iterations reached!\n");
     }
     pyviWrite(vis);
     printNL();
     vecPrint(data.probs);
+
+    freePyVi(&vis);
     // int status = system("python3 visualise/visualise.py");
 }
 /*

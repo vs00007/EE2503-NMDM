@@ -15,13 +15,12 @@ double d_nm(size_t n , size_t m , InputData input_data)
 
 Mat2d matrix_d_nm(InputData input_data)
 {
-    size_t len = input_data.params.num_traps ;
-    size_t i,j ;
+    size_t len = input_data.params.num_traps;
     Mat2d Mat_d_nm = mat2DInitZerosA(len,len); 
 
-    for(i=0;i<len;i++)
+    for(size_t i=0;i<len;i++)
     {
-        for(j=0;j<len;j++)
+        for(size_t j=0;j<len;j++)
         {
             *mat2DRef(Mat_d_nm, i, j) = d_nm(i , j , input_data) ;
         }
@@ -40,9 +39,8 @@ Mat2d matrix_E_n(InputData input_data, Vec mesh)
     Vec E = poissonWrapper(input_data, mesh);
     vecScale(Q, E, &E);
 
-    size_t i,j ;
-    for(i = 0; i < len ; i++){
-        for(j = 0; j < len ; j++){
+    for(size_t i = 0; i < len ; i++){
+        for(size_t j = 0; j < len ; j++){
             *mat2DRef(Mat_E_n, i, j) = E.x[i] - E.x[j] ;
         }
     }
@@ -70,12 +68,11 @@ Mat2d matrix_r_nm(InputData input_data , Mat2d mat_E , Mat2d mat_d)
     then pass them to functions instead of using the functions repeatedly in each function*/
 
     size_t len = input_data.params.num_traps ;
-    size_t i , j ; 
 
     Mat2d mat_r = mat2DInitZerosA(len, len);
 
-    for(i = 0; i < len; i++){
-        for(j = 0; j < len; j++){
+    for(size_t i = 0; i < len; i++){
+        for(size_t j = 0; j < len; j++){
             *mat2DRef(mat_r, i, j) = r_nm(input_data, mat_E , mat_d , i,j);
         }
     }
@@ -121,24 +118,24 @@ Mat2d R_en(InputData input_data, Vec mesh)
     double k = 1 ;
     double q = -1.6e-19 ;
     
-    size_t i = 0 ;
-    double t = 0;
-
+    Vec fn = input_data.probs ;
+    Vec d1 = input_data.locs ;
+    OxParams params_1 = input_data.params ;
     Vec E = getGridNumE(input_data, mesh);
 
     //Top electrode
     double V_0 = input_data.params.V_0 ;
 
-    for(i = 0 ; i < len ; i++){
-        t = transmission_param(d.x[i] , input_data , V_0) ;
-        *mat2DRef(mat_R, i, 0) = k * t * kb_T * log(1 + exp(E.x[i] + q*V_0 )) ;
+    for(size_t i = 0 ; i < len ; i++){
+        double t = transmission_param(d.x[i] , input_data , V_0) ;
+        *mat2DRef(mat_R, i, 0) = k*t*kb_T*log(1 + exp(E.x[i] + q*V_0 )) ;
     }
 
     // Bottom electrode
     double V_L = input_data.params.V_L ;
 
-    for(i = 0 ; i < len ; i++){
-        t = transmission_param(d.x[i] , input_data , V_L) ;
+    for(size_t i = 0 ; i < len ; i++){
+        double t = transmission_param(d.x[i] , input_data , V_L) ;
         *mat2DRef(mat_R, i, 1) = k * t * kb_T * log(1 + exp(E.x[i] + q * V_L )) ;
     }
     return mat_R ;

@@ -429,8 +429,8 @@ void testMeshGen()
     vecPrint(mesh);
     printNL();
 
-    PyViParameter param = pyviCreateParameter(&vis, "x", mesh);
-    PyViSection * sec = pyviCreateSection(&vis, "Voltage", param);
+    PyViBase param = pyviCreateParameter(&vis, "x", mesh);
+    PyViSec sec = pyviCreateSection(&vis, "Voltage", param);
     // PyViSection * analytical = pyviCreateSection(&vis, "Analytical Solution", param);
     data.locs = d;
     data.probs = f_n;
