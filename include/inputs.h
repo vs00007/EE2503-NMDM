@@ -36,8 +36,6 @@ int parse_toml_file(const char* filename, OxParams* params, Vec* locations, Vec*
 
 InputData getInput(char *filename);
 
-void printParams(OxParams p);
-
 void printOxParams(const OxParams* params);
 
 void printInputData(const InputData* data);

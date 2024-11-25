@@ -265,7 +265,7 @@ Vec constructB(Vec f_n, Vec d, Vec mesh, size_t chunk, OxParams params)
     {
         idx = i / chunk - 1;
         if (idx > d.len - 1) continue;
-        double diff = (vecGet(mesh, i) - vecGet(mesh, i - 1)) ;
+        double diff = 1e-12;
         double entry = vecGet(f_n, idx) * Q / ((params.eps_r * EPS0) * pow(diff, 3));
         if ((vecGet(d, idx) - vecGet(mesh, i)) == 0) *vecRef(b, i) = entry;
     }
@@ -312,7 +312,7 @@ Vec numSolveV(MatTD mat, Vec b)
     return sol;
 }
 
-Vec  poissonWrapper(InputData data, Vec mesh)
+Vec poissonWrapper(InputData data, Vec mesh)
 {
     MatTD jcob = generateJacobian(mesh);
 
@@ -332,6 +332,7 @@ Vec getGridNumV(InputData data, Vec mesh)
 {
     Vec numSol = poissonWrapper(data, mesh);
     Vec gridV = vecInitA(0, data.locs.len);
+    if (!gridV.x) printf("Allocation Failure!\n");
     size_t idx = 0;
     for (size_t i = 0; i < mesh.len; i ++)
     {

@@ -33,10 +33,11 @@ int main()
 
     Vec delta_fn = vecInitZerosA(dim);
     Mat2d delta_E = mat2DInitZerosA(dim, dim);
-    Vec V = poissonWrapper(data, mesh);
+    Vec V;
     for(size_t iter = 0; iter < ITER_MAX; iter++)
     {
         V = poissonWrapper(data, mesh);
+        vecPrint(V);
         pyviSectionPush(V_vi, V);
 
         // set to prev iter values
@@ -45,8 +46,11 @@ int main()
 
         // solve for fn
         data.probs = jacobianImplementationA(coefficientMatrix, R1, R2);
+        vecPrint(data.probs);
         E_nm = matrix_E_n(data, mesh);
         
+        mat2DPrint(E_nm);
+
         // d_m doesn't change?
         //d_nm = matrix_d_nm(data);
         
@@ -57,12 +61,12 @@ int main()
 
         if(mat2DContainsNan(E_nm))
         {
-            printf("[Steady-State] Error: E_nm contains nan!\n");
+            printf("[Steady-State] Error: E_nm contains nan! Iter : %zu\n", iter);
             break;
         }
         if(vecContainsNan(delta_fn))
         {
-            printf("[Steady-State] Error: f_n contains nan!\n");
+            printf("[Steady-State] Error: f_n contains nan! Iter : %zu\n", iter);
             break;
         }
 
@@ -91,31 +95,14 @@ int main()
 * TODO List:
 * ---------------------------------
 * 1. Input Handler (File Manager) - DONE - 5/11/2024
-*    - Read from data/input_params.txt
-*    - Create include/inputs.h
-*    - Implement src/input.c
-*    - Add validation and error handling
 
 * 2. Interpolation Module - DONE - 16/11/2024
-*    - Interpolate potential V between grid points
-*    - Required for continuous potential profile
-*    - Methods: Lagrange
 
 * 3. Steady State Solver - DONE - 22/11/2024
-*    - Solve df/dt = 0 (Master equation)
-*    - Handle boundary conditions
-*    - Implement convergence criteria
 
 * 4. Initial Value Problem - DONE - 13/11/2024
-*    - Implement Master equation solver
-*    - Time evolution of trap occupations
-*    - Handle initial conditions
 
 * 5. Coefficient Generator - DONE - 15/11/2024
-*    - Generate rates and coefficients
-*    - Physical parameters lookup
-*    - Temperature dependence
 
 * 6. Poisson solver - DONE - 14/11/2024
-*    - Check docs (design.md) for info.
 */

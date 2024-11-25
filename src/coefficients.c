@@ -36,10 +36,11 @@ Mat2d matrix_E_n(InputData input_data, Vec mesh)
 
     Mat2d Mat_E_n = mat2DInitZerosA(len,len);
 
-    Vec E = poissonWrapper(input_data, mesh);
+    Vec E = getGridNumV(input_data, mesh);
+    // printInputData(&input_data);
     vecScale(Q, E, &E);
-
     for(size_t i = 0; i < len ; i++){
+        if (isnan(E.x[i])) printf("Found Bad E. i = %zu\n", i);
         for(size_t j = 0; j < len ; j++){
             *mat2DRef(Mat_E_n, i, j) = E.x[i] - E.x[j] ;
         }
@@ -54,10 +55,10 @@ double r_nm(InputData input_data , Mat2d mat_E , Mat2d mat_d , size_t n , size_t
 
     double nu = input_data.params.nu_0 ;
     double gamma = input_data.params.gamma_0 ;
-    double kb_T = 1.38*1e-23*input_data.params.temp ;
+    double kb_T = 1.38 * 1e-23 * input_data.params.temp ;
 
-    double E_nm = mat_E.mat[len*n + m] ;
-    double d_nm = mat_d.mat[len*n + m] ;
+    double E_nm = mat_E.mat[len * n + m];
+    double d_nm = mat_d.mat[len * n + m];
 
     return (nu*(exp((-d_nm/gamma) - (E_nm/kb_T))));
 }

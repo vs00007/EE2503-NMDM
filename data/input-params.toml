@@ -1,20 +1,20 @@
 [Oxide]
-length               = 1e-8  # Length in m
-relative_permitivity = 3.9   # Dimensionless
-v_top                = 1     # in Volts
-v_bottom             = 0     # in Volts
-temperature          = 300   # in Kelvin
-electron_affinity    = 1.39   # in eV\
+length               = 1e-08
+relative_permitivity = 3.9
+v_top                = 1
+v_bottom             = 0
+temperature          = 300
+electron_affinity    = 3.9
 
 [Oxide.traps]
-locations            = [0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9] # Value between 0 and 1 (Relative to the oxide thickness)
-# occ_probs            = [0, 0, 0, 0, 0]              # Please input probabilities between 0 and 1
+locations            = [0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95]
+occ_probs            = [0.1, 0.1, 0.1, 0.1, 0.1]
 
 [Oxide.transport]
-mobility             = 5e-4  # m^2 / Vs 
-m_eff                = 0.42  # In units of electron mass Me 
-nu_0                 = 1e-5
-relaxation_distance  = 5e-10 # In m
+mobility             = 5e-2
+m_eff                = 0.42
+nu_0                 = 1
+relaxation_distance  = 5e-10
 
 [Oxide.SimParams]
-chunk_size = 100
+chunk_size = 3

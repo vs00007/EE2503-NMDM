@@ -409,7 +409,7 @@ void testMeshGen()
     Vec f_n = vecInitOnesA(d.len);
     randF(f_n, 1e-6, 1e-7, 0);
 
-    InputData data = {.params = {.L = 1e-9, .V_0 = 1, .eps_r = 11.7, .chunk_size = 10}};
+    InputData data = getInput("data/input-params.toml");
     // *vecRef(d, 0) = 0.33 * data.params.L;
     // *vecRef(d, 1) = 0.66 * data.params.L;
 
@@ -417,23 +417,19 @@ void testMeshGen()
     // vecPrint(d);
     // printNL();
 
-    vecScale(data.params.L, d, &d);
-
     printNL();
     vecPrint(d);
     printNL();
     
-    Vec mesh = generateMesh(d, data.params);
+    Vec mesh = generateMesh(data.locs, data.params);
     
-    printNL();
-    vecPrint(mesh);
-    printNL();
+    // printNL();
+    // vecPrint(mesh);
+    // printNL();
 
     PyViBase param = pyviCreateParameter(&vis, "x", mesh);
     PyViSec sec = pyviCreateSection(&vis, "Voltage", param);
     // PyViSection * analytical = pyviCreateSection(&vis, "Analytical Solution", param);
-    data.locs = d;
-    data.probs = f_n;
 
     // printNL();
     // vecPrint(data.probs);
@@ -445,8 +441,6 @@ void testMeshGen()
     // pyviSectionPush(analytical, solA);
     Vec sol2 = getGridNumV(data, mesh);
 
-    printNL();
-    vecPrint(sol);
     printNL();
     vecPrint(sol2);
     printNL();
