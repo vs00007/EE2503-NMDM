@@ -311,7 +311,7 @@ int mat2DContainsNan(Mat2d a)
 
     for(size_t i = 0; i < a.rows*a.cols; i++)
     {
-        if(isnan(a.mat[i])) return 1;
+        if(isnan(a.mat[i]) || !isfinite(a.mat[i])) return 1;
     }
 
     return 0;

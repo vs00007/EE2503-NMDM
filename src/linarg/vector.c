@@ -337,7 +337,7 @@ int vecContainsNan(Vec a)
 
     for(size_t i = 0; i < a.len; i++)
     {
-        if(isnan(LA_VIDX(a, i))) return 1;
+        if(isnan(LA_VIDX(a, i)) || !isfinite(LA_VIDX(a, i))) return 1;
     }
 
     return 0;
