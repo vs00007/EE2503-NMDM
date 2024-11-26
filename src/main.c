@@ -34,7 +34,11 @@ int main()
     for(size_t i = 0; i < coefficientMatrix.rows; i++) *mat2DRef(coefficientMatrix, i, i) = 0.0L;
 
     // q1: What are R1 and R2??
-    // q1: What are R1 and R2??
+    /*
+        Mihir, I added code for transient analysis. Check if it is working once.
+        (the solver function needs vec and mat, but the vec and mat dimensions cannot be figured out beforehand)
+        (try not to change the master_eqn.c file, just make realllyyy big vector and matrix, and then push it to a new pyvi file) 
+    */
 
     Vec delta_fn = vecInitZerosA(dim);
     Mat2d delta_E = mat2DInitZerosA(dim, dim);
@@ -100,8 +104,9 @@ int main()
 
     pyviWrite(vis);
     printNL();
+
 /*
-    TODO: 
+    data.params.V_0 = 1.0;
 
     RK45Config config;
     config.h = 1e-6;
