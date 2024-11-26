@@ -44,11 +44,18 @@
             return ret; \
         }
 
+// if condition is true, then report an warning and *NOT* return.
+#define LINALG_WARN_IF(condition, ...) \
+        if(condition) \
+        { \
+            LINALG_REPORT_WARN(__VA_ARGS__) \
+        }
+
 // gets value at index from vector by reference(dereferenced)
 // allows for syntax like: VEC_INDEX(a, 2) = 5;
 #define VEC_INDEX(vector, index) *vecRef(vector, index)
 
-// This function is called in the LINALG_ERROR_TRAP macro
+// This function is called in the LINALG_REPORT_ERROR and LINALG_ASSERT_ERROR macros
 void error_handler(const char* file, const char* function, size_t line_no);
 
 // Vector implementation

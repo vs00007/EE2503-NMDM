@@ -46,10 +46,14 @@ int main()
 
         // solve for fn
         data.probs = jacobianImplementationA(coefficientMatrix, R1, R2);
+        printf("Probabilites[%zu]:", iter);
         vecPrint(data.probs);
+        printNL();
         E_nm = matrix_E_n(data, mesh);
         
+        printf("Energies[%zu]:", iter);
         mat2DPrint(E_nm);
+        printNL();
 
         // d_m doesn't change?
         //d_nm = matrix_d_nm(data);
