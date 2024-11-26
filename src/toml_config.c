@@ -83,7 +83,7 @@ int parse_toml_file(const char* filename, OxParams* params, Vec* locations, Vec*
     }
 
     toml_array_t* loc_array = toml_array_in(traps, "locations");
-  //  toml_array_t* prob_array = toml_array_in(traps, "occ_probs");
+      //  toml_array_t* prob_array = toml_array_in(traps, "occ_probs");
 
     if (!loc_array) {
         fprintf(stderr, "Missing trap arrays\n");
