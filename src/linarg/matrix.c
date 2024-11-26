@@ -308,7 +308,6 @@ int mat2DContainsNan(Mat2d a)
 {
     LINALG_ASSERT_ERROR(!a.mat, 0, "input matrix is null!");
     LINALG_ASSERT_WARN(a.rows*a.cols == 0, 0, "input matrix is null!");
-    LINALG_WARN_IF(mat2DContainsNan(a), "input matrix contains NAN!");
 
     for(size_t i = 0; i < a.rows*a.cols; i++)
     {
