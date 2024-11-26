@@ -15,7 +15,7 @@ Error-handling macros are used to simplify error reporting:
 The `Mat2d` struct represents a 2D matrix:
 ```c
 typedef struct Mat2d {
-    double* mat;  // Pointer to matrix data (stored in row-major order)
+    long double* mat;  // Pointer to matrix data (stored in row-major order)
     size_t rows;  // Number of rows
     size_t cols;  // Number of columns
 } Mat2d;
@@ -26,7 +26,7 @@ typedef struct Mat2d {
 ### `LA_UNPACK(matrix)`
 Unpacks the matrix data and allows direct access to its elements using array notation. It converts the `mat` field into a 2D array based on the number of rows.
 ```c
-#define LA_UNPACK(matrix) ((double (*)[matrix.rows]) matrix.mat)
+#define LA_UNPACK(matrix) ((long double (*)[matrix.rows]) matrix.mat)
 ```
 
 ### `LA_UNPACK_ROW(matrix, row)`
@@ -47,11 +47,11 @@ Here is the documentation for each function in the provided code:
 
 ---
 
-### `Mat2d mat2DInitA(double value, size_t rows, size_t cols)`
+### `Mat2d mat2DInitA(long double value, size_t rows, size_t cols)`
 Initializes a matrix on the heap, filling each element with the specified value.
 
 #### Parameters:
-- `double value`: The value to initialize each matrix element with.
+- `long double value`: The value to initialize each matrix element with.
 - `size_t rows`: The number of rows in the matrix.
 - `size_t cols`: The number of columns in the matrix.
 
@@ -115,11 +115,11 @@ Mat2d copy = mat2DCopyA(mat);  // Creates a copy of matrix `mat`
 
 ---
 
-### `Mat2d mat2DConstruct(double* ptr, size_t rows, size_t cols)`
+### `Mat2d mat2DConstruct(long double* ptr, size_t rows, size_t cols)`
 Constructs a matrix from an existing pointer, without allocating memory.
 
 #### Parameters:
-- `double* ptr`: Pointer to the matrix data.
+- `long double* ptr`: Pointer to the matrix data.
 - `size_t rows`: The number of rows.
 - `size_t cols`: The number of columns.
 
@@ -128,7 +128,7 @@ Constructs a matrix from an existing pointer, without allocating memory.
 
 #### Example:
 ```c
-double data[] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
+long double data[] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
 Mat2d mat = mat2DConstruct(data, 2, 3);  // Constructs a 2x3 matrix from `data`
 ```
 
@@ -185,7 +185,7 @@ Vec col_vec = mat2DCol(mat, 1);  // Gets the second column as a vector
 
 ---
 
-### `double mat2DGet(Mat2d a, size_t row, size_t col)`
+### `long double mat2DGet(Mat2d a, size_t row, size_t col)`
 Gets the value at the specified row and column, checking for out-of-bounds access.
 
 #### Parameters:
@@ -198,12 +198,12 @@ Gets the value at the specified row and column, checking for out-of-bounds acces
 
 #### Example:
 ```c
-double val = mat2DGet(mat, 1, 1);  // Gets the value at (1, 1)
+long double val = mat2DGet(mat, 1, 1);  // Gets the value at (1, 1)
 ```
 
 ---
 
-### `double* mat2DRef(Mat2d a, size_t row, size_t col)`
+### `long double* mat2DRef(Mat2d a, size_t row, size_t col)`
 Gets a reference to the value at the specified row and column, checking for out-of-bounds access.
 
 #### Parameters:
@@ -216,7 +216,7 @@ Gets a reference to the value at the specified row and column, checking for out-
 
 #### Example:
 ```c
-double* ref = mat2DRef(mat, 1, 1);  // Gets a reference to the value at (1, 1)
+long double* ref = mat2DRef(mat, 1, 1);  // Gets a reference to the value at (1, 1)
 ```
 
 ---
@@ -239,11 +239,11 @@ mat2DAdd(a, b, &result);  // Adds matrices `a` and `b`, stores result in `result
 
 ---
 
-### `int mat2DScale(double a, Mat2d b, Mat2d* result)`
+### `int mat2DScale(long double a, Mat2d b, Mat2d* result)`
 Multiplies a matrix by a scalar and stores the result in another matrix.
 
 #### Parameters:
-- `double a`: The scalar value.
+- `long double a`: The scalar value.
 - `Mat2d b`: The input matrix.
 - `Mat2d* result`: Pointer to the result matrix.
 
@@ -257,7 +257,7 @@ mat2DScale(2.0, mat, &result);  // Scales matrix `mat` by 2.0
 
 ---
 
-### `double mat2DMax(Mat2d a)`
+### `long double mat2DMax(Mat2d a)`
 Finds the maximum value in a matrix.
 
 #### Parameters:
@@ -268,12 +268,12 @@ Finds the maximum value in a matrix.
 
 #### Example:
 ```c
-double max_value = mat2DMax(mat);  // Finds the maximum value in the matrix
+long double max_value = mat2DMax(mat);  // Finds the maximum value in the matrix
 ```
 
 ---
 
-### `double mat2DMin(Mat2d a)`
+### `long double mat2DMin(Mat2d a)`
 Finds the minimum value in a matrix.
 
 #### Parameters:
@@ -284,7 +284,7 @@ Finds the minimum value in a matrix.
 
 #### Example:
 ```c
-double min_value = mat2DMin(mat);  // Finds the minimum value in the matrix
+long double min_value = mat2DMin(mat);  // Finds the minimum value in the matrix
 ```
 
 ---

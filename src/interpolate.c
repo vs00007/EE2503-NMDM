@@ -1,10 +1,10 @@
 #include <include/linalg.h>
 
-// using double precision
+// using long double precision
 
-static double lagrangeBasis(const Vec gridPoints, size_t i, double x)
+static long double lagrangeBasis(const Vec gridPoints, size_t i, long double x)
 {
-    double basis = 1.0;
+    long double basis = 1.0;
 
     for (size_t j = 0; j < gridPoints.len; j++)
     {
@@ -26,8 +26,8 @@ int lagrangeInterpolate(const Vec gridPoints, const Vec values, const Vec interP
 
     for (size_t k = 0; k < interPoints.len; k++)
     {
-        double x = vecGet(interPoints, k);
-        double interpolated_value = 0.0;
+        long double x = vecGet(interPoints, k);
+        long double interpolated_value = 0.0;
 
         for (size_t i = 0; i < gridPoints.len; i++)
         {
@@ -42,10 +42,10 @@ int lagrangeInterpolate(const Vec gridPoints, const Vec values, const Vec interP
 }
 
 // keep in mind that this generate uniform mesh points
-Vec generateInterPoints(double start, double end, size_t num_points)
+Vec generateInterPoints(long double start, long double end, size_t num_points)
 {
     Vec points = vecInitZerosA(num_points);
-    double step = (end - start) / (num_points - 1);
+    long double step = (end - start) / (num_points - 1);
 
     for (size_t i = 0; i < num_points; i++)
     {

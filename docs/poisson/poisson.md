@@ -20,10 +20,10 @@ The library uses several predefined constants (defined in header files):
 ```c
 typedef struct OxParams 
 {
-    double V_0;    // Potential at x = 0 (Bottom electrode)
-    double V_L;    // Potential at x = L (Top electrode)
-    double eps_r;  // Relative permittivity of oxide
-    double L;      // Oxide thickness
+    long double V_0;    // Potential at x = 0 (Bottom electrode)
+    long double V_L;    // Potential at x = L (Top electrode)
+    long double eps_r;  // Relative permittivity of oxide
+    long double L;      // Oxide thickness
 } OxParams;
 ```
 #### Parameters
@@ -57,7 +57,7 @@ typedef struct OxParams
 ### analyticalPoissonSol
 
 ```c
-double analyticalPoissonSol(const Vec f_n, const Vec d, double x)
+long double analyticalPoissonSol(const Vec f_n, const Vec d, long double x)
 ```
 
 Calculates the electric potential at a point due to a set of point charges.
@@ -76,7 +76,7 @@ Calculates the electric potential at a point due to a set of point charges.
 ### poissonSolve
 
 ```c
-double poissonSolve(const Vec f_n, const Vec d, double x)
+long double poissonSolve(const Vec f_n, const Vec d, long double x)
 ```
 
 Safe wrapper for analyticalPoissonSol with input validation.
@@ -113,7 +113,7 @@ Calculates potentials at each charge position.
 ### validateInput
 
 ```c
-int validateInput(const Vec f_n, const Vec d, double x)
+int validateInput(const Vec f_n, const Vec d, long double x)
 ```
 
 Validates inputs for poissonSolve function.
@@ -156,7 +156,7 @@ positions.x[1] = 2.0;
 positions.x[2] = 3.0;
 
 // Calculate potential at a point
-double potential = poissonSolve(charges, positions, 2.5);
+long double potential = poissonSolve(charges, positions, 2.5);
 
 // Calculate potentials at charge positions
 Vec gridPotentials = getGridV(charges, positions);

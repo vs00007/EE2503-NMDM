@@ -11,17 +11,17 @@
 #define MAX_TRAPS 1000
 
 typedef struct {
-    double thickness;
-    double relPermittivity;
-    double vBottom;
-    double vTop;
+    long double thickness;
+    long double relPermittivity;
+    long double vBottom;
+    long double vTop;
 } OxideParams;
 
 typedef struct {
     OxideParams oxideParams;
     int numTraps;
-    double* trapPositions;
-    double* occupationProbs;
+    long double* trapPositions;
+    long double* occupationProbs;
 } TrapConfig;
 
 bool Validate(const TrapConfig* config, char* error_msg);

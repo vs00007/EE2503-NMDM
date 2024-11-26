@@ -7,9 +7,9 @@ void test_poisson_full();
 
 void printVecUnits(Vec f_n, char a);
 
-void randF(Vec param, double min, double max, int sort);
+void randF(Vec param, long double min, long double max, int sort);
 
-int compareDoubles(double a, double b, double epsilon);
+int comparelong doubles(long double a, long double b, long double epsilon);
 
 int qsort_compare(const void *a, const void *b);
 

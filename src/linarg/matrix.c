@@ -5,22 +5,22 @@
 #include <math.h>
 
 // LINALG_UNPACK_MAT(matrix, r, c)[x][y] = value at xth col and yth row
-#define LA_UNPACK(matrix) ((double (*)[matrix.cols]) matrix.mat)
+#define LA_UNPACK(matrix) ((long double (*)[matrix.cols]) matrix.mat)
 
-#define LA_UNPACK_PTR(matrix) ((double (*)[matrix->cols]) matrix->mat)
+#define LA_UNPACK_PTR(matrix) ((long double (*)[matrix->cols]) matrix->mat)
 
 #define LA_UNPACK_ROW(matrix, row) mat2DRow(matrix, row)
 #define LA_UNPACK_COL(matrix, col) mat2DCol(matrix, col)
 
 // initialzie the matrix on the heap with some initial value
-Mat2d mat2DInitA(double value, size_t rows, size_t cols)
+Mat2d mat2DInitA(long double value, size_t rows, size_t cols)
 {
     if(rows == 0 || cols == 0)
     {
         LINALG_REPORT_ERROR("invalid zero row or col matrix requested!");
         return (Mat2d){ NULL, 0, 0 };
     }
-    Mat2d mat = { (double*)calloc(rows*cols, sizeof(double)), rows, cols };
+    Mat2d mat = { (long double*)calloc(rows*cols, sizeof(long double)), rows, cols };
     LINALG_ASSERT_ERROR(!mat.mat, mat, "unkown error occured when allocation memory!");
     for(size_t i = 0; i < mat.cols*mat.rows; i++) mat.mat[i] = value;
 
@@ -50,14 +50,14 @@ Mat2d mat2DCopyA(Mat2d matrix)
         LINALG_REPORT_ERROR("invalid matrix pointer(null)!");
         return (Mat2d){ NULL, 0, 0 };
     }
-    Mat2d mat = { (double*)calloc(matrix.rows*matrix.cols, sizeof(double)), matrix.rows, matrix.cols };
+    Mat2d mat = { (long double*)calloc(matrix.rows*matrix.cols, sizeof(long double)), matrix.rows, matrix.cols };
     LINALG_ASSERT_ERROR(!mat.mat, mat, "unkown error occured when allocation memory!");
     for(size_t i = 0; i < mat.cols*mat.rows; i++) mat.mat[i] = matrix.mat[i];
     return mat;
 }
 
 // construct a matrix from a pointer(does not allocate)
-Mat2d mat2DConstruct(double* ptr, size_t rows, size_t cols)
+Mat2d mat2DConstruct(long double* ptr, size_t rows, size_t cols)
 {
     Mat2d mat = { ptr, rows, cols };
     return mat;
@@ -98,7 +98,7 @@ Vec mat2DCol(Mat2d matrix, size_t col)
 
 // gets the nth value in a matrix(by value)
 // checks for out-of-bounds
-double mat2DGet(Mat2d a, size_t row, size_t col)
+long double mat2DGet(Mat2d a, size_t row, size_t col)
 {
     LINALG_ASSERT_ERROR(row >= a.rows, NAN, "out of bounds matrix row access!");
     LINALG_ASSERT_ERROR(col >= a.cols, NAN, "out of bounds matrix col access!");
@@ -107,7 +107,7 @@ double mat2DGet(Mat2d a, size_t row, size_t col)
 }
 // gets the nth value in a matrix(by ref)
 // checks for out-of-bounds( returns nullptr is performed )
-double* mat2DRef(Mat2d a, size_t row, size_t col)
+long double* mat2DRef(Mat2d a, size_t row, size_t col)
 {
     LINALG_ASSERT_ERROR(row >= a.rows, NULL, "out of bounds matrix row access!");
     LINALG_ASSERT_ERROR(col >= a.cols, NULL, "out of bounds matrix col access!");
@@ -144,7 +144,7 @@ int mat2DSub(Mat2d a, Mat2d b, Mat2d* result)
     return LINALG_OK;
 }
 // multiply scalar value to matrixs and get result into another matrix, prints error if input is invalid
-int mat2DScale(double a, Mat2d b, Mat2d* result)
+int mat2DScale(long double a, Mat2d b, Mat2d* result)
 {
     LINALG_ASSERT_ERROR(!result, LINALG_ERROR, "result matrix is null!");
     LINALG_ASSERT_ERROR(!result->mat, LINALG_ERROR, "result matrix is null!");
@@ -170,7 +170,7 @@ int mat2DTransform(Mat2d A, Vec x, Vec* result)
 
     for(size_t i = 0; i < A.rows; i++)
     {
-        double val = 0;
+        long double val = 0;
         for(size_t j = 0; j < A.cols; j++) val += LA_UNPACK(A)[i][j] * VEC_INDEX(x, j);
         VEC_INDEX(*result, i) = val;
     }
@@ -189,7 +189,7 @@ Vec mat2DTransformA(Mat2d A, Vec x)
 
     for(size_t i = 0; i < A.rows; i++)
     {
-        double val = 0;
+        long double val = 0;
         for(size_t j = 0; j < A.cols; j++) val += LA_UNPACK(A)[i][j] * VEC_INDEX(x, j);
         VEC_INDEX(result, i) = val;
     }
@@ -213,7 +213,7 @@ int mat2DMul(Mat2d A, Mat2d B, Mat2d* result)
     {
         for(size_t j = 0; j < B.cols; j++)
         {
-            double res = 0;
+            long double res = 0;
             for(size_t k = 0; k < B.rows; k++) res += LA_UNPACK(A)[i][k] * LA_UNPACK(B)[k][j];
             LA_UNPACK_PTR(result)[i][j] = res;
         }
@@ -235,7 +235,7 @@ Mat2d mat2DMulA(Mat2d A, Mat2d B)
     {
         for(size_t j = 0; j < B.cols; j++)
         {
-            double res = 0;
+            long double res = 0;
             for(size_t k = 0; k < B.rows; k++) res += LA_UNPACK(A)[i][k] * LA_UNPACK(B)[k][j];
             LA_UNPACK(result)[i][j] = res;
         }
@@ -264,39 +264,39 @@ int mat2DTranspose(Mat2d A, Mat2d* result)
 }
 
 // maximum value in the matrix, prints error if input is invalid
-double mat2DMax(Mat2d a)
+long double mat2DMax(Mat2d a)
 {
     LINALG_ASSERT_ERROR(!a.mat, NAN, "input matrix is null!");
     LINALG_ASSERT_WARN(a.rows*a.cols == 0, -INFINITY, "input matrix is null!");
     LINALG_WARN_IF(mat2DContainsNan(a), "input matrix contains INF or NAN!");
 
-    double max_value = -INFINITY;
+    long double max_value = -INFINITY;
 
     for(size_t i = 0; i < a.rows*a.cols; i++) max_value = max_value > a.mat[i] ? max_value : a.mat[i];
 
     return max_value;
 }
 // maximum abs value in the matrix, prints error if input is invalid
-double mat2DMaxAbs(Mat2d a)
+long double mat2DMaxAbs(Mat2d a)
 {
     LINALG_ASSERT_ERROR(!a.mat, NAN, "input matrix is null!");
     LINALG_ASSERT_WARN(a.rows*a.cols == 0, -INFINITY, "input matrix is null!");
     LINALG_WARN_IF(mat2DContainsNan(a), "input matrix contains INF or NAN!");
 
-    double max_value = -INFINITY;
+    long double max_value = -INFINITY;
 
-    for(size_t i = 0; i < a.rows*a.cols; i++) max_value = max_value > fabs(a.mat[i]) ? max_value : fabs(a.mat[i]);
+    for(size_t i = 0; i < a.rows*a.cols; i++) max_value = max_value > fabsl(a.mat[i]) ? max_value : fabsl(a.mat[i]);
 
     return max_value;
 }
 // minimum value in the matrix, prints error if input is invalid
-double mat2DMin(Mat2d a)
+long double mat2DMin(Mat2d a)
 {
     LINALG_ASSERT_ERROR(!a.mat, NAN, "input matrix is null!");
     LINALG_ASSERT_WARN(a.rows*a.cols == 0, INFINITY, "input matrix is null!");
     LINALG_WARN_IF(mat2DContainsNan(a), "input matrix contains INF or NAN!");
 
-    double min_value = INFINITY;
+    long double min_value = INFINITY;
 
     for(size_t i = 0; i < a.rows*a.cols; i++) min_value = min_value < a.mat[i] ? min_value : a.mat[i];
 
@@ -336,9 +336,9 @@ MatTD matTDinitA(size_t len)
         LINALG_REPORT_ERROR("invalid zero length vector requested!");
         return (MatTD){{NULL, 0, 0}, {NULL, 0, 0}, {NULL, 0, 0}};
     }
-    Vec a = { (double*)calloc(len, sizeof(double)), len, 1 };
-    Vec b = { (double*)calloc(len, sizeof(double)), len, 1 };
-    Vec c = { (double*)calloc(len, sizeof(double)), len, 1 };
+    Vec a = { (long double*)calloc(len, sizeof(long double)), len, 1 };
+    Vec b = { (long double*)calloc(len, sizeof(long double)), len, 1 };
+    Vec c = { (long double*)calloc(len, sizeof(long double)), len, 1 };
 
     MatTD mat;
     mat.main = b;

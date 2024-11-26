@@ -12,7 +12,7 @@ int main()
     printInputData(&data);
     Vec mesh = generateMesh(data.locs, data.params);
     printNL();
-    printf("V_top = %g\n", data.params.V_L);
+    printf("V_top = %Lg\n", data.params.V_L);
 
     PyVi vis = pyviInitA("data/visualise.pyvi");
     PyViBase x_vi = pyviCreateParameter(&vis, "d", data.locs);
@@ -74,8 +74,8 @@ int main()
             break;
         }
 
-        double error_fn = vecMax(delta_fn) / vecMax(data.probs);
-        double error_E = mat2DMaxAbs(delta_E) / mat2DMaxAbs(E_nm);
+        long double error_fn = vecMax(delta_fn) / vecMax(data.probs);
+        long double error_E = mat2DMaxAbs(delta_E) / mat2DMaxAbs(E_nm);
 
         pyviSectionPush(f_n, data.probs);
 

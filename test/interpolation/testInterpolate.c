@@ -5,8 +5,8 @@ void test_interpolation() {
     char *filepath = "data/input-params.toml";
     InputData data = getInput(filepath);
 
-    double x_min = vecGet(data.locs, 0);
-    double x_max = vecGet(data.locs, data.locs.len - 1);
+    long double x_min = vecGet(data.locs, 0);
+    long double x_max = vecGet(data.locs, data.locs.len - 1);
     Vec interp_points = generateInterPoints(x_min, x_max, 100); 
 
     // Perform interpolation using input locations and probabilities
@@ -18,13 +18,13 @@ void test_interpolation() {
     printf("Original points:\n");
     printf("x\t\tProbability\n");
     for(size_t i = 0; i < data.locs.len; i++) {
-        printf("%e\t%f\n", vecGet(data.locs, i), vecGet(data.probs, i));
+        printf("%Le\t%f\n", vecGet(data.locs, i), vecGet(data.probs, i));
     }
 
     printf("\nInterpolated points:\n");
     printf("x\t\tProbability\n");
     for(size_t i = 0; i < interp_points.len; i++) {
-        printf("%e\t%f\n", 
+        printf("%Le\t%f\n", 
                vecGet(interp_points, i), 
                vecGet(interpolated_probs, i));
     }

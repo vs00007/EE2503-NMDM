@@ -58,7 +58,7 @@ void test_mat2DCopyA() {
 }
 
 void test_mat2DConstruct() {
-    double data[] = {1.0, 2.0, 3.0, 4.0};
+    long double data[] = {1.0, 2.0, 3.0, 4.0};
     Mat2d mat = mat2DConstruct(data, 2, 2);
     assert(mat.rows == 2);
     assert(mat.cols == 2);

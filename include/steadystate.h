@@ -10,7 +10,7 @@ void vecMultiply(Vec a, Vec b, Vec* result);
 
 void jacobianMatrix(Mat2d matrix /*Initialize this matrix to 0*/, Mat2d coeffmatrix/*state to state transmission coefficients*/ , Vec R1 /*electrode 1 coefficients matrix*/, Vec R2 /*electrode 2 coefficients matrix*/,Vec f , int i, int j);
 
-void swap(double* a, double*b);
+void swap(long double* a, long double*b);
 
 void swapRows(Mat2d A, Vec b, int row1, int row2);
 

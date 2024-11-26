@@ -128,7 +128,7 @@ void test_vecSub() {
 void test_vecDot() {
     Vec a = vecInitA(2.0, 3);
     Vec b = vecInitA(3.0, 3);
-    double dot = vecDot(a, b);
+    long double dot = vecDot(a, b);
     assert(dot == 18.0); // 2*3 + 2*3 + 2*3 = 18
     freeVec(&a);
     freeVec(&b);
@@ -188,10 +188,10 @@ void test_vecNormalize() {
     Vec a = vecInitA(3.0, 3);
     Vec result = vecInitZerosA(3);
     int status = vecNormalize(a, &result);
-    double magnitude = vecMagnitude(a);
+    long double magnitude = vecMagnitude(a);
     assert(status == LINALG_OK);
     for (size_t i = 0; i < 3; i++) {
-        assert(fabs(VEC_INDEX(result, i) - (3.0 / magnitude)) < 1e-6);
+        assert(fabsl(VEC_INDEX(result, i) - (3.0 / magnitude)) < 1e-6);
     }
     freeVec(&a);
     freeVec(&result);
@@ -210,17 +210,17 @@ void test_vecNormalize() {
     result = vecInitZerosA(3);
     status = vecNormalize(a, &result);
     assert(status == LINALG_OK);
-    assert(fabs(VEC_INDEX(result, 0) - 1.0) < 1e-6);
-    assert(fabs(VEC_INDEX(result, 1)) < 1e-6);
-    assert(fabs(VEC_INDEX(result, 2)) < 1e-6);
+    assert(fabsl(VEC_INDEX(result, 0) - 1.0) < 1e-6);
+    assert(fabsl(VEC_INDEX(result, 1)) < 1e-6);
+    assert(fabsl(VEC_INDEX(result, 2)) < 1e-6);
     freeVec(&a);
     freeVec(&result);
 }
 
 void test_vecMagnitude() {
     Vec a = vecInitA(3.0, 3);
-    double magnitude = vecMagnitude(a);
-    assert(fabs(magnitude - sqrt(27.0)) < 1e-6); // sqrt(3^2 + 3^2 + 3^2) = sqrt(27)
+    long double magnitude = vecMagnitude(a);
+    assert(fabsl(magnitude - sqrt(27.0)) < 1e-6); // sqrt(3^2 + 3^2 + 3^2) = sqrt(27)
     freeVec(&a);
 
     // Test magnitude of zero vector
@@ -233,7 +233,7 @@ void test_vecMagnitude() {
     a = vecInitZerosA(3);
     VEC_INDEX(a, 1) = 1.0;
     magnitude = vecMagnitude(a);
-    assert(fabs(magnitude - 1.0) < 1e-6);
+    assert(fabsl(magnitude - 1.0) < 1e-6);
     freeVec(&a);
 }
 

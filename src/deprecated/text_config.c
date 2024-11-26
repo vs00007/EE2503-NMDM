@@ -6,7 +6,7 @@
 #include "include/deprecated/config.h"
 
 // Helper function to check if a number is valid (not NaN or infinite)
-static bool ValidNumber(double num)
+static bool ValidNumber(long double num)
 {
     return !isnan(num) && !isinf(num);
 }
@@ -99,7 +99,7 @@ bool Validate(const TrapConfig *config, char *error_msg)
 }
 
 // Helper function to parse array from string
-static bool ParseArray(const char *str, double *arr, int expected_size, char *error_msg)
+static bool ParseArray(const char *str, long double *arr, int expected_size, char *error_msg)
 {
     size_t len = strlen(str) + 1;
     char *copy = malloc(len);
@@ -170,7 +170,7 @@ bool Read(const char *filename, TrapConfig *config, char *error_msg)
         snprintf(error_msg, MAX_ERROR_LEN, "File is empty");
         return false;
     }
-    if (sscanf(line, "%lf %lf %lf %lf",
+    if (sscanf(line, "%Lf %Lf %Lf %Lf",
                &config->oxideParams.thickness,
                &config->oxideParams.relPermittivity,
                &config->oxideParams.vBottom,
@@ -198,8 +198,8 @@ bool Read(const char *filename, TrapConfig *config, char *error_msg)
     }
 
     // Allocate memory for arrays
-    config->trapPositions = malloc(config->numTraps * sizeof(double));
-    config->occupationProbs = malloc(config->numTraps * sizeof(double));
+    config->trapPositions = malloc(config->numTraps * sizeof(long double));
+    config->occupationProbs = malloc(config->numTraps * sizeof(long double));
     if (!config->trapPositions || !config->occupationProbs)
     {
         free(config->trapPositions);
@@ -272,7 +272,7 @@ bool Write(const char *filename, const TrapConfig *config, char *error_msg)
     }
 
     // Write oxide parameters
-    fprintf(file, "%.6e %.6e %.6e %.6e\n",
+    fprintf(file, "%.3Le %.3Le %.3Le %.3Le\n",
             config->oxideParams.thickness,
             config->oxideParams.relPermittivity,
             config->oxideParams.vBottom,
@@ -285,7 +285,7 @@ bool Write(const char *filename, const TrapConfig *config, char *error_msg)
     fprintf(file, "{");
     for (int i = 0; i < config->numTraps; i++)
     {
-        fprintf(file, "%.6e%s",
+        fprintf(file, "%.3Le%s",
                 config->trapPositions[i],
                 i < config->numTraps - 1 ? ", " : "");
     }
@@ -295,7 +295,7 @@ bool Write(const char *filename, const TrapConfig *config, char *error_msg)
     fprintf(file, "{");
     for (int i = 0; i < config->numTraps; i++)
     {
-        fprintf(file, "%.6f%s",
+        fprintf(file, "%Lf%s",
                 config->occupationProbs[i],
                 i < config->numTraps - 1 ? ", " : "");
     }

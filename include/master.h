@@ -14,8 +14,8 @@ typedef struct rk45
 } rk45;
 
 
-Vec f(double t, Vec y);
+Vec f(long double t, Vec y);
 
-rk45 rkf45_calculator(double h, double t_i, Vec y_i);
+rk45 rkf45_calculator(long double h, long double t_i, Vec y_i);
 
-void solver(double h, double t_initial, double t_final, Vec y_initial, double TOL, Vec t_res, Mat2d res);
+void solver(long double h, long double t_initial, long double t_final, Vec y_initial, long double TOL, Vec t_res, Mat2d res);

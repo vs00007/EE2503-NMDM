@@ -19,15 +19,15 @@
 
 // typedef struct OxParams 
 // {
-//     double V_0;
-//     double V_L;
-//     double eps_r;
-//     double L;
-//     double nu_0;
-//     double m_eff;
-//     double gamma_0;
-//     double mobility;
-//     double temp ;
+//     long double V_0;
+//     long double V_L;
+//     long double eps_r;
+//     long double L;
+//     long double nu_0;
+//     long double m_eff;
+//     long double gamma_0;
+//     long double mobility;
+//     long double temp ;
 //     size_t num_traps;
 //     size_t chunk_size ;
 // } OxParams;
@@ -46,7 +46,7 @@
  * - Position x is not NaN
  * - No NaN values in vectors
  */
-int validateInput(const Vec f_n, const Vec d, double x);
+int validateInput(const Vec f_n, const Vec d, long double x);
 
 /**
  * @brief Validates two vectors for compatibility
@@ -72,7 +72,7 @@ int validateTwoVecs(const Vec f_n, const Vec d);
  * @param x Position at which to calculate potential (in meters)
  * @return Potential in volts (assuming vacuum permittivity)
  */
-double analyticalPoissonSol(const Vec f_n, const Vec d, double x);
+long double analyticalPoissonSol(const Vec f_n, const Vec d, long double x);
 
 /**
  * @brief Safe wrapper for analyticalPoissonSol with input validation
@@ -84,7 +84,7 @@ double analyticalPoissonSol(const Vec f_n, const Vec d, double x);
  * 
  * Sets errno to EINVAL if inputs are invalid
  */
-double poissonSolveAnalytical(const Vec f_n, const Vec d, double x);
+long double poissonSolveAnalytical(const Vec f_n, const Vec d, long double x);
 
 /**
  * @brief Calculates potentials at each charge location
