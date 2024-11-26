@@ -122,8 +122,8 @@ int mat2DAdd(Mat2d a, Mat2d b, Mat2d* result)
     LINALG_ASSERT_ERROR(!result->mat, LINALG_ERROR, "result matrix is null!");
     LINALG_ASSERT_ERROR(a.rows != b.rows || b.cols != a.cols, LINALG_ERROR, "attempt to add mat(%zux%zu) and mat(%zux%zu)", a.cols, a.rows, b.cols, b.rows);
     LINALG_ASSERT_ERROR(a.rows != result->rows || b.cols != result->cols, LINALG_ERROR, "result matrix is mat(%zux%zu) but inputs are mat(%zux%zu)", result->cols, result->rows, b.cols, b.rows);
-    LINALG_WARN_IF(mat2DContainsNan(a), "input matrix contains NAN!");
-    LINALG_WARN_IF(mat2DContainsNan(b), "input matrix contains NAN!");
+    LINALG_WARN_IF(mat2DContainsNan(a), "input matrix contains INF or NAN!");
+    LINALG_WARN_IF(mat2DContainsNan(b), "input matrix contains INF or NAN!");
 
     for(size_t i = 0; i < a.rows*a.cols; i++) result->mat[i] = a.mat[i] + b.mat[i];
 
@@ -136,8 +136,8 @@ int mat2DSub(Mat2d a, Mat2d b, Mat2d* result)
     LINALG_ASSERT_ERROR(!result->mat, LINALG_ERROR, "result matrix is null!");
     LINALG_ASSERT_ERROR(a.rows != b.rows || b.cols != a.cols, LINALG_ERROR, "attempt to add mat(%zux%zu) and mat(%zux%zu)", a.cols, a.rows, b.cols, b.rows);
     LINALG_ASSERT_ERROR(a.rows != result->rows || b.cols != result->cols, LINALG_ERROR, "result matrix is mat(%zux%zu) but inputs are mat(%zux%zu)", result->cols, result->rows, b.cols, b.rows);
-    LINALG_WARN_IF(mat2DContainsNan(a), "input matrix contains NAN!");
-    LINALG_WARN_IF(mat2DContainsNan(b), "input matrix contains NAN!");
+    LINALG_WARN_IF(mat2DContainsNan(a), "input matrix contains INF or NAN!");
+    LINALG_WARN_IF(mat2DContainsNan(b), "input matrix contains INF or NAN!");
 
     for(size_t i = 0; i < a.rows*a.cols; i++) result->mat[i] = a.mat[i] - b.mat[i];
 
@@ -149,11 +149,11 @@ int mat2DScale(double a, Mat2d b, Mat2d* result)
     LINALG_ASSERT_ERROR(!result, LINALG_ERROR, "result matrix is null!");
     LINALG_ASSERT_ERROR(!result->mat, LINALG_ERROR, "result matrix is null!");
     LINALG_ASSERT_ERROR(b.rows != result->rows || b.cols != result->cols, LINALG_ERROR, "result matrix is mat(%zux%zu) but inputs are mat(%zux%zu)", result->cols, result->rows, b.cols, b.rows);
-    LINALG_WARN_IF(mat2DContainsNan(b), "input matrix contains NAN!");
+    LINALG_WARN_IF(mat2DContainsNan(b), "input matrix contains INF or NAN!");
 
     for(size_t i = 0; i < b.rows*b.cols; i++) result->mat[i] = a * b.mat[i];
 
-    LINALG_WARN_IF(mat2DContainsNan(*result), "input matrix contains NAN!");
+    LINALG_WARN_IF(mat2DContainsNan(*result), "input matrix contains INF or NAN!");
 
     return LINALG_OK;
 }
@@ -165,8 +165,8 @@ int mat2DTransform(Mat2d A, Vec x, Vec* result)
     LINALG_ASSERT_ERROR(!result->x, LINALG_ERROR, "result matrix is null!");
     LINALG_ASSERT_ERROR(A.cols != x.len, LINALG_ERROR, "invalid vector: mat(%zux%zu) applied over vec(%zu)", A.rows, A.cols, x.len);
     LINALG_ASSERT_ERROR(A.rows != result->len, LINALG_ERROR, "invalid vector: mat(%zux%zu) applied over vec(%zu) is put in vec(%zu)", A.rows, A.cols, x.len, result->len);
-    LINALG_WARN_IF(mat2DContainsNan(A), "input matrix contains NAN!");
-    LINALG_WARN_IF(vecContainsNan(x), "input vector contains NAN!");
+    LINALG_WARN_IF(mat2DContainsNan(A), "input matrix contains INF or NAN!");
+    LINALG_WARN_IF(vecContainsNan(x), "input vector contains INF or NAN!");
 
     for(size_t i = 0; i < A.rows; i++)
     {
@@ -182,8 +182,8 @@ Vec mat2DTransformA(Mat2d A, Vec x)
 {
     Vec badVec = {NULL, 0, 0};
     LINALG_ASSERT_ERROR(A.cols != x.len, badVec, "invalid vector: mat(%zux%zu) applied over vec(%zu)", A.rows, A.cols, x.len);
-    LINALG_WARN_IF(mat2DContainsNan(A), "input matrix contains NAN!");
-    LINALG_WARN_IF(vecContainsNan(x), "input vector contains NAN!");
+    LINALG_WARN_IF(mat2DContainsNan(A), "input matrix contains INF or NAN!");
+    LINALG_WARN_IF(vecContainsNan(x), "input vector contains INF or NAN!");
 
     Vec result = vecInitZerosA(A.rows);
 
@@ -206,8 +206,8 @@ int mat2DMul(Mat2d A, Mat2d B, Mat2d* result)
     LINALG_ASSERT_ERROR(A.rows != result->rows || B.cols != result->cols, LINALG_ERROR, 
                         "invalid operation: multiplication between mat(%zux%zu) and mat(%zux%zu) stored in mat(%zux%zu)", A.rows, A.cols, B.rows, B.cols, result->rows, result->cols);
 
-    LINALG_WARN_IF(mat2DContainsNan(A), "input matrix contains NAN!");
-    LINALG_WARN_IF(mat2DContainsNan(B), "input matrix contains NAN!");
+    LINALG_WARN_IF(mat2DContainsNan(A), "input matrix contains INF or NAN!");
+    LINALG_WARN_IF(mat2DContainsNan(B), "input matrix contains INF or NAN!");
 
     for(size_t i = 0; i < A.rows; i++)
     {
@@ -226,8 +226,8 @@ Mat2d mat2DMulA(Mat2d A, Mat2d B)
 {
     Mat2d bad_mat = {NULL, 0, 0};
     LINALG_ASSERT_ERROR(A.cols != B.rows, bad_mat, "invalid operation: multiplication between mat(%zux%zu) and mat(%zux%zu)", A.rows, A.cols, B.rows, B.cols);
-    LINALG_WARN_IF(mat2DContainsNan(A), "input matrix contains NAN!");
-    LINALG_WARN_IF(mat2DContainsNan(B), "input matrix contains NAN!");
+    LINALG_WARN_IF(mat2DContainsNan(A), "input matrix contains INF or NAN!");
+    LINALG_WARN_IF(mat2DContainsNan(B), "input matrix contains INF or NAN!");
 
     Mat2d result = mat2DInitZerosA(A.rows, B.cols);
 
@@ -250,7 +250,7 @@ int mat2DTranspose(Mat2d A, Mat2d* result)
     LINALG_ASSERT_ERROR(!result, LINALG_ERROR, "result matrix is null!");
     LINALG_ASSERT_ERROR(!result->mat, LINALG_ERROR, "result matrix is null!");
     LINALG_ASSERT_ERROR(A.cols != result->rows || A.rows != result->cols, LINALG_ERROR, "invalid operation: multiplication between mat(%zux%zu) and mat(%zux%zu)", A.rows, A.cols, result->rows, result->cols);
-    LINALG_WARN_IF(mat2DContainsNan(A), "input matrix contains NAN!");
+    LINALG_WARN_IF(mat2DContainsNan(A), "input matrix contains INF or NAN!");
 
     for(size_t i = 0; i < A.rows; i++)
     {
@@ -268,7 +268,7 @@ double mat2DMax(Mat2d a)
 {
     LINALG_ASSERT_ERROR(!a.mat, NAN, "input matrix is null!");
     LINALG_ASSERT_WARN(a.rows*a.cols == 0, -INFINITY, "input matrix is null!");
-    LINALG_WARN_IF(mat2DContainsNan(a), "input matrix contains NAN!");
+    LINALG_WARN_IF(mat2DContainsNan(a), "input matrix contains INF or NAN!");
 
     double max_value = -INFINITY;
 
@@ -281,7 +281,7 @@ double mat2DMaxAbs(Mat2d a)
 {
     LINALG_ASSERT_ERROR(!a.mat, NAN, "input matrix is null!");
     LINALG_ASSERT_WARN(a.rows*a.cols == 0, -INFINITY, "input matrix is null!");
-    LINALG_WARN_IF(mat2DContainsNan(a), "input matrix contains NAN!");
+    LINALG_WARN_IF(mat2DContainsNan(a), "input matrix contains INF or NAN!");
 
     double max_value = -INFINITY;
 
@@ -294,7 +294,7 @@ double mat2DMin(Mat2d a)
 {
     LINALG_ASSERT_ERROR(!a.mat, NAN, "input matrix is null!");
     LINALG_ASSERT_WARN(a.rows*a.cols == 0, INFINITY, "input matrix is null!");
-    LINALG_WARN_IF(mat2DContainsNan(a), "input matrix contains NAN!");
+    LINALG_WARN_IF(mat2DContainsNan(a), "input matrix contains INF or NAN!");
 
     double min_value = INFINITY;
 

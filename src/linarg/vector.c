@@ -92,7 +92,7 @@ void printVecUnits(Vec f_n, char a)
 double vecGet(Vec a, size_t n)
 {
     LINALG_ASSERT_ERROR(n >= a.len, NAN, "out of bounds vector access!");
-    LINALG_ASSERT_WARN(isnan(*(a.x + a.offset * n)), *(a.x + a.offset * n), "accessing value which is NAN!");
+    LINALG_ASSERT_WARN(isnan(*(a.x + a.offset * n)), *(a.x + a.offset * n), "accessing value which is INF or NAN!");
     return *(a.x + a.offset * n);
 }
 
@@ -102,7 +102,7 @@ double vecGet(Vec a, size_t n)
 double* vecRef(Vec a, size_t n)
 {
     LINALG_ASSERT_ERROR(n >= a.len, NULL, "out of bounds vector access!");
-    LINALG_ASSERT_WARN(isnan(*(a.x + a.offset * n)), (a.x + a.offset * n), "accessing value which is NAN!");
+    LINALG_ASSERT_WARN(isnan(*(a.x + a.offset * n)), (a.x + a.offset * n), "accessing value which is INF or NAN!");
     return (a.x + a.offset * n);
 }
 
@@ -114,8 +114,8 @@ int vecAdd(Vec a, Vec b, Vec* result)
     LINALG_ASSERT_ERROR(!a.x || !b.x, LINALG_ERROR, "input vector/s is/are null!");
     LINALG_ASSERT_ERROR(b.len < result->len, LINALG_ERROR, "output vector not big enough to store result!");
     LINALG_ASSERT_ERROR(b.len > result->len, LINALG_ERROR, "output dimension larger than input dimension!");
-    LINALG_WARN_IF(vecContainsNan(a), "input vector contains NAN!");
-    LINALG_WARN_IF(vecContainsNan(b), "input vector contains NAN!");
+    LINALG_WARN_IF(vecContainsNan(a), "input vector contains INF or NAN!");
+    LINALG_WARN_IF(vecContainsNan(b), "input vector contains INF or NAN!");
 
     for(size_t i = 0; i < a.len; i++)
     {
@@ -132,8 +132,8 @@ int vecSub(Vec a, Vec b, Vec* result)
     LINALG_ASSERT_ERROR(!a.x || !b.x, LINALG_ERROR, "input vector/s is/are null!");
     LINALG_ASSERT_ERROR(b.len < result->len, LINALG_ERROR, "output vector not big enough to store result!");
     LINALG_ASSERT_ERROR(b.len > result->len, LINALG_ERROR, "output dimension larger than input dimension!");
-    LINALG_WARN_IF(vecContainsNan(a), "input vector contains NAN!");
-    LINALG_WARN_IF(vecContainsNan(b), "input vector contains NAN!");
+    LINALG_WARN_IF(vecContainsNan(a), "input vector contains INF or NAN!");
+    LINALG_WARN_IF(vecContainsNan(b), "input vector contains INF or NAN!");
 
     for(size_t i = 0; i < a.len; i++)
     {
@@ -149,15 +149,15 @@ int vecScale(double a, Vec b, Vec* result)
     LINALG_ASSERT_ERROR(!b.x, LINALG_ERROR, "input vector/s is/are null!");
     LINALG_ASSERT_ERROR(b.len < result->len, LINALG_ERROR, "output vector not big enough to store result!");
     LINALG_ASSERT_ERROR(b.len > result->len, LINALG_ERROR, "output dimension larger than input dimension!");
-    LINALG_WARN_IF(isnan(a), "input scalar is NAN!");
-    LINALG_WARN_IF(vecContainsNan(b), "input vector contains NAN!");
+    LINALG_WARN_IF(isnan(a), "input scalar is INF or NAN!");
+    LINALG_WARN_IF(vecContainsNan(b), "input vector contains INF or NAN!");
 
     for(size_t i = 0; i < b.len; i++)
     {
         LA_VIDX_PTR(result, i) = a * LA_VIDX(b, i);
     }
 
-    LINALG_WARN_IF(vecContainsNan(*result), "output vector contains NAN!");
+    LINALG_WARN_IF(vecContainsNan(*result), "output vector contains INF or NAN!");
 
     return LINALG_OK;
 }
@@ -171,8 +171,8 @@ double vecDot(Vec a, Vec b)
 {
     LINALG_ASSERT_ERROR(a.len != b.len, NAN, "attempt to take dot product of vectors with dimension %zu and %zu!", a.len, b.len);
     LINALG_ASSERT_ERROR(!a.x || !b.x, NAN, "input vector/s is/are null!");
-    LINALG_WARN_IF(vecContainsNan(a), "input vector contains NAN!");
-    LINALG_WARN_IF(vecContainsNan(b), "input vector contains NAN!");
+    LINALG_WARN_IF(vecContainsNan(a), "input vector contains INF or NAN!");
+    LINALG_WARN_IF(vecContainsNan(b), "input vector contains INF or NAN!");
 
     double result = 0.0;
 
@@ -194,7 +194,7 @@ double vecNorm(Vec a, double p)
 {
     LINALG_ASSERT_ERROR(!a.x, NAN, "input vector is null!");
     LINALG_ASSERT_ERROR(p < 1, NAN, "L_p is not a valid norm for p = %f", p);
-    LINALG_WARN_IF(vecContainsNan(a), "input vector contains NAN!");
+    LINALG_WARN_IF(vecContainsNan(a), "input vector contains INF or NAN!");
 
     double result = 0.0;
 
@@ -210,7 +210,7 @@ double vecMax(Vec a)
 {
     LINALG_ASSERT_ERROR(!a.x, NAN, "input vector is null!");
     LINALG_ASSERT_WARN(a.len == 0, INFINITY, "max of a zero dimension vector");
-    LINALG_WARN_IF(vecContainsNan(a), "input vector contains NAN!");
+    LINALG_WARN_IF(vecContainsNan(a), "input vector contains INF or NAN!");
 
     double result = -INFINITY;
 
@@ -226,7 +226,7 @@ double vecMaxAbs(Vec a)
 {
     LINALG_ASSERT_ERROR(!a.x, NAN, "input vector is null!");
     LINALG_ASSERT_WARN(a.len == 0, INFINITY, "max of a zero dimension vector");
-    LINALG_WARN_IF(vecContainsNan(a), "input vector contains NAN!");
+    LINALG_WARN_IF(vecContainsNan(a), "input vector contains INF or NAN!");
 
     double result = -INFINITY;
 
@@ -242,7 +242,7 @@ double vecMin(Vec a)
 {
     LINALG_ASSERT_ERROR(!a.x, NAN, "input vector is null!");
     LINALG_ASSERT_WARN(a.len == 0, -INFINITY, "min of a zero dimension vector");
-    LINALG_WARN_IF(vecContainsNan(a), "input vector contains NAN!");
+    LINALG_WARN_IF(vecContainsNan(a), "input vector contains INF or NAN!");
 
     double result = INFINITY;
 
@@ -258,7 +258,7 @@ double vecSum(Vec a)
 {
     LINALG_ASSERT_ERROR(!a.x, NAN, "input vector is null!");
     LINALG_ASSERT_WARN(a.len == 0, 0, "sum of a zero dimension vector");
-    LINALG_WARN_IF(vecContainsNan(a), "input vector contains NAN!");
+    LINALG_WARN_IF(vecContainsNan(a), "input vector contains INF or NAN!");
 
     double result = 0;
     for(size_t i = 0; i < a.len; i++) result += LA_VIDX(a, i);
@@ -270,7 +270,7 @@ double vecProd(Vec a)
 {
     LINALG_ASSERT_ERROR(!a.x, NAN, "input vector is null!");
     LINALG_ASSERT_WARN(a.len == 0, 1, "product of a zero dimension vector");
-    LINALG_WARN_IF(vecContainsNan(a), "input vector contains NAN!");
+    LINALG_WARN_IF(vecContainsNan(a), "input vector contains INF or NAN!");
 
     double result = 1;
     for(size_t i = 0; i < a.len; i++) result *= LA_VIDX(a, i);
@@ -282,7 +282,7 @@ double vecRange(Vec a)
 {
     LINALG_ASSERT_ERROR(!a.x, NAN, "input vector is null!");
     LINALG_ASSERT_WARN(a.len == 0, 0, "input is a zero dimension vector");
-    LINALG_WARN_IF(vecContainsNan(a), "input vector contains NAN!");
+    LINALG_WARN_IF(vecContainsNan(a), "input vector contains INF or NAN!");
 
     double max_val = -INFINITY;
     double min_val = INFINITY;
@@ -300,7 +300,7 @@ double vecRangeRelative(Vec a)
 {
     LINALG_ASSERT_ERROR(!a.x, NAN, "input vector is null!");
     LINALG_ASSERT_WARN(a.len == 0, 0, "input is a zero dimension vector");
-    LINALG_WARN_IF(vecContainsNan(a), "input vector contains NAN!");
+    LINALG_WARN_IF(vecContainsNan(a), "input vector contains INF or NAN!");
 
     double max_val = -INFINITY;
     double min_val = INFINITY;
@@ -320,7 +320,7 @@ double vecStandardDeviation(Vec a)
 {
     LINALG_ASSERT_ERROR(!a.x, NAN, "input vector is null!");
     LINALG_ASSERT_WARN(a.len == 0, 0, "checking a zero dimension vector");
-    LINALG_WARN_IF(vecContainsNan(a), "input vector contains NAN!");
+    LINALG_WARN_IF(vecContainsNan(a), "input vector contains INF or NAN!");
 
     double mean = vecSum(a)/(double)a.len;
     double dev = 0;
