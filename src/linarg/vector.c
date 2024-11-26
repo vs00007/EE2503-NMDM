@@ -157,6 +157,8 @@ int vecScale(double a, Vec b, Vec* result)
         LA_VIDX_PTR(result, i) = a * LA_VIDX(b, i);
     }
 
+    LINALG_WARN_IF(vecContainsNan(*result), "output vector contains NAN!");
+
     return LINALG_OK;
 }
 // unit vector of the norm
