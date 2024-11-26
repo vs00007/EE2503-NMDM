@@ -3,3 +3,4 @@ build/
 venv/
 .vscode/
 App/
+data/visualise.pyvi
