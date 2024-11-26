@@ -35,7 +35,7 @@ Mat2d matrix_E_n(InputData input_data, Vec mesh)
     size_t len = input_data.params.num_traps;
 
     Mat2d Mat_E_n = mat2DInitZerosA(len,len);
-
+    if (!Mat_E_n.mat) printf("matrix allocation fucked up!\n");
     Vec E = getGridNumV(input_data, mesh);
     // printInputData(&input_data);
     vecScale(Q, E, &E);

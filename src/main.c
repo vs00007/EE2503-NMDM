@@ -70,7 +70,7 @@ int main()
             break;
         }
 
-        double error_fn = vecNorm(delta_fn, 2) / vecNorm(data.probs, 2);
+        double error_fn = vecMax(delta_fn) / vecMax(data.probs);
         double error_E = mat2DMaxAbs(delta_E) / mat2DMaxAbs(E_nm);
 
         pyviSectionPush(f_n, data.probs);
