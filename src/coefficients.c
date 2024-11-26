@@ -39,7 +39,7 @@ Mat2d matrix_E_n(InputData input_data, Vec mesh)
     Vec E = getGridNumV(input_data, mesh);
     vecScale(-Q, E, &E);
     
-    for(size_t i = 0; i < len ; i++){
+    for(size_t i = 0; i < len    ; i++){
         if (isnan(E.x[i])) printf("Found Bad E. i = %zu\n", i);
         for(size_t j = 0; j < len ; j++){
             *mat2DRef(Mat_E_n, i, j) = E.x[i] - E.x[j] ;
@@ -128,7 +128,7 @@ Mat2d R_en(InputData input_data, Vec mesh)
     long double V_0 = input_data.params.V_0 ;
 
     for(size_t i = 0 ; i < len ; i++){
-        long double t = transmission_param(d.x[i] , input_data , V_0) ;
+        long double t = 1.0; //transmission_param(d.x[i] , input_data , V_0) ;
         *mat2DRef(mat_R, i, 0) = k*t*kb_T*log(1 + exp(E.x[i] + q*V_0 )) ;
     }
 
@@ -136,7 +136,7 @@ Mat2d R_en(InputData input_data, Vec mesh)
     long double V_L = input_data.params.V_L ;
 
     for(size_t i = 0 ; i < len ; i++){
-        long double t = transmission_param(d.x[i] , input_data , V_L) ;
+        long double t = 1.0; // transmission_param(d.x[i] , input_data , V_L) ;
         *mat2DRef(mat_R, i, 1) = k * t * kb_T * log(1 + exp(E.x[i] + q * V_L )) ;
     }
     return mat_R ;
