@@ -1,5 +1,5 @@
 [Oxide]
-length               = 1e-8
+length               = 1e-7 
 relative_permitivity = 3.9
 v_top                = 1
 v_bottom             = 0

@@ -183,8 +183,8 @@ Vec generateMesh(Vec d, OxParams oxparams)
     // from d[n] to L
     long double d_n = fabsl(d.x[d.len - 1] - oxparams.L);
 
-    mesh_point = d_n - eps_dist;
-    dynStackPush(&mesh, &mesh_point);
+    // mesh_point = d_n - eps_dist;
+    // dynStackPush(&mesh, &mesh_point);
 
     for(size_t i = 0; i < chunk_size; i++)
     {
@@ -361,7 +361,7 @@ Vec getGridNumE(InputData data, Vec mesh)
     for(size_t i = 0; i < gridV.len; i++)
     {
         // EC = -qV - χ - Ed
-        long double EC_val = -Q * (vecGet(gridV, i) - (data.params.electron_affinity) - vecGet(data.energies, i));
+        long double EC_val = -Q * (vecGet(gridV, i) - (data.params.electron_affinity) - Q * vecGet(data.energies, i));
         *vecRef(EC, i) = EC_val;
     }
     // printVecUnits(EC, 'eV');

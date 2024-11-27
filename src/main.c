@@ -49,26 +49,26 @@ int main()
         delta_fn = data.probs;
         delta_E = E_nm;
 
-    //     // solve for fn
-    //     data.probs = jacobianImplementationA(coefficientMatrix, R1, R2);
-    //     V = poissonWrapper(data, mesh);
+        // solve for fn
+        data.probs = jacobianImplementationA(coefficientMatrix, R1, R2);
+        V = poissonWrapper(data, mesh);
 
-    //     vecPrint(V);
-    //     pyviSectionPush(V_vi, V);
+        vecPrint(V);
+        pyviSectionPush(V_vi, V);
 
-    //     printf("\nProbabilites[%zu]:", iter);
-    //     vecPrint(data.probs);
-    //     // printNL();
+        printf("\nProbabilites[%zu]:", iter);
+        vecPrint(data.probs);
+        // printNL();
 
-    //     E_nm = matrix_E_n(data, mesh);
+        E_nm = matrix_E_n(data, mesh);
         
         printf("\nEnergies[%zu]:", iter);
         mat2DPrint(E_nm);
         printNL();
 
-    //     R = R_en(data, mesh);
-    //     R1 = mat2DCol(R, 0);
-    //     R2 = mat2DCol(R, 1);
+        R = R_en(data, mesh);
+        R1 = mat2DCol(R, 0);
+        R2 = mat2DCol(R, 1);
 
         printf("Transmission Coefficients[%zu]:", iter);
         mat2DPrint(R);
@@ -88,36 +88,36 @@ int main()
         // d_m doesn't change? - - Of course it doesn't
         //d_nm = matrix_d_nm(data);
         
-    //     mat2DSub(delta_E, E_nm, &delta_E);
-    //     vecSub(delta_fn, data.probs, &delta_fn);
+        mat2DSub(delta_E, E_nm, &delta_E);
+        vecSub(delta_fn, data.probs, &delta_fn);
 
-    //     long double error_fn = vecMax(delta_fn) / vecMax(data.probs);
-    //     long double error_E = mat2DMaxAbs(delta_E) / mat2DMaxAbs(E_nm);
+        long double error_fn = vecMax(delta_fn) / vecMax(data.probs);
+        long double error_E = mat2DMaxAbs(delta_E) / mat2DMaxAbs(E_nm);
 
-    //     pyviSectionPush(f_n, data.probs);
+        pyviSectionPush(f_n, data.probs);
 
-    //     if(mat2DContainsNan(E_nm))
-    //     {
-    //         printf("[Steady-State] Error: E_nm contains nan! Iter : %zu\n", iter);
-    //         break;
-    //     }
-    //     if(vecContainsNan(delta_fn))
-    //     {
-    //         printf("[Steady-State] Error: f_n contains nan! Iter : %zu\n", iter);
-    //         break;
-    //     }
+        if(mat2DContainsNan(E_nm))
+        {
+            printf("[Steady-State] Error: E_nm contains nan! Iter : %zu\n", iter);
+            break;
+        }
+        if(vecContainsNan(delta_fn))
+        {
+            printf("[Steady-State] Error: f_n contains nan! Iter : %zu\n", iter);
+            break;
+        }
 
-    //     if (error_E < TOL && error_fn < TOL)
-    //     {
+        if (error_E < TOL && error_fn < TOL)
+        {
 
-    //         printf("YAY! Steady state converged ... in ... Iter count : %zu\n", iter);
-    //         break;
-    //     }
+            // printf("YAY! Steady state converged ... in ... Iter count : %zu\n", iter);
+            // break;
+        }
 
-    //     if (iter == ITER_MAX - 1) printf("Max Iterations reached!\n");
+        if (iter == ITER_MAX - 1) printf("Max Iterations reached!\n");
     }
 
-
+    pyviWrite(vis);
     printNL();
 /*
     data.params.V_0 = 1.0;

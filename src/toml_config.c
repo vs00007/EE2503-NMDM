@@ -104,17 +104,29 @@ int parse_toml_file(const char* filename, OxParams* params, Vec* locations, Vec*
 
     for (size_t i = 0; i < array_size; i++) {
         const char* raw_loc = toml_raw_at(loc_array, i);
-
         locations->x[i] = strtod(raw_loc, &endptr);
         if (*endptr != '\0') {
-            fprintf(stderr, "Invalid value in locations array\n");
+            fprintf(stderr, "Invalid value in locations or energies array\n");
             free(locations->x);
             free(trap_energies->x);
             toml_free(conf);
             return -1;
         }
     }
+    for (size_t i = 0; i < array_size; i++) {
+        const char* raw_e = toml_raw_at(energy_array, i);
+        trap_energies->x[i] = strtod(raw_e, &endptr);
+        if (*endptr != '\0') {
+            fprintf(stderr, "Invalid value in locations or energies array\n");
+            free(locations->x);
+            free(trap_energies->x);
+            toml_free(conf);
+            return -1;
+        }
+    }
+            
     vecScale(params->L, *locations, locations);
+    vecScale(Q, *trap_energies, trap_energies);
 
     toml_table_t* transport = toml_table_in(oxide, "transport");
     if (!transport) {
@@ -205,13 +217,14 @@ void printInputData(const InputData* data)
     printOxParams(&data->params);
     
     printf("\n=== Trap Data ===\n");
-    printf("Index    Location (m)    Occupation Prob.\n");
+    printf("Index    Location (m)    Occupation Prob.    Trap Energies (Ed)\n");
     printf("----------------------------------------\n");
     for(size_t i = 0; i < data->locs.len; i++) {
-        printf("%-8zu %-14.3Le %-14.3Lf\n", 
-               i, 
-               vecGet(data->locs, i), 
-               vecGet(data->probs, i));
+        printf("%-8zu %-14.3Le %-14.3Lf %-14.3Le\n", 
+                i, 
+                vecGet(data->locs, i), 
+                vecGet(data->probs, i));
+                vecGet(data->energies, i);
     }
     printf("\n=====================================\n");
 }
