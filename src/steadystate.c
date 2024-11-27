@@ -68,15 +68,28 @@ void gaussianElimination(Mat2d A/*jacobian matrix*/, Vec b/*coefficient vector*/
     int pivot_row = 0;
     long double pivot, factor;
 
+    Mat2d temp = mat2DCopyA(A);
+    Vec tempVec = vecCopyA(b);
+
     for(size_t i = 0; i < A.rows; i++){
-        pivot_row = find_pivot_row(A, i, i);
-        if(pivot_row != (int)i){
-            swapRows(A, b, i, pivot_row);
-        }
+        //pivot_row = find_pivot_row(A, i, i);
+        //if(pivot_row != (int)i){
+        //    swapRows(A, b, i, pivot_row);
+        //}
 
         pivot = *mat2DRef(A, i, i);
         if(fabsl(pivot) < MIN_ERROR){
-            printf("Bad Matrix!");
+            printf("Bad Matrix:\n");
+            printf("Jacobian:");
+            mat2DPrint(temp);
+            printf("\n");
+            printf("Vec:");
+            vecPrint(tempVec);
+            printf("\n");
+            printf("RREF-Jacobian:");
+            mat2DPrint(A);
+            printf("\n");
+            printf("=============================================================================================\n");
             return;
         }
         VEC_INDEX(b, i)/=pivot;
@@ -142,9 +155,15 @@ Vec masterEquationCoeffA(Vec f, Vec R1, Vec R2, Mat2d coeffmatrix){
 
 //implements jacobian algorithm
 Vec jacobianImplementationA(Mat2d coeffmatrix, Vec R1, Vec R2){
-    srand(time(NULL));
+    //srand(time(NULL));
     Mat2d matrix = mat2DInitZerosA(coeffmatrix.rows, coeffmatrix.cols); //don't forget to remove it dumb
     Vec f = vecInitA(0, matrix.cols); //need it dumb
+
+    for(size_t i = 0; i < f.len; i++)
+    {
+        VEC_INDEX(f, i) = ((long double)rand()) / RAND_MAX;
+    }
+
     Vec F = vecInitA(0, matrix.cols); //need it dumb but can free it later
     Vec delta_f = vecInitA(1e-10, matrix.cols); //free it dumb
     while(fabsl(vecMax(delta_f)) > MIN_ERROR){

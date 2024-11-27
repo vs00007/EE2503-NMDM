@@ -70,9 +70,9 @@ void vecPrint(Vec a)
     printf("[");
     for(size_t i = 0; i < a.len - 1; i++)
     {
-        printf("%Lg, ", LA_VIDX(a, i));
+        printf("%.17Lg, ", LA_VIDX(a, i));
     }
-    printf("%Lg]", LA_VIDX(a, a.len - 1));
+    printf("%.17Lg]", LA_VIDX(a, a.len - 1));
 }
 
 void printVecUnits(Vec f_n, char a)

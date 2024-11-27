@@ -40,14 +40,14 @@ int main()
         (try not to change the master_eqn.c file, just make realllyyy big vector and matrix, and then push it to a new pyvi file) 
     */
 
-    // Vec delta_fn = vecInitZerosA(dim);
-    // Mat2d delta_E = mat2DInitZerosA(dim, dim);
-    // Vec V;
-    // for(size_t iter = 0; iter < ITER_MAX; iter++)
-    // {
-    //     // set to prev iter values
-    //     delta_fn = data.probs;
-    //     delta_E = E_nm;
+    Vec delta_fn = vecInitZerosA(dim);
+    Mat2d delta_E = mat2DInitZerosA(dim, dim);
+    Vec V;
+    for(size_t iter = 0; iter < 1; iter++)
+    {
+        // set to prev iter values
+        delta_fn = data.probs;
+        delta_E = E_nm;
 
     //     // solve for fn
     //     data.probs = jacobianImplementationA(coefficientMatrix, R1, R2);
@@ -62,19 +62,31 @@ int main()
 
     //     E_nm = matrix_E_n(data, mesh);
         
-    //     printf("Energies[%zu]:", iter);
-    //     mat2DPrint(E_nm);
-    //     printNL();
+        printf("\nEnergies[%zu]:", iter);
+        mat2DPrint(E_nm);
+        printNL();
 
     //     R = R_en(data, mesh);
     //     R1 = mat2DCol(R, 0);
     //     R2 = mat2DCol(R, 1);
 
-    //     // d_m doesn't change? - - Of course it doesn't
-    //     //d_nm = matrix_d_nm(data);
+        printf("Transmission Coefficients[%zu]:", iter);
+        mat2DPrint(R);
+        printf("\n");
+
+        coefficientMatrix = matrix_r_nm(data, E_nm, d_nm);
+        for(size_t i = 0; i < coefficientMatrix.rows; i++) *mat2DRef(coefficientMatrix, i, i) = 0.0L;
         
-    //     coefficientMatrix = matrix_r_nm(data, E_nm, d_nm);
-    //     for(size_t i = 0; i < coefficientMatrix.rows; i++) *mat2DRef(coefficientMatrix, i, i) = 0.0L;
+        printf("\nCoeffmatrix[%zu]:", iter);
+        mat2DPrint(coefficientMatrix);
+        printNL();
+
+        printf("\ndelta distance[%zu]:", iter);
+        mat2DPrint(d_nm);
+        printNL();
+
+        // d_m doesn't change? - - Of course it doesn't
+        //d_nm = matrix_d_nm(data);
         
     //     mat2DSub(delta_E, E_nm, &delta_E);
     //     vecSub(delta_fn, data.probs, &delta_fn);
@@ -107,7 +119,7 @@ int main()
 
 
     printNL();
-
+/*
     data.params.V_0 = 1.0;
 
     RK45Config config;
@@ -119,20 +131,32 @@ int main()
     config.mesh = mesh;
     config.y_initial = data.probs;
 
+    Vec timestamps = vecInitZerosA(100);
+    Mat2d fn_t = mat2DInitZerosA(data.probs.len, 100);
+
+    solver(config, timestamps, fn_t);
+
     size_t slen = 0;
-    Vec t_result_inf = vecInitZerosA(100);
-    Mat2d f_res_inf = mat2DInitA(0.0L, data.probs.len, 100);
-    Vec t_res_act;
-    Mat2d f_res_act;
-    solver(config, t_result_inf, f_res_inf);
-
-    for (size_t i = 1; i < t_result_inf.len; i ++){
-        if (vecGet(t_result_inf, i) < vecGet(t_result_inf, i - 1)) slen = i; 
+    for (size_t i = 1; i < timestamps.len; i ++)
+    {
+        if (vecGet(timestamps, i) < vecGet(timestamps, i - 1)) slen = i; 
     } 
-    t_res_act = vecConstruct(t_result_inf.x, slen);
-    f_res_act = mat2DConstruct(f_res_inf.mat, data.params.num_traps, slen);
 
-    pyviWrite(vis);
+    PyVi trans_pyvi = pyviInitA("data/transient.pyvi");
+    PyViBase x_pyvi = pyviCreateParameter(&trans_pyvi, "x", data.locs);
+    
+    for(size_t i = 0; i < data.probs.len; i++)
+    {
+        char buf[16];
+        sscanf(buf, "f_n[%zu]", i);
+        PyViSec f_n_pyvi = pyviCreateSection(&trans_pyvi, buf, x_pyvi);
+
+        for(size_t j = 0; j < slen; j++)
+        {
+            //pyviSectionPush(f_n_pyvi, );
+        }
+    }
+ */
     freePyVi(&vis);
     // int status = system("python3 visualise/visualise.py");
 }
