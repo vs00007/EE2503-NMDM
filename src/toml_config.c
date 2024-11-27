@@ -83,7 +83,7 @@ int parse_toml_file(const char* filename, OxParams* params, Vec* locations, Vec*
     }
 
     toml_array_t* loc_array = toml_array_in(traps, "locations");
-      //  toml_array_t* prob_array = toml_array_in(traps, "occ_probs");
+       toml_array_t* prob_array = toml_array_in(traps, "trap_energy");
 
     if (!loc_array) {
         fprintf(stderr, "Missing trap arrays\n");
@@ -92,11 +92,12 @@ int parse_toml_file(const char* filename, OxParams* params, Vec* locations, Vec*
     }
 
     size_t array_size = toml_array_nelem(loc_array);
-    // if (array_size != (size_t)toml_array_nelem(prob_array)) {
-    //     fprintf(stderr, "Location and probability arrays must have same size\n");
-    //     toml_free(conf);
-    //     return -1;
-    // }
+
+    if (array_size != (size_t)toml_array_nelem(prob_array)) {
+        fprintf(stderr, "Location and probability arrays must have same size\n");
+        toml_free(conf);
+        return -1;
+    }
 
     *locations = vecInitOnesA(array_size);
     *occ_probs = vecInitZerosA(array_size);

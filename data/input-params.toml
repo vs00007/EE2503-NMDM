@@ -8,7 +8,7 @@ electron_affinity    = -1.45
 
 [Oxide.traps]
 locations            = [0.1, 0.9]
-occ_probs            = [0.1, 0.1, 0.1, 0.1, 0.1]
+trap_energy          = [0.1, 0.1]  # in eV
 
 [Oxide.transport]
 mobility             = 5e-2
