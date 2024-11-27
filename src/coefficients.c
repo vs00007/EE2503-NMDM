@@ -40,7 +40,7 @@ Mat2d matrix_E_n(InputData input_data, Vec mesh)
     vecScale(-Q, E, &E);
     
     for(size_t i = 0; i < len    ; i++){
-        if (isnan(E.x[i])) printf("Found Bad E. i = %zu\n", i);
+        // if (isnan(E.x[i])) printf("Found Bad E. i = %zu\n", i);
         for(size_t j = 0; j < len ; j++){
             *mat2DRef(Mat_E_n, i, j) = E.x[i] - E.x[j] ;
         }

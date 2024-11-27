@@ -6,7 +6,7 @@
 #include<stdlib.h>
 #include<include/inputs.h>
 
-#define N 1e8
+#define N 1e6
 
 typedef struct rk45
 {

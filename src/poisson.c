@@ -159,8 +159,8 @@ Vec generateMesh(Vec d, OxParams oxparams)
     // Piecewise mesh creation. Adds all points to the mesh
 
     long double d_0 = d.x[0];
-    // mesh_point = d_0 - eps_dist;
-    // dynStackPush(&mesh, &mesh_point);
+    mesh_point = d_0 - eps_dist;
+    dynStackPush(&mesh, &mesh_point);
 
     // from 0 to d[0]
     for(size_t i = 0; i < chunk_size; i++)
@@ -170,14 +170,14 @@ Vec generateMesh(Vec d, OxParams oxparams)
         dynStackPush(&mesh, &mesh_point);
     }
 
-    // mesh_point = d_0 + eps_dist;
-    // dynStackPush(&mesh, &mesh_point);
+    mesh_point = d_0 + eps_dist;
+    dynStackPush(&mesh, &mesh_point);
 
     // Everywhere else
     for (size_t i = 0; i < d.len - 1; i++)
     {
-        // mesh_point = d.x[i] - eps_dist;
-        // dynStackPush(&mesh, &mesh_point);
+        mesh_point = d.x[i] - eps_dist;
+        dynStackPush(&mesh, &mesh_point);
         long double d_i = fabsl(d.x[i] - d.x[i + 1]);
         for (size_t j = 0; j < chunk_size; j++)
         {
@@ -185,16 +185,16 @@ Vec generateMesh(Vec d, OxParams oxparams)
             // printf("%Lg\n", mesh_point);
             dynStackPush(&mesh, &mesh_point);
         }
-        // mesh_point = d.x[i] + eps_dist;
-        // dynStackPush(&mesh, &mesh_point);
+        mesh_point = d.x[i] + eps_dist;
+        dynStackPush(&mesh, &mesh_point);
 
     }
 
     // from d[n] to L
     long double d_n = fabsl(d.x[d.len - 1] - oxparams.L);
 
-    // mesh_point = d_n - eps_dist;
-    // dynStackPush(&mesh, &mesh_point);
+    mesh_point = d_n - eps_dist;
+    dynStackPush(&mesh, &mesh_point);
 
     for(size_t i = 0; i < chunk_size; i++)
     {
@@ -202,8 +202,8 @@ Vec generateMesh(Vec d, OxParams oxparams)
         // printf("%Lg\n", mesh_point);
         dynStackPush(&mesh, &mesh_point);
     }
-    // mesh_point = d_n + eps_dist;
-    // dynStackPush(&mesh, &mesh_point);
+    mesh_point = d_n + eps_dist;
+    dynStackPush(&mesh, &mesh_point);
 
     // Last point
     mesh_point = oxparams.L;
@@ -282,8 +282,11 @@ Vec constructB(Vec f_n, Vec d, Vec mesh, size_t chunk, OxParams params)
     {
         idx = i / chunk - 1;
         if (idx > d.len - 1) continue;
-        long double diff = 2.5e-10;
-        long double entry = vecGet(f_n, idx) * Q / ((params.eps_r * EPS0) * pow(diff, 3));
+
+        long double diff = (vecGet(mesh, i - 1) - vecGet(mesh, i + 1)) / 2;
+
+        long double entry = vecGet(f_n, idx) * Q / ((params.eps_r * EPS0) * powl(diff, 3));
+
         if ((vecGet(d, idx) - vecGet(mesh, i)) == 0) *vecRef(b, i) = entry;
     }
     *vecRef(b, b.len - 1) = params.V_L; 
@@ -372,7 +375,7 @@ Vec getGridNumE(InputData data, Vec mesh)
         long double EC_val = -Q * (vecGet(gridV, i) - (data.params.electron_affinity));
         *vecRef(EC, i) = EC_val;
     }
-    printVecUnits(EC, 'eV');
+    // printVecUnits(EC, 'eV');
 
     return EC;
 }

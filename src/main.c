@@ -11,8 +11,8 @@ int main()
     InputData data = getInput("data/input-params.toml");
     printInputData(&data);
     Vec mesh = generateMesh(data.locs, data.params);
-    printNL();
-    printf("V_top = %Lg\n", data.params.V_L);
+    // printNL();
+    // printf("V_top = %Lg\n", data.params.V_L);
 
     PyVi vis = pyviInitA("data/visualise.pyvi");
     PyViBase x_vi = pyviCreateParameter(&vis, "d", data.locs);
@@ -52,11 +52,14 @@ int main()
         // solve for fn
         data.probs = jacobianImplementationA(coefficientMatrix, R1, R2);
         V = poissonWrapper(data, mesh);
+
         vecPrint(V);
         pyviSectionPush(V_vi, V);
+
         printf("\nProbabilites[%zu]:", iter);
         vecPrint(data.probs);
-        printNL();
+        // printNL();
+
         E_nm = matrix_E_n(data, mesh);
         
         printf("Energies[%zu]:", iter);
@@ -67,7 +70,7 @@ int main()
         R1 = mat2DCol(R, 0);
         R2 = mat2DCol(R, 1);
 
-        // d_m doesn't change?
+        // d_m doesn't change? - - Of course it doesn't
         //d_nm = matrix_d_nm(data);
         
         coefficientMatrix = matrix_r_nm(data, E_nm, d_nm);
@@ -105,7 +108,6 @@ int main()
     pyviWrite(vis);
     printNL();
 
-/*
     data.params.V_0 = 1.0;
 
     RK45Config config;
@@ -117,10 +119,29 @@ int main()
     config.mesh = mesh;
     config.y_initial = data.probs;
 
-    solver(config, );
-*/
+    // size_t slen = 0;
+    // Vec t_result_inf = vecInitZerosA(100);
+    // Mat2d f_res_inf = mat2DInitA(0.0L, data.probs.len, 100);
+    // Vec t_res_act;
+    // Mat2d f_res_act;
 
-    vecPrint(data.probs);
+    // while (true)
+    // {
+    //     solver(config, t_result_inf, f_res_inf);
+
+    //     for (size_t i = 1; i < t_result_inf.len; i ++){
+    //         if (vecGet(t_result_inf, i) < vecGet(t_result_inf, i - 1)) slen = i; 
+    //     } 
+    //     t_res_act = vecConstruct(t_result_inf.x, slen);
+    //     f_res_act = mat2DConstruct(f_res_inf.mat, data.params.num_traps, slen);
+
+
+        
+    //     // vecPrint(t_result_inf);
+    //     // printNL();
+    //     // mat2DPrint(f_res_act);
+    // }
+
 
     freePyVi(&vis);
     // int status = system("python3 visualise/visualise.py");

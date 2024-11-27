@@ -46,9 +46,9 @@ rk45 rkf45_calculator(long double h, long double t_i, Vec y_i, InputData data, V
     // long double k_2 = h * f(t_i + h * 3 / 8, y_i + k_0 * 3 / 32 + k_1 * 9 / 32);
 
     Vec vec21 = vecInitZerosA(l);
-    vecScale(3.0 / 32.0, k_0, &vec21); 
+    vecScale(3.0 / 32.0, k_0, &vec21);
     Vec vec22 = vecInitZerosA(l);
-    vecScale(9.0 / 32, k_1, &vec22);  
+    vecScale(9.0 / 32, k_1, &vec22);
     vecAdd(y_i, vec21, &vec21);
     vecAdd(vec21, vec22, &vec21);
     Vec k_2 = vecInitZerosA(l);
@@ -215,6 +215,7 @@ void solver(RK45Config config, Vec t_res, Mat2d res){
                 VEC_INDEX(col, i) = VEC_INDEX(y5, i);
             }
             VEC_INDEX(t_res, n + 1) = VEC_INDEX(t_res, n) + h;
+            if (VEC_INDEX(t_res, n + 1) == 0) break;
             n++;
         }
 
