@@ -1,6 +1,6 @@
 #include "include/inputs.h"
 
-int parse_toml_file(const char* filename, OxParams* params, Vec* locations, Vec* occ_probs) {
+int parse_toml_file(const char* filename, OxParams* params, Vec* locations, Vec* trap_energies) {
     FILE* fp = fopen(filename, "r");
     if (!fp) {
         fprintf(stderr, "Cannot open file\n");
@@ -83,24 +83,24 @@ int parse_toml_file(const char* filename, OxParams* params, Vec* locations, Vec*
     }
 
     toml_array_t* loc_array = toml_array_in(traps, "locations");
-       toml_array_t* prob_array = toml_array_in(traps, "trap_energy");
+       toml_array_t* energy_array = toml_array_in(traps, "trap_energy");
 
-    if (!loc_array) {
-        fprintf(stderr, "Missing trap arrays\n");
+    if (!loc_array || !energy_array) {
+        fprintf(stderr, "Missing Trap array or Energy array\n");
         toml_free(conf);
         return -1;
     }
 
     size_t array_size = toml_array_nelem(loc_array);
 
-    if (array_size != (size_t)toml_array_nelem(prob_array)) {
-        fprintf(stderr, "Location and probability arrays must have same size\n");
+    if (array_size != (size_t)toml_array_nelem(energy_array)) {
+        fprintf(stderr, "Location and Energy arrays must have same size\n");
         toml_free(conf);
         return -1;
     }
 
     *locations = vecInitOnesA(array_size);
-    *occ_probs = vecInitZerosA(array_size);
+    *trap_energies = vecInitZerosA(array_size);
 
     for (size_t i = 0; i < array_size; i++) {
         const char* raw_loc = toml_raw_at(loc_array, i);
@@ -109,7 +109,7 @@ int parse_toml_file(const char* filename, OxParams* params, Vec* locations, Vec*
         if (*endptr != '\0') {
             fprintf(stderr, "Invalid value in locations array\n");
             free(locations->x);
-            free(occ_probs->x);
+            free(trap_energies->x);
             toml_free(conf);
             return -1;
         }
@@ -219,9 +219,9 @@ void printInputData(const InputData* data)
 InputData getInput(char *filename) {
     OxParams params;
     Vec locations;
-    Vec occ_probs;
+    Vec trap_energies;
 
-    if (parse_toml_file(filename, &params, &locations, &occ_probs) != 0) {
+    if (parse_toml_file(filename, &params, &locations, &trap_energies) != 0) {
         fprintf(stderr, "Failed to parse TOML file\n");
         return (InputData){0};
     }
@@ -229,8 +229,8 @@ InputData getInput(char *filename) {
     InputData data;
     data.params = params;
     data.locs = locations;
-    data.probs = occ_probs;
-
+    data.probs = vecInitZerosA(params.num_traps);
+    data.energies = trap_energies;
     return data;
 }
 

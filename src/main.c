@@ -115,7 +115,7 @@ int main()
     //     }
 
     //     if (iter == ITER_MAX - 1) printf("Max Iterations reached!\n");
-    // }
+    }
 
 
     printNL();
