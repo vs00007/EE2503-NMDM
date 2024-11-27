@@ -272,7 +272,7 @@ Vec constructB(Vec f_n, Vec d, Vec mesh, size_t chunk, OxParams params)
         idx = i / chunk - 1;
         if (idx > d.len - 1) continue;
 
-        long double diff = (vecGet(mesh, i - 1) - vecGet(mesh, i + 1)) / 2;
+        long double diff = (vecGet(mesh, i + 1) - vecGet(mesh, i - 1)) / 2;
 
         long double entry = vecGet(f_n, idx) * Q / ((params.eps_r * EPS0) * powl(diff, 3));
 

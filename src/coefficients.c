@@ -128,18 +128,23 @@ Mat2d R_en(InputData input_data, Vec mesh)
     long double V_0 = input_data.params.V_0;
     // Bottom electrode
     long double V_L = input_data.params.V_L;
+    long double ln_expo;
 
     for(size_t i = 0 ; i < len ; i++){
         long double t = 1.0; //transmission_param(d.x[i] , input_data , V_0) ;
-        long double e_top_t = k * t * kb_T * log(1 + exp(-(E.x[i] + Q * V_0) / kb_T));
-        long double e_bottom_t = k * t * kb_T * log(1 + exp(-(E.x[i] + Q * V_L) / kb_T));
+        ln_expo = -(E.x[i] + Q * V_0) / kb_T;
+        if (ln_expo < 1000) ln_expo = logl(1 + exp(-(E.x[i] + Q * V_0) / kb_T));
+        long double e_top_t = k * t * kb_T * ln_expo;
+        long double e_bottom_t = k * t * kb_T * ln_expo;
         *mat2DRef(mat_R, i, 0) = e_top_t + e_bottom_t;
     }
 
     for(size_t i = 0 ; i < len ; i++){
         long double t = 1.0; // transmission_param(d.x[i] , input_data , V_L) ;
-        long double e_top_t = k * t * kb_T * log(1 + exp((E.x[i] + Q * V_0) / kb_T));
-        long double e_bottom_t = k * t * kb_T * log(1 + exp((E.x[i] + Q * V_L) / kb_T));
+        ln_expo = (E.x[i] + Q * V_0) / kb_T;
+        if (ln_expo < 100) ln_expo = logl(1 + exp((E.x[i] + Q * V_0) / kb_T));
+        long double e_top_t = k * t * kb_T * ln_expo;
+        long double e_bottom_t = k * t * kb_T * ln_expo;
         *mat2DRef(mat_R, i, 1) = e_top_t + e_bottom_t;
     }
     return mat_R ;

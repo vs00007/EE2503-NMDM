@@ -158,15 +158,15 @@ Vec masterEquationCoeffA(Vec f, Vec R1, Vec R2, Mat2d coeffmatrix){
 Vec jacobianImplementationA(Mat2d coeffmatrix, Vec R1, Vec R2){
     srand(time(NULL));
     Mat2d matrix = mat2DInitZerosA(coeffmatrix.rows, coeffmatrix.cols); //don't forget to remove it dumb
-    Vec f = vecInitA(0, matrix.cols); //need it dumb
+    Vec f = vecInitA(1e-15, matrix.cols); //need it dumb
 
-    for(size_t i = 0; i < f.len; i++)
-    {
-        VEC_INDEX(f, i) = ((long double)rand()) / RAND_MAX;
-    }
+    // for(size_t i = 0; i < f.len; i++)
+    // {
+    //     VEC_INDEX(f, i) = ((long double)rand()) / RAND_MAX;
+    // }
 
     Vec F = vecInitA(0, matrix.cols); //need it dumb but can free it later
-    Vec delta_f = vecInitA(1e-10, matrix.cols); //free it dumb
+    Vec delta_f = vecInitA(1, matrix.cols); //free it dumb
     while(vecMaxAbs(delta_f)/vecMaxAbs(f) > MIN_REL_ERROR){
         for(size_t i = 0; i < matrix.rows; i++){
             for(size_t j = 0; j < matrix.cols; j++){

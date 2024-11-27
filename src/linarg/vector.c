@@ -232,7 +232,7 @@ long double vecMaxAbs(Vec a)
 
     for(size_t i = 0; i < a.len; i++)
     {
-        result = fabsl(result) > LA_VIDX(a, i) ? result : LA_VIDX(a, i);
+        result = result > fabsl(LA_VIDX(a, i)) ? result : LA_VIDX(a, i);
     }
 
     return result;

@@ -43,6 +43,7 @@ int main()
     Vec delta_fn = vecInitZerosA(dim);
     Mat2d delta_E = mat2DInitZerosA(dim, dim);
     Vec V;
+    long double w = 0.1L;
     for(size_t iter = 0; iter < ITER_MAX; iter++)
     {
         // set to prev iter values
@@ -51,6 +52,9 @@ int main()
 
         // solve for fn
         data.probs = jacobianImplementationA(coefficientMatrix, R1, R2);
+        vecScale(w, data.probs, &data.probs);
+        vecScale(1L - w, delta_fn, &delta_fn);
+        vecAdd(delta_fn, data.probs, &data.probs);
         V = poissonWrapper(data, mesh);
 
         vecPrint(V);
@@ -91,7 +95,7 @@ int main()
         mat2DSub(delta_E, E_nm, &delta_E);
         vecSub(delta_fn, data.probs, &delta_fn);
 
-        long double error_fn = vecMax(delta_fn) / vecMax(data.probs);
+        long double error_fn = vecMaxAbs(delta_fn) / vecMaxAbs(data.probs);
         long double error_E = mat2DMaxAbs(delta_E) / mat2DMaxAbs(E_nm);
 
         pyviSectionPush(f_n, data.probs);
@@ -110,8 +114,8 @@ int main()
         if (error_E < TOL && error_fn < TOL)
         {
 
-            // printf("YAY! Steady state converged ... in ... Iter count : %zu\n", iter);
-            // break;
+            printf("YAY! Steady state converged ... in ... Iter count : %zu\n", iter);
+            break;
         }
 
         if (iter == ITER_MAX - 1) printf("Max Iterations reached!\n");
