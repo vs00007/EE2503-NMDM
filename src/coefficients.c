@@ -60,11 +60,9 @@ long double r_nm(InputData input_data , Mat2d mat_E , Mat2d mat_d , size_t n , s
     long double E_nm = mat2DGet(mat_E, n, m);
     long double d_nm = mat2DGet(mat_d, n, m);
 
-    long double prob = exp((-d_nm/gamma) - (E_nm/kb_T));
+    if(E_nm < 0.0) return nu * exp(-d_nm/gamma);
 
-    if (prob > 1.0) prob = 1.0;
-
-    return nu * prob;
+    return nu * exp((-d_nm/gamma) - (E_nm/kb_T));
 }
 
 Mat2d matrix_r_nm(InputData input_data , Mat2d mat_E , Mat2d mat_d)
@@ -119,7 +117,7 @@ Mat2d R_en(InputData input_data, Vec mesh)
     size_t len = input_data.params.num_traps ;
     Mat2d mat_R = mat2DInitZerosA(len, 2) ;
     Vec d = input_data.locs ;
-    long double k = 1 ;
+    long double k = 1e13;
     
     Vec fn = input_data.probs ;
     Vec d1 = input_data.locs ;
@@ -133,8 +131,8 @@ Mat2d R_en(InputData input_data, Vec mesh)
 
     for(size_t i = 0 ; i < len ; i++){
         long double t = 1.0; //transmission_param(d.x[i] , input_data , V_0) ;
-        long double e_top_t = k * t * kb_T * log(1 + exp((E.x[i] + Q * V_0) / kb_T));
-        long double e_bottom_t = k * t * kb_T * log(1 + exp((E.x[i] + Q * V_L) / kb_T));
+        long double e_top_t = k * t * kb_T * log(1 + exp(-(E.x[i] + Q * V_0) / kb_T));
+        long double e_bottom_t = k * t * kb_T * log(1 + exp(-(E.x[i] + Q * V_L) / kb_T));
         *mat2DRef(mat_R, i, 0) = e_top_t + e_bottom_t;
     }
 

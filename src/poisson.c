@@ -159,9 +159,6 @@ Vec generateMesh(Vec d, OxParams oxparams)
     // Piecewise mesh creation. Adds all points to the mesh
 
     long double d_0 = d.x[0];
-    mesh_point = d_0 - eps_dist;
-    dynStackPush(&mesh, &mesh_point);
-
     // from 0 to d[0]
     for(size_t i = 0; i < chunk_size; i++)
     {
@@ -170,14 +167,9 @@ Vec generateMesh(Vec d, OxParams oxparams)
         dynStackPush(&mesh, &mesh_point);
     }
 
-    mesh_point = d_0 + eps_dist;
-    dynStackPush(&mesh, &mesh_point);
-
     // Everywhere else
     for (size_t i = 0; i < d.len - 1; i++)
     {
-        mesh_point = d.x[i] - eps_dist;
-        dynStackPush(&mesh, &mesh_point);
         long double d_i = fabsl(d.x[i] - d.x[i + 1]);
         for (size_t j = 0; j < chunk_size; j++)
         {
@@ -185,8 +177,6 @@ Vec generateMesh(Vec d, OxParams oxparams)
             // printf("%Lg\n", mesh_point);
             dynStackPush(&mesh, &mesh_point);
         }
-        mesh_point = d.x[i] + eps_dist;
-        dynStackPush(&mesh, &mesh_point);
 
     }
 
@@ -202,8 +192,7 @@ Vec generateMesh(Vec d, OxParams oxparams)
         // printf("%Lg\n", mesh_point);
         dynStackPush(&mesh, &mesh_point);
     }
-    mesh_point = d_n + eps_dist;
-    dynStackPush(&mesh, &mesh_point);
+
 
     // Last point
     mesh_point = oxparams.L;
