@@ -1,35 +1,49 @@
 #include<include/master.h>
+#include<include/inputs.h>
+#include<include/steadystate.h>
+#include<include/coefficients.h>
 
-Vec f(double t, Vec y){
-    Vec function = vecInitZerosA(y.len);
+Vec f(long double t, Vec y, InputData data, Vec mesh){
     // *(vecRef(function, 0)) = *vecRef(y, 2) + *vecRef(y, 1) + 2;
     // *(vecRef(function, 1)) = *vecRef(y, 2) + *vecRef(y, 0) + 3;
     // *(vecRef(function, 2)) = *vecRef(y, 0) + *vecRef(y, 1) + 7;
     
     // define the rhs function here
+    data.probs = y;
 
-    return function;
+    Mat2d E_nm = matrix_E_n(data, mesh);
+
+    Mat2d R = R_en(data, mesh);
+    Vec R1 = mat2DCol(R, 0);
+    Vec R2 = mat2DCol(R, 1);
+
+    Mat2d d_nm = matrix_d_nm(data);
+
+    Mat2d coefficientMatrix = matrix_r_nm(data, E_nm, d_nm);
+    for(size_t i = 0; i < coefficientMatrix.rows; i++) *mat2DRef(coefficientMatrix, i, i) = 0.0L;
+
+    return masterEquationCoeffA(y, R1, R2, E_nm);
 }
 
-rk45 rkf45_calculator(double h, double t_i, Vec y_i){
+rk45 rkf45_calculator(long double h, long double t_i, Vec y_i, InputData data, Vec mesh){
     size_t l = y_i.len;
 
-    // double k_0 = h * f(t_i, y_i);
+    // long double k_0 = h * f(t_i, y_i);
 
-    Vec k_0 = f(t_i, y_i); 
+    Vec k_0 = f(t_i, y_i, data, mesh); 
     vecScale(h, k_0, &k_0);
 
 
-    // double k_1 = h * f(t_i + h * 1 / 4, y_i + k_0 / 4);
+    // long double k_1 = h * f(t_i + h * 1 / 4, y_i + k_0 / 4);
 
     Vec vec11 = vecInitZerosA(l);
     vecScale(0.25, k_0, &vec11);
     vecAdd(y_i, vec11, &vec11);
     Vec k_1 = vecInitZerosA(l);
-    vecScale(h, f(t_i + h * 1.0 / 4.0, vec11), &k_1);
+    vecScale(h, f(t_i + h * 1.0 / 4.0, vec11, data, mesh), &k_1);
 
 
-    // double k_2 = h * f(t_i + h * 3 / 8, y_i + k_0 * 3 / 32 + k_1 * 9 / 32);
+    // long double k_2 = h * f(t_i + h * 3 / 8, y_i + k_0 * 3 / 32 + k_1 * 9 / 32);
 
     Vec vec21 = vecInitZerosA(l);
     vecScale(3.0 / 32.0, k_0, &vec21); 
@@ -38,10 +52,10 @@ rk45 rkf45_calculator(double h, double t_i, Vec y_i){
     vecAdd(y_i, vec21, &vec21);
     vecAdd(vec21, vec22, &vec21);
     Vec k_2 = vecInitZerosA(l);
-    vecScale(h, f(t_i + h * 3.0 / 8.0, vec21), &k_2);
+    vecScale(h, f(t_i + h * 3.0 / 8.0, vec21, data, mesh), &k_2);
 
 
-    // double k_3 = h * f(t_i + h * 12 / 13, y_i + k_0 * 1932 / 2197 + k_1 * (-7200) / 2197 + k_2 * 7296 / 2197);
+    // long double k_3 = h * f(t_i + h * 12 / 13, y_i + k_0 * 1932 / 2197 + k_1 * (-7200) / 2197 + k_2 * 7296 / 2197);
 
     Vec vec31 = vecInitZerosA(l);
     vecScale(1932.0 / 2197.0, k_0, &vec31); 
@@ -53,10 +67,10 @@ rk45 rkf45_calculator(double h, double t_i, Vec y_i){
     vecAdd(vec31, vec32, &vec31); 
     vecAdd(vec31, vec33, &vec31); 
     Vec k_3 = vecInitZerosA(l);
-    vecScale(h, f(t_i + h * 12.0 / 13.0, vec31), &k_3);
+    vecScale(h, f(t_i + h * 12.0 / 13.0, vec31, data, mesh), &k_3);
 
 
-    // double k_4 = h * f(t_i + h, y_i + k_0 * 439 / 216 + k_1 * (-8) + k_2 * 3680 / 513 + k_3 * (-845) / 4104);
+    // long double k_4 = h * f(t_i + h, y_i + k_0 * 439 / 216 + k_1 * (-8) + k_2 * 3680 / 513 + k_3 * (-845) / 4104);
 
     Vec vec41 = vecInitZerosA(l);
     vecScale(439.0 / 216.0, k_0, &vec41);
@@ -71,11 +85,11 @@ rk45 rkf45_calculator(double h, double t_i, Vec y_i){
     vecAdd(vec41, vec43, &vec41);
     vecAdd(vec41, vec44, &vec41);
     Vec k_4 = vecInitZerosA(l);
-    vecScale(h, f(t_i + h, vec41), &k_4);
+    vecScale(h, f(t_i + h, vec41, data, mesh), &k_4);
 
 
 
-    // double k_5 = h * f(t_i + h * 1 / 2, y_i + k_0 * (-8) / 27 + k_1 * 2 + k_2 * (-3544) / 2565 + k_3 * 1859 / 4104 + k_4 * (-11) / 40);
+    // long double k_5 = h * f(t_i + h * 1 / 2, y_i + k_0 * (-8) / 27 + k_1 * 2 + k_2 * (-3544) / 2565 + k_3 * 1859 / 4104 + k_4 * (-11) / 40);
 
     Vec vec51 = vecInitZerosA(l);
     vecScale(-8.0 / 27.0, k_0, &vec51);
@@ -93,10 +107,10 @@ rk45 rkf45_calculator(double h, double t_i, Vec y_i){
     vecAdd(vec51, vec54, &vec51);
     vecAdd(vec51, vec55, &vec51);
     Vec k_5 = vecInitZerosA(l);
-    vecScale(h, f(t_i + h * 0.5, vec51), &k_5);
+    vecScale(h, f(t_i + h * 0.5, vec51, data, mesh), &k_5);
 
 
-    // double y_order4 = y_i + k_0 * 25 / 216 + k_2 * 1408 / 2565 + k_3 * 2197 / 4104 + k_4 * (-1) / 5;
+    // long double y_order4 = y_i + k_0 * 25 / 216 + k_2 * 1408 / 2565 + k_3 * 2197 / 4104 + k_4 * (-1) / 5;
 
     Vec y_4_1 = vecInitZerosA(l);
     vecScale(25.0 / 216.0, k_0, &y_4_1);
@@ -112,7 +126,7 @@ rk45 rkf45_calculator(double h, double t_i, Vec y_i){
     vecAdd(y_4_1, y_4_4, &y_4_1);
 
 
-    // double y_order5 = y_i + k_0 * 16 / 135 + k_2 * 6656 / 12825 + k_3 * 28561 / 56430 + k_4 * (-9) / 50 + k_5 * 2 / 55;
+    // long double y_order5 = y_i + k_0 * 16 / 135 + k_2 * 6656 / 12825 + k_3 * 28561 / 56430 + k_4 * (-9) / 50 + k_5 * 2 / 55;
 
 
     Vec y_5_1 = vecInitZerosA(l);
@@ -134,7 +148,7 @@ rk45 rkf45_calculator(double h, double t_i, Vec y_i){
     Vec error = vecInitZerosA(l);
     vecSub(y_5_1, y_4_1, &error);
     for(size_t i = 0; i < l; i++){
-        VEC_INDEX(error, i) = fabs(VEC_INDEX(error, i));
+        VEC_INDEX(error, i) = fabsl(VEC_INDEX(error, i));
     }
 
     freeVec(&vec11);
@@ -166,7 +180,13 @@ rk45 rkf45_calculator(double h, double t_i, Vec y_i){
 }
 
 
-void solver(double h, double t_initial, double t_final, Vec y_initial, double TOL, Vec t_res, Mat2d res){
+void solver(RK45Config config, Vec t_res, Mat2d res){
+    long double h = config.h;
+    long double t_initial = config.t_initial;
+    long double t_final = config.t_final;
+    Vec y_initial = config.y_initial;
+    long double tol = config.tol;
+    
     size_t l = y_initial.len;
     VEC_INDEX(t_res, 0) = t_initial;
     Vec col1 = mat2DCol(res, 0);
@@ -183,13 +203,13 @@ void solver(double h, double t_initial, double t_final, Vec y_initial, double TO
 
         Vec y = mat2DCol(res, n);
 
-        rk45 tuple = rkf45_calculator(h, VEC_INDEX(t_res, n), y);
+        rk45 tuple = rkf45_calculator(h, VEC_INDEX(t_res, n), y, config.data, config.mesh);
         Vec y5 = tuple.y_5;
         Vec error = tuple.err;
 
         Vec col = mat2DCol(res, n+1);
-        double errmax = vecMax(error);
-        if(errmax < TOL){
+        long double errmax = vecMax(error);
+        if(errmax < tol){
 
             for(size_t i = 0; i < l; i++){
                 VEC_INDEX(col, i) = VEC_INDEX(y5, i);
@@ -198,6 +218,6 @@ void solver(double h, double t_initial, double t_final, Vec y_initial, double TO
             n++;
         }
 
-        h *= 0.9 * fmax(0.5, fmin(2, 0.9 * pow((TOL / errmax), 1.0 / 5)));
+        h *= 0.9 * fmax(0.5, fmin(2, 0.9 * pow((tol / errmax), 1.0 / 5)));
     }
 }

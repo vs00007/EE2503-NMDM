@@ -9,16 +9,16 @@
 #define EPSILON 1e-6
 #define NUM_TESTS 100
 
-int compareDoubles(double a, double b, double epsilon)
+int comparelong doubles(long double a, long double b, long double epsilon)
 {
-    return fabs(a - b) < epsilon;
+    return fabsl(a - b) < epsilon;
 }
 
 int qsort_compare(const void *a, const void *b) {
-    return (*(double*)a > *(double*)b) - (*(double*)a < *(double*)b);
+    return (*(long double*)a > *(long double*)b) - (*(long double*)a < *(long double*)b);
 }
 
-void randF(Vec param, double min, double max, int sort)
+void randF(Vec param, long double min, long double max, int sort)
 {
     srand(time(NULL));
     if (param.len == 0)
@@ -29,12 +29,12 @@ void randF(Vec param, double min, double max, int sort)
     
     for (size_t i = 0; i < param.len; i++)
     {
-        param.x[i] = min + (max - min) * ((double)rand() / RAND_MAX);
+        param.x[i] = min + (max - min) * ((long double)rand() / RAND_MAX);
     }
 
     if (sort)
     {
-        qsort(param.x, param.len, sizeof(double), qsort_compare);
+        qsort(param.x, param.len, sizeof(long double), qsort_compare);
     }
 }
 
@@ -89,19 +89,19 @@ void test_poisson()
         printf("Distances are : ");
         printVecUnits(d, 'm');
 
-        double x = 0.2;
-        double sol = poissonSolveAnalytical(f_n, d, x);
+        long double x = 0.2;
+        long double sol = poissonSolveAnalytical(f_n, d, x);
 
-        printf("Exact solution : V(%lfm) = %e\n", x, sol);
+        printf("Exact solution : V(%Lfm) = %Le\n", x, sol);
 
         
-        double expected = Q * K * (1.0/1.0 + 1.0/1.0 + 1.0/1.0 + 1.0/1.0); 
+        long double expected = Q * K * (1.0/1.0 + 1.0/1.0 + 1.0/1.0 + 1.0/1.0); 
         total_tests++;
-        if (compareDoubles(sol, expected, EPSILON)) {
-            printf("Expected %e, got %e. Test case 1 passed.\n", expected, sol);
+        if (comparelong doubles(sol, expected, EPSILON)) {
+            printf("Expected %Le, got %Le. Test case 1 passed.\n", expected, sol);
             test_passed++;
         } else {
-            printf("Test case 1 failed. Expected %e, got %e\n", expected, sol);
+            printf("Test case 1 failed. Expected %Le, got %Le\n", expected, sol);
         }
 
         freeVec(&f_n);
@@ -119,19 +119,19 @@ void test_poisson()
         printf("Distance: ");
         printVecUnits(d, 'm');
 
-        double x = 2.0;
-        double sol = poissonSolveAnalytical(f_n, d, x);
+        long double x = 2.0;
+        long double sol = poissonSolveAnalytical(f_n, d, x);
 
-        printf("Solution: V(%lfm) = %e\n", x, sol);
+        printf("Solution: V(%Lfm) = %Le\n", x, sol);
 
 
-        double expected = Q * K * (1.0 / 1.0);
+        long double expected = Q * K * (1.0 / 1.0);
         total_tests++;
-        if (compareDoubles(sol, expected, EPSILON)) {
-            printf("Expected %e, got %e. Test case 2 passed\n", expected, sol);
+        if (comparelong doubles(sol, expected, EPSILON)) {
+            printf("Expected %Le, got %Le. Test case 2 passed\n", expected, sol);
             test_passed++;
         } else {
-            printf("Test case 2 failed. Expected %e, got %e\n", expected, sol);
+            printf("Test case 2 failed. Expected %Le, got %Le\n", expected, sol);
         }
 
         freeVec(&f_n);
@@ -152,19 +152,19 @@ void test_poisson()
         printf("Distances: ");
         printVecUnits(d, 'm');
 
-        double x = 4.0;
-        double sol = poissonSolveAnalytical(f_n, d, x);
+        long double x = 4.0;
+        long double sol = poissonSolveAnalytical(f_n, d, x);
 
-        printf("Solution: V(%lfm) = %e\n", x, sol);
+        printf("Solution: V(%Lfm) = %Le\n", x, sol);
 
         // Validate result
-        double expected = Q * K * (1.0/3.0 - 2.0/2.0 + 1.5/1.0);
+        long double expected = Q * K * (1.0/3.0 - 2.0/2.0 + 1.5/1.0);
         total_tests++;
-        if (compareDoubles(sol, expected, EPSILON)) {
-            printf("Expected %e, got %e. Test case 3 passed\n", expected, sol);
+        if (comparelong doubles(sol, expected, EPSILON)) {
+            printf("Expected %Le, got %Le. Test case 3 passed\n", expected, sol);
             test_passed++;
         } else {
-            printf("Test case 3 failed. Expected %e, got %e\n", expected, sol);
+            printf("Test case 3 failed. Expected %Le, got %Le\n", expected, sol);
         }
 
         freeVec(&f_n);
@@ -182,18 +182,18 @@ void test_poisson()
         f_n.x[0] = 0.0;  f_n.x[1] = 1.0;
         printf("\n1.) Zero charge at some location: ");
         printVecUnits(f_n, 'q');
-        double x = 2.0;
-        double sol = poissonSolveAnalytical(f_n, d, x);
-        printf("Solution: V(%lfm) = %e\n", x, sol);
+        long double x = 2.0;
+        long double sol = poissonSolveAnalytical(f_n, d, x);
+        printf("Solution: V(%Lfm) = %Le\n", x, sol);
 
         // Validate result
-        double expected = Q * K * (1.0 / 1.0);
+        long double expected = Q * K * (1.0 / 1.0);
         total_tests++;
-        if (compareDoubles(sol, expected, EPSILON)) {
-            printf("Expected %e, got %e. Test case 4a passed\n", expected, sol);
+        if (comparelong doubles(sol, expected, EPSILON)) {
+            printf("Expected %Le, got %Le. Test case 4a passed\n", expected, sol);
             test_passed++;
         } else {
-            printf("Test case 4a failed. Expected %e, got %e\n", expected, sol);
+            printf("Test case 4a failed. Expected %Le, got %Le\n", expected, sol);
         }
 
         // Case 4b: Very large distance
@@ -202,31 +202,31 @@ void test_poisson()
         printf("\nVery large distance: ");
         printVecUnits(d, 'm');
         sol = poissonSolveAnalytical(f_n, d, x);
-        printf("Solution: V(%lfm) = %e\n", x, sol);
+        printf("Solution: V(%Lfm) = %Le\n", x, sol);
 
         // Validate result (should be very close to zero)
         total_tests++;
         if (sol < EPSILON) {
-            printf("Expected close to 0, got %e. Test case 4b passed.\n", sol);
+            printf("Expected close to 0, got %Le. Test case 4b passed.\n", sol);
             test_passed++;
         } else {
-            printf("Test case 4b failed. Expected close to 0, got %e\n", sol);
+            printf("Test case 4b failed. Expected close to 0, got %Le\n", sol);
         }
 
         // Test point very close to a charge (Outside Threshold)
         d.x[0] = 1.0;    d.x[1] = 2.0;
         x = 1.0 + 1e-9;
-        printf("\nTest point very close to charge: Distance = %e\n", fabs(d.x[0] - x));
+        printf("\nTest point very close to charge: Distance = %Le\n", fabsl(d.x[0] - x));
         sol = poissonSolveAnalytical(f_n, d, x);
-        printf("Solution: V(%lfm) = %e\n", x, sol);
+        printf("Solution: V(%Lfm) = %Le\n", x, sol);
 
         total_tests++;
         expected = Q * K * (1.0 / 1e-9 + 1.0/ (1 - 1e-9));
-        if (compareDoubles(sol, expected, EPSILON)) {
-            printf("Expected %e, got %e, Test case 4c passed\n", expected, sol);
+        if (comparelong doubles(sol, expected, EPSILON)) {
+            printf("Expected %Le, got %Le, Test case 4c passed\n", expected, sol);
             test_passed++;
         } else {
-            printf("Test case 4c failed. Expected %e, got %e\n", expected, sol);
+            printf("Test case 4c failed. Expected %Le, got %Le\n", expected, sol);
         }
 
          // Test point very close to a charge (Crosses Threshold)
@@ -234,16 +234,16 @@ void test_poisson()
         x = 1.0 + 1e-11;
         printf("\nTest point very close to charge: ");
         sol = poissonSolveAnalytical(f_n, d, x);
-        printf("Solution: V(%lfm) = %e\n", x, sol);
+        printf("Solution: V(%Lfm) = %Le\n", x, sol);
 
         // Should ignore the charge at small distance
         total_tests++;
         expected = Q * K * (1.0/ (1 - 1e-11));
-        if (compareDoubles(sol, expected, EPSILON)) {
-            printf("Expected %e, got %e. Test case 4d passed\n", expected, sol);
+        if (comparelong doubles(sol, expected, EPSILON)) {
+            printf("Expected %Le, got %Le. Test case 4d passed\n", expected, sol);
             test_passed++;
         } else {
-            printf("Test case 4d failed. Expected %e, got %e\n", expected, sol);
+            printf("Test case 4d failed. Expected %Le, got %Le\n", expected, sol);
         }
 
         freeVec(&f_n);
@@ -257,15 +257,15 @@ void test_poisson()
         // Empty vectors
         Vec f_n = vecInitA(0.0, 0);
         Vec d = vecInitA(0.0, 0);
-        double x = 1.0;
-        double sol = poissonSolveAnalytical(f_n, d, x);
+        long double x = 1.0;
+        long double sol = poissonSolveAnalytical(f_n, d, x);
         
         total_tests++;
         if (isnan(sol) || isinf(sol)) {
             printf("Test case 5a passed (handled empty vectors)\n");
             test_passed++;
         } else {
-            printf("Test case 5a failed. Expected NaN or Inf, got %e\n", sol);
+            printf("Test case 5a failed. Expected NaN or Inf, got %Le\n", sol);
         }
 
         // Mismatched vector lengths
@@ -278,7 +278,7 @@ void test_poisson()
             printf("Test case 5b passed (handled mismatched vector lengths)\n");
             test_passed++;
         } else {
-            printf("Test case 5b failed. Expected NaN or Inf, got %e\n", sol);
+            printf("Test case 5b failed. Expected NaN or Inf, got %Le\n", sol);
         }
 
         freeVec(&f_n);
@@ -396,7 +396,7 @@ void testMeshGen()
     Vec d = vecInitZerosA(100);
     for (size_t i = 0; i < d.len; i++)
     {
-        d.x[i] = (double)(i + 1) / 101;
+        d.x[i] = (long double)(i + 1) / 101;
     }
 
     // vecScale(1.0/3 *1e-9, d, &d);

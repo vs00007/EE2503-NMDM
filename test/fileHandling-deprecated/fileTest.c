@@ -23,15 +23,15 @@
 
 //     // Print configuration details
 //     printf("Oxide Parameters:\n");
-//     printf("  Thickness: %.6e m\n", config.oxideParams.thickness);
-//     printf("  Relative Permittivity: %.6f\n", config.oxideParams.relPermittivity);
-//     printf("  Bottom Voltage: %.6f V\n", config.oxideParams.vBottom);
-//     printf("  Top Voltage: %.6f V\n", config.oxideParams.vTop);
+//     printf("  Thickness: %.3Le m\n", config.oxideParams.thickness);
+//     printf("  Relative Permittivity: %Lf\n", config.oxideParams.relPermittivity);
+//     printf("  Bottom Voltage: %Lf V\n", config.oxideParams.vBottom);
+//     printf("  Top Voltage: %Lf V\n", config.oxideParams.vTop);
 
 //     printf("\nTraps:\n");
 //     for (int i = 0; i < config.numTraps; i++)
 //     {
-//         printf("  Trap %d: position = %.6e m, probability = %.6f\n",
+//         printf("  Trap %d: position = %.3Le m, probability = %Lf\n",
 //                i + 1, config.trapPositions[i], config.occupationProbs[i]);
 //     }
 

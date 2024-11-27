@@ -8,9 +8,9 @@
 #include<stdint.h>
 
 
-double d_nm(size_t n , size_t m , InputData input_data) 
+long double d_nm(size_t n , size_t m , InputData input_data) 
 {
-    return fabs(input_data.locs.x[n] - input_data.locs.x[m]) ;
+    return fabsl(input_data.locs.x[n] - input_data.locs.x[m]) ;
 }
 
 Mat2d matrix_d_nm(InputData input_data)
@@ -35,11 +35,11 @@ Mat2d matrix_E_n(InputData input_data, Vec mesh)
     size_t len = input_data.params.num_traps;
 
     Mat2d Mat_E_n = mat2DInitZerosA(len,len);
-    if (!Mat_E_n.mat) printf("matrix allocation fucked up!\n");
+    
     Vec E = getGridNumV(input_data, mesh);
-    // printInputData(&input_data);
-    vecScale(Q, E, &E);
-    for(size_t i = 0; i < len ; i++){
+    vecScale(-Q, E, &E);
+    
+    for(size_t i = 0; i < len    ; i++){
         if (isnan(E.x[i])) printf("Found Bad E. i = %zu\n", i);
         for(size_t j = 0; j < len ; j++){
             *mat2DRef(Mat_E_n, i, j) = E.x[i] - E.x[j] ;
@@ -49,18 +49,18 @@ Mat2d matrix_E_n(InputData input_data, Vec mesh)
     return Mat_E_n ;
 }
 
-double r_nm(InputData input_data , Mat2d mat_E , Mat2d mat_d , size_t n , size_t m)
+long double r_nm(InputData input_data , Mat2d mat_E , Mat2d mat_d , size_t n , size_t m)
 {
     size_t len = input_data.params.num_traps ;
 
-    double nu = input_data.params.nu_0 ;
-    double gamma = input_data.params.gamma_0 ;
-    double kb_T = 1.38 * 1e-23 * input_data.params.temp ;
+    long double nu = input_data.params.nu_0 ;
+    long double gamma = input_data.params.gamma_0 ;
+    long double kb_T = 1.38 * 1e-23 * input_data.params.temp ;
 
-    double E_nm = mat2DGet(mat_E, n, m);
-    double d_nm = mat2DGet(mat_d, n, m);
+    long double E_nm = mat_E.mat[len*n + m];
+    long double d_nm = mat_d.mat[len*n + m];
 
-    return (nu*(exp((-d_nm/gamma) - (E_nm/kb_T))));
+    return (nu*(exp((-d_nm/gamma) + (E_nm/kb_T))));
 }
 
 Mat2d matrix_r_nm(InputData input_data , Mat2d mat_E , Mat2d mat_d)
@@ -80,25 +80,25 @@ Mat2d matrix_r_nm(InputData input_data , Mat2d mat_E , Mat2d mat_d)
     return mat_r ;
 }
 
-double transmission_param(double T_b , InputData input_data , double V_electrode)
+long double transmission_param(long double T_b , InputData input_data , long double V_electrode)
 {
-    double h_bar = 1.054571817e-34 ;
-    double q = -1.6e-19 ;
-    double m = 9.1e-32;
-    double E_A = input_data.params.electron_affinity ;
+    long double h_bar = 1.054571817e-34 ;
+    long double q = -1.6e-19 ;
+    long double m = 9.1e-32;
+    long double E_A = input_data.params.electron_affinity ;
 
     Vec mesh = generateMesh( input_data.locs ,input_data.params);
     Vec V_x = poissonWrapper(input_data, mesh) ;
     
     size_t i = 0;
-    double T_exp= 0 ;
+    long double T_exp= 0 ;
     size_t j = 0 ; 
     Vec d_now = input_data.locs ;
     size_t band = input_data.params.chunk_size ;
-    double delta = (d_now.x[1] - d_now.x[0])/band ;
+    long double delta = (d_now.x[1] - d_now.x[0])/band ;
 
     while(mesh.x[i] <= T_b){
-        double E = -q*V_x.x[i] + E_A ;
+        long double E = -q*V_x.x[i] + E_A ;
         if(mesh.x[i] > d_now.x[ j + 1 ] && j< (input_data.params.num_traps - 1)){
             j++ ;
             delta = (d_now.x[ j + 1 ] - d_now.x[j])/band ;
@@ -112,12 +112,12 @@ double transmission_param(double T_b , InputData input_data , double V_electrode
 
 Mat2d R_en(InputData input_data, Vec mesh)
 {
-    double kb_T = 1.38*1e-23*input_data.params.temp ;
+    long double kb_T = 1.38*1e-23*input_data.params.temp ;
     size_t len = input_data.params.num_traps ;
     Mat2d mat_R = mat2DInitZerosA(len, 2) ;
     Vec d = input_data.locs ;
-    double k = 1 ;
-    double q = -1.6e-19 ;
+    long double k = 1 ;
+    long double q = -1.6e-19 ;
     
     Vec fn = input_data.probs ;
     Vec d1 = input_data.locs ;
@@ -125,18 +125,18 @@ Mat2d R_en(InputData input_data, Vec mesh)
     Vec E = getGridNumE(input_data, mesh);
 
     //Top electrode
-    double V_0 = input_data.params.V_0 ;
+    long double V_0 = input_data.params.V_0 ;
 
     for(size_t i = 0 ; i < len ; i++){
-        double t = transmission_param(d.x[i] , input_data , V_0) ;
+        long double t = 1.0; //transmission_param(d.x[i] , input_data , V_0) ;
         *mat2DRef(mat_R, i, 0) = k*t*kb_T*log(1 + exp(E.x[i] + q*V_0 )) ;
     }
 
     // Bottom electrode
-    double V_L = input_data.params.V_L ;
+    long double V_L = input_data.params.V_L ;
 
     for(size_t i = 0 ; i < len ; i++){
-        double t = transmission_param(d.x[i] , input_data , V_L) ;
+        long double t = 1.0; // transmission_param(d.x[i] , input_data , V_L) ;
         *mat2DRef(mat_R, i, 1) = k * t * kb_T * log(1 + exp(E.x[i] + q * V_L )) ;
     }
     return mat_R ;

@@ -27,12 +27,12 @@ This function logs the file, function, and line number where the error occurred.
 The `Vec` struct represents a vector:
 ```c
 typedef struct Vec {
-    double* x;     // Pointer to the data
+    long double* x;     // Pointer to the data
     size_t len;    // Length of the vector
     size_t offset; // Offset for accessing elements
 } Vec;
 ```
-Vectors are stored as contiguous arrays of `double` values, with an optional offset for indexing.
+Vectors are stored as contiguous arrays of `long double` values, with an optional offset for indexing.
 
 ## Macros
 
@@ -48,11 +48,11 @@ Here is the documentation for each function in the provided code:
 
 ---
 
-### `Vec vecInitA(double value, size_t len)`
+### `Vec vecInitA(long double value, size_t len)`
 Initializes a vector on the heap and fills it with a specified value.
 
 #### Parameters:
-- `double value`: The value to initialize each element of the vector with.
+- `long double value`: The value to initialize each element of the vector with.
 - `size_t len`: The length of the vector.
 
 #### Returns:
@@ -113,11 +113,11 @@ Vec a = vecCopyA(b);  // Creates a copy of vector `b`.
 
 ---
 
-### `Vec vecConstruct(double* ptr, size_t len)`
+### `Vec vecConstruct(long double* ptr, size_t len)`
 Constructs a vector from an existing pointer, without allocating memory.
 
 #### Parameters:
-- `double* ptr`: A pointer to the array of data.
+- `long double* ptr`: A pointer to the array of data.
 - `size_t len`: The length of the vector.
 
 #### Returns:
@@ -125,7 +125,7 @@ Constructs a vector from an existing pointer, without allocating memory.
 
 #### Example:
 ```c
-double data[] = {1.0, 2.0, 3.0};
+long double data[] = {1.0, 2.0, 3.0};
 Vec a = vecConstruct(data, 3);
 ```
 
@@ -157,7 +157,7 @@ vecPrintUnits(a, 'm');  // Prints [1.0m, 2.0m, 3.0m,]
 
 ---
 
-### `double vecGet(Vec a, size_t n)`
+### `long double vecGet(Vec a, size_t n)`
 Gets the value at the nth index in a vector, checking for out-of-bounds access.
 
 #### Parameters:
@@ -169,12 +169,12 @@ Gets the value at the nth index in a vector, checking for out-of-bounds access.
 
 #### Example:
 ```c
-double val = vecGet(a, 2);
+long double val = vecGet(a, 2);
 ```
 
 ---
 
-### `double* vecRef(Vec a, size_t n)`
+### `long double* vecRef(Vec a, size_t n)`
 Gets a reference to the value at the nth index in a vector, checking for out-of-bounds access.
 
 #### Parameters:
@@ -186,7 +186,7 @@ Gets a reference to the value at the nth index in a vector, checking for out-of-
 
 #### Example:
 ```c
-double* val_ptr = vecRef(a, 2);
+long double* val_ptr = vecRef(a, 2);
 ```
 
 ---
@@ -209,11 +209,11 @@ vecAdd(a, b, &result);
 
 ---
 
-### `int vecScale(double a, Vec b, Vec* result)`
+### `int vecScale(long double a, Vec b, Vec* result)`
 Multiplies a vector by a scalar and stores the result in another vector.
 
 #### Parameters:
-- `double a`: The scalar value.
+- `long double a`: The scalar value.
 - `Vec b`: The input vector.
 - `Vec* result`: Pointer to the result vector.
 
@@ -244,7 +244,7 @@ vecNormalize(a, &result);
 
 ---
 
-### `double vecDot(Vec a, Vec b)`
+### `long double vecDot(Vec a, Vec b)`
 Calculates the dot product of two vectors.
 
 #### Parameters:
@@ -256,12 +256,12 @@ Calculates the dot product of two vectors.
 
 #### Example:
 ```c
-double dot_product = vecDot(a, b);
+long double dot_product = vecDot(a, b);
 ```
 
 ---
 
-### `double vecMagnitude(Vec a)`
+### `long double vecMagnitude(Vec a)`
 Calculates the L2 norm (magnitude) of a vector.
 
 #### Parameters:
@@ -272,29 +272,29 @@ Calculates the L2 norm (magnitude) of a vector.
 
 #### Example:
 ```c
-double magnitude = vecMagnitude(a);
+long double magnitude = vecMagnitude(a);
 ```
 
 ---
 
-### `double vecNorm(Vec a, double p)`
+### `long double vecNorm(Vec a, long double p)`
 Calculates the L_p norm of a vector. Prints a warning if `p < 1`.
 
 #### Parameters:
 - `Vec a`: The input vector.
-- `double p`: The order of the norm.
+- `long double p`: The order of the norm.
 
 #### Returns:
 - The L_p norm, or `NAN` if an error occurs.
 
 #### Example:
 ```c
-double norm = vecNorm(a, 2.0);  // Calculates L2 norm
+long double norm = vecNorm(a, 2.0);  // Calculates L2 norm
 ```
 
 ---
 
-### `double vecMax(Vec a)`
+### `long double vecMax(Vec a)`
 Finds the maximum value in a vector.
 
 #### Parameters:
@@ -305,12 +305,12 @@ Finds the maximum value in a vector.
 
 #### Example:
 ```c
-double max_value = vecMax(a);
+long double max_value = vecMax(a);
 ```
 
 ---
 
-### `double vecMin(Vec a)`
+### `long double vecMin(Vec a)`
 Finds the minimum value in a vector.
 
 #### Parameters:
@@ -321,7 +321,7 @@ Finds the minimum value in a vector.
 
 #### Example:
 ```c
-double min_value = vecMin(a);
+long double min_value = vecMin(a);
 ```
 
 ---

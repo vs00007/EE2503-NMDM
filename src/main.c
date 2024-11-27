@@ -12,7 +12,7 @@ int main()
     printInputData(&data);
     Vec mesh = generateMesh(data.locs, data.params);
     printNL();
-    printf("V_top = %g\n", data.params.V_L);
+    printf("V_top = %Lg\n", data.params.V_L);
 
     PyVi vis = pyviInitA("data/visualise.pyvi");
     PyViBase x_vi = pyviCreateParameter(&vis, "d", data.locs);
@@ -31,22 +31,30 @@ int main()
     Mat2d d_nm = matrix_d_nm(data);
     Mat2d coefficientMatrix = matrix_r_nm(data, E_nm, d_nm);
 
+    for(size_t i = 0; i < coefficientMatrix.rows; i++) *mat2DRef(coefficientMatrix, i, i) = 0.0L;
+
+    // q1: What are R1 and R2??
+    /*
+        Mihir, I added code for transient analysis. Check if it is working once.
+        (the solver function needs vec and mat, but the vec and mat dimensions cannot be figured out beforehand)
+        (try not to change the master_eqn.c file, just make realllyyy big vector and matrix, and then push it to a new pyvi file) 
+    */
+
     Vec delta_fn = vecInitZerosA(dim);
     Mat2d delta_E = mat2DInitZerosA(dim, dim);
     Vec V;
     for(size_t iter = 0; iter < ITER_MAX; iter++)
     {
-        V = poissonWrapper(data, mesh);
-        vecPrint(V);
-        pyviSectionPush(V_vi, V);
-
         // set to prev iter values
         delta_fn = data.probs;
         delta_E = E_nm;
 
         // solve for fn
         data.probs = jacobianImplementationA(coefficientMatrix, R1, R2);
-        printf("Probabilites[%zu]:", iter);
+        V = poissonWrapper(data, mesh);
+        vecPrint(V);
+        pyviSectionPush(V_vi, V);
+        printf("\nProbabilites[%zu]:", iter);
         vecPrint(data.probs);
         printNL();
         E_nm = matrix_E_n(data, mesh);
@@ -55,13 +63,23 @@ int main()
         mat2DPrint(E_nm);
         printNL();
 
+        R = R_en(data, mesh);
+        R1 = mat2DCol(R, 0);
+        R2 = mat2DCol(R, 1);
+
         // d_m doesn't change?
         //d_nm = matrix_d_nm(data);
         
         coefficientMatrix = matrix_r_nm(data, E_nm, d_nm);
+        for(size_t i = 0; i < coefficientMatrix.rows; i++) *mat2DRef(coefficientMatrix, i, i) = 0.0L;
         
         mat2DSub(delta_E, E_nm, &delta_E);
         vecSub(delta_fn, data.probs, &delta_fn);
+
+        long double error_fn = vecMax(delta_fn) / vecMax(data.probs);
+        long double error_E = mat2DMaxAbs(delta_E) / mat2DMaxAbs(E_nm);
+
+        pyviSectionPush(f_n, data.probs);
 
         if(mat2DContainsNan(E_nm))
         {
@@ -74,11 +92,6 @@ int main()
             break;
         }
 
-        double error_fn = vecMax(delta_fn) / vecMax(data.probs);
-        double error_E = mat2DMaxAbs(delta_E) / mat2DMaxAbs(E_nm);
-
-        pyviSectionPush(f_n, data.probs);
-
         if (error_E < TOL && error_fn < TOL)
         {
 
@@ -88,8 +101,25 @@ int main()
 
         if (iter == ITER_MAX - 1) printf("Max Iterations reached!\n");
     }
+
     pyviWrite(vis);
     printNL();
+
+/*
+    data.params.V_0 = 1.0;
+
+    RK45Config config;
+    config.h = 1e-6;
+    config.t_initial = 0.0;
+    config.t_final = 1.0;
+    config.tol = 1e-6;
+    config.data = data;
+    config.mesh = mesh;
+    config.y_initial = data.probs;
+
+    solver(config, );
+*/
+
     vecPrint(data.probs);
 
     freePyVi(&vis);

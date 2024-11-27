@@ -1,16 +1,16 @@
 #include <include/linalg.h>
 #include <include/poisson.h>
 
-double analyticalPoissonSol(const Vec f_n, const Vec d, double x)
+long double analyticalPoissonSol(const Vec f_n, const Vec d, long double x)
 {
-    double sum = 0.0;
+    long double sum = 0.0;
     for (size_t i = 0; i < f_n.len; i++)
     {
-        double r_i = fabs(d.x[i] - x);
+        long double r_i = fabsl(d.x[i] - x);
 
         if (r_i < 1e-15)
         {
-            printf("\nSkipping charge at %e.\n", r_i);
+            printf("\nSkipping charge at %Le.\n", r_i);
             continue;
         }
 
@@ -20,7 +20,7 @@ double analyticalPoissonSol(const Vec f_n, const Vec d, double x)
     return K * Q * sum;
 }
 
-int validateInput(const Vec f_n, const Vec d, double x)
+int validateInput(const Vec f_n, const Vec d, long double x)
 {
     if (f_n.len != d.len || f_n.len == 0) {
         return 0;  
@@ -49,7 +49,7 @@ int validateTwoVecs(const Vec f_n, const Vec d)
     return 1;
 }
 
-double poissonSolveAnalytical(const Vec f_n, const Vec d, double x)
+long double poissonSolveAnalytical(const Vec f_n, const Vec d, long double x)
 {
     if (!validateInput(f_n, d, x)) {
         errno = EINVAL;
@@ -125,7 +125,7 @@ Vec getGridE(Vec f_n, Vec d, OxParams params)
 
 void stackToVec(DynStack* mesh, Vec *mesh_vec)
 {
-    mesh_vec->x = (double *)mesh->data;
+    mesh_vec->x = (long double *)mesh->data;
 }
 
 int validateVec(const Vec d, const OxParams params)
@@ -153,38 +153,38 @@ Vec generateMesh(Vec d, OxParams oxparams)
         return (Vec){NULL, 0, 0};
     }
 
-    DynStack mesh = dynStackInit(sizeof(double));
-    double mesh_point = 0;
+    DynStack mesh = dynStackInit(sizeof(long double));
+    long double mesh_point = 0;
     
     // Piecewise mesh creation. Adds all points to the mesh
 
     // from 0 to d[n]
-    double d_0 = d.x[0];
+    long double d_0 = d.x[0];
     for(size_t i = 0; i < chunk_size; i++)
     {
-        mesh_point = (double)(i * d_0) / chunk_size; 
-        // printf("%g\n", mesh_point);
+        mesh_point = (long double)(i * d_0) / chunk_size; 
+        // printf("%Lg\n", mesh_point);
         dynStackPush(&mesh, &mesh_point);
     }
 
     // Everywhere else
     for (size_t i = 0; i < d.len - 1; i++)
     {
-        double d_i = fabs(d.x[i] - d.x[i + 1]);
+        long double d_i = fabsl(d.x[i] - d.x[i + 1]);
         for (size_t j = 0; j < chunk_size; j++)
         {
-            mesh_point = d.x[i] + (double)(j * d_i) / chunk_size;
-            // printf("%g\n", mesh_point);
+            mesh_point = d.x[i] + (long double)(j * d_i) / chunk_size;
+            // printf("%Lg\n", mesh_point);
             dynStackPush(&mesh, &mesh_point);
         }
     }
 
     // from d[n] to L
-    double d_n = fabs(d.x[d.len - 1] - oxparams.L);
+    long double d_n = fabsl(d.x[d.len - 1] - oxparams.L);
     for(size_t i = 0; i < chunk_size; i++)
     {
-        mesh_point = d.x[d.len - 1] + (double)(i * d_n) / chunk_size; 
-        // printf("%g\n", mesh_point);
+        mesh_point = d.x[d.len - 1] + (long double)(i * d_n) / chunk_size; 
+        // printf("%Lg\n", mesh_point);
         dynStackPush(&mesh, &mesh_point);
     }
 
@@ -194,7 +194,7 @@ Vec generateMesh(Vec d, OxParams oxparams)
 
     // for (size_t i = 0; i < mesh.len; i ++)
     // {
-    //     printf("%g\n", *(double *)dynStackGet(mesh, i));
+    //     printf("%Lg\n", *(long double *)dynStackGet(mesh, i));
     // }
     Vec mesh_vec = vecInitZerosA(mesh.len);
     stackToVec(&mesh, &mesh_vec);
@@ -226,12 +226,12 @@ MatTD generateJacobian(Vec mesh)
 
     for (size_t i = 1; i < mesh.len - 1; i ++)
     {
-        double avg_step = 0;
+        long double avg_step = 0;
         avg_step = 0.5 * (vecGet(h, i) + vecGet(h, i - 1));
 
-        double term_i_minus_1 = 1 / (vecGet(h, i - 1) * avg_step);
-        double term_i_plus_1 = 1 / (vecGet(h, i) * avg_step);
-        double term_i = -2 / (vecGet(h, i) * vecGet(h, i - 1));
+        long double term_i_minus_1 = 1 / (vecGet(h, i - 1) * avg_step);
+        long double term_i_plus_1 = 1 / (vecGet(h, i) * avg_step);
+        long double term_i = -2 / (vecGet(h, i) * vecGet(h, i - 1));
 
         *vecRef(jcob.main, i) = term_i;
         *vecRef(jcob.sub, i) = term_i_minus_1;
@@ -265,8 +265,8 @@ Vec constructB(Vec f_n, Vec d, Vec mesh, size_t chunk, OxParams params)
     {
         idx = i / chunk - 1;
         if (idx > d.len - 1) continue;
-        double diff = 1e-12;
-        double entry = vecGet(f_n, idx) * Q / ((params.eps_r * EPS0) * pow(diff, 3));
+        long double diff = 2.5e-10;
+        long double entry = vecGet(f_n, idx) * Q / ((params.eps_r * EPS0) * pow(diff, 3));
         if ((vecGet(d, idx) - vecGet(mesh, i)) == 0) *vecRef(b, i) = entry;
     }
     *vecRef(b, b.len - 1) = params.V_L; 
@@ -291,11 +291,11 @@ Vec numSolveV(MatTD mat, Vec b)
 
     for (size_t i = 1; i < b.len; i ++)
     {
-        double num_sup = vecGet(mat.sup, i);
-        double den = vecGet(mat.main, i) - vecGet(mat.sub, i) * vecGet(mod_sup, i - 1);
+        long double num_sup = vecGet(mat.sup, i);
+        long double den = vecGet(mat.main, i) - vecGet(mat.sub, i) * vecGet(mod_sup, i - 1);
         *vecRef(mod_sup, i) = num_sup / den;
 
-        double num_sol = vecGet(b, i) - vecGet(mat.sub, i) * vecGet(mod_d, i - 1);
+        long double num_sol = vecGet(b, i) - vecGet(mat.sub, i) * vecGet(mod_d, i - 1);
         *vecRef(mod_d, i) = num_sol / den;
     }
 
@@ -352,7 +352,7 @@ Vec getGridNumE(InputData data, Vec mesh)
     for(size_t i = 0; i < gridV.len; i++)
     {
         // EC = -qV - χ
-        double EC_val = -Q * (vecGet(gridV, i) - (data.params.electron_affinity));
+        long double EC_val = -Q * (vecGet(gridV, i) - (data.params.electron_affinity));
         *vecRef(EC, i) = EC_val;
     }
     printVecUnits(EC, 'eV');

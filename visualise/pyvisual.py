@@ -154,11 +154,11 @@ class PyVi:
             draw_nplot(self)
 
         def nxt_iter(self : PyVi, event):
-            self.curr_iter = self.curr_iter + 1
+            self.curr_iter = (self.curr_iter + 1) % len(section.iterations)
             draw_nplot(self)
         
         def prev_iter(self, event):
-            self.curr_iter = self.curr_iter - 1
+            self.curr_iter = (self.curr_iter - 1) % len(section.iterations)
             draw_nplot(self)
         
         prevButtonLoc = fig.add_axes([0.7, 0.05, 0.1, 0.075])

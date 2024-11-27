@@ -25,7 +25,7 @@ Example:
 // larg stands for linear algebra
 
 typedef struct VecX {
-    double* x;
+    long double* x;
     size_t dim;
 } VecX;
 
@@ -33,7 +33,7 @@ typedef struct VecX {
 VecX larg_initVecXA(size_t dim) {
     VecX vecx;
     
-    vecx.x = (double*)malloc(dim * sizeof(double));
+    vecx.x = (long double*)malloc(dim * sizeof(long double));
     vecx.dim = dim;
 
     for(size_t i = 0; i < dim; i++) vecx.x[i] = 0.0;

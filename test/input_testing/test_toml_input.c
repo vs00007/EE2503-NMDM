@@ -6,9 +6,9 @@ void printVecExp(Vec f_n)
     printf("[");
     for(size_t i = 0; i < f_n.len - 1; i++)
     {
-        printf("%e, ", vecGet(f_n, i));
+        printf("%Le, ", vecGet(f_n, i));
     }
-    printf("%e]", vecGet(f_n, f_n.len - 1));
+    printf("%Le]", vecGet(f_n, f_n.len - 1));
 }
 
 void test_toml()
@@ -27,8 +27,8 @@ void test_toml()
     vecPrint(data.probs);
     printf("\n");
 
-    printf("Relative Permitivity : %lf\n", data.params.eps_r);
-    printf("Potential at L = 0 : %lf\n", data.params.V_0);
-    printf("Potential at L = L : %lf\n", data.params.V_L);
-    printf("Length of the oxide : %e\n", data.params.L);
+    printf("Relative Permitivity : %Lf\n", data.params.eps_r);
+    printf("Potential at L = 0 : %Lf\n", data.params.V_0);
+    printf("Potential at L = L : %Lf\n", data.params.V_L);
+    printf("Length of the oxide : %Le\n", data.params.L);
 }

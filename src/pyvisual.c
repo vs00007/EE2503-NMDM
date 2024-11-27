@@ -77,7 +77,7 @@ void pyviPrintVec(PyVi pyvi, Vec x)
 {
     for(size_t i = 0; i < x.len; i++)
     {
-        fprintf(pyvi.file, "%.17g", *vecRef(x, i));
+        fprintf(pyvi.file, "%.17Lg", *vecRef(x, i));
         if(i != x.len - 1) fprintf(pyvi.file, ",");
     }
 }

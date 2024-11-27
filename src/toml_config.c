@@ -176,22 +176,22 @@ void printOxParams(const OxParams* params)
 {
     printf("\n=== Oxide Parameters ===\n");
     printf("Device Properties:\n");
-    printf("  Length: %.3e m\n", params->L);
-    printf("  Relative Permittivity: %.3f\n", params->eps_r);
-    printf("  Electron Affinity: %.3f eV\n", params->electron_affinity);
+    printf("  Length: %.3Le m\n", params->L);
+    printf("  Relative Permittivity: %Lf\n", params->eps_r);
+    printf("  Electron Affinity: %Lf eV\n", params->electron_affinity);
     
     printf("\nVoltage Conditions:\n");
-    printf("  Bottom Voltage (V₀): %.3f V\n", params->V_0);
-    printf("  Top Voltage (Vₗ): %.3f V\n", params->V_L);
+    printf("  Bottom Voltage (V₀): %Lf V\n", params->V_0);
+    printf("  Top Voltage (Vₗ): %Lf V\n", params->V_L);
     
     printf("\nTransport Parameters:\n");
-    printf("  Attempt Frequency (ν₀): %.3e Hz\n", params->nu_0);
-    printf("  Effective Mass (m*): %.3e kg\n", params->m_eff);
-    printf("  Mobility (μ): %.3e m²/V·s\n", params->mobility);
-    printf("  Relaxation Distance (γ₀): %.3e m\n", params->gamma_0);
+    printf("  Attempt Frequency (ν₀): %.3Le Hz\n", params->nu_0);
+    printf("  Effective Mass (m*): %.3Le kg\n", params->m_eff);
+    printf("  Mobility (μ): %.3Le m²/V·s\n", params->mobility);
+    printf("  Relaxation Distance (γ₀): %.3Le m\n", params->gamma_0);
     
     printf("\nSimulation Parameters:\n");
-    printf("  Temperature: %.1f K\n", params->temp);
+    printf("  Temperature: %Lf K\n", params->temp);
     printf("  Number of Traps: %zu\n", params->num_traps);
     printf("  Chunk Size: %zu\n", params->chunk_size);
     printf("\n=====================================\n");
@@ -207,7 +207,7 @@ void printInputData(const InputData* data)
     printf("Index    Location (m)    Occupation Prob.\n");
     printf("----------------------------------------\n");
     for(size_t i = 0; i < data->locs.len; i++) {
-        printf("%-8zu %-14.3e %-14.3f\n", 
+        printf("%-8zu %-14.3Le %-14.3Lf\n", 
                i, 
                vecGet(data->locs, i), 
                vecGet(data->probs, i));

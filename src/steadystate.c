@@ -24,8 +24,8 @@ void jacobianMatrix(Mat2d matrix /*Initialize this matrix to 0*/, Mat2d coeffmat
     Vec fbar = vecInitZerosA(f.len); //remove this dumb
     vecSub(one, f, &fbar);
     if(i == j){
-        double abbar = vecDot(mat2DRow(coeffmatrix, i), fbar);
-        double ab = vecDot(mat2DCol(coeffmatrix, i), f);
+        long double abbar = vecDot(mat2DRow(coeffmatrix, i), fbar);
+        long double ab = vecDot(mat2DCol(coeffmatrix, i), f);
         *mat2DRef(matrix, i, i) = -(VEC_INDEX(R1, i) + VEC_INDEX(R2, i) + abbar + ab);
     }
     else{
@@ -35,8 +35,8 @@ void jacobianMatrix(Mat2d matrix /*Initialize this matrix to 0*/, Mat2d coeffmat
 }
 
 //swaps a, b
-void swap(double* a, double* b){
-    double temp = *a;
+void swap(long double* a, long double* b){
+    long double temp = *a;
     *a = *b;
     *b = temp;
 }
@@ -53,10 +53,10 @@ void swapRows(Mat2d A, Vec b, int row1, int row2){
 
 int find_pivot_row(Mat2d A, int start_row, int column){
     int max_row = start_row;
-    double max_val = fabs(*mat2DRef(A, start_row, column));
+    long double max_val = fabsl(*mat2DRef(A, start_row, column));
     for(size_t i = start_row + 1; i < A.rows; i++){
-        if(fabs(*mat2DRef(A, i, column)) > max_val){
-            max_val = fabs(*mat2DRef(A, i, column));
+        if(fabsl(*mat2DRef(A, i, column)) > max_val){
+            max_val = fabsl(*mat2DRef(A, i, column));
             max_row = i;
         }
     }
@@ -66,7 +66,7 @@ int find_pivot_row(Mat2d A, int start_row, int column){
 //does gaussian elimination
 void gaussianElimination(Mat2d A/*jacobian matrix*/, Vec b/*coefficient vector*/){
     int pivot_row = 0;
-    double pivot, factor;
+    long double pivot, factor;
 
     for(size_t i = 0; i < A.rows; i++){
         pivot_row = find_pivot_row(A, i, i);
@@ -75,7 +75,7 @@ void gaussianElimination(Mat2d A/*jacobian matrix*/, Vec b/*coefficient vector*/
         }
 
         pivot = *mat2DRef(A, i, i);
-        if(fabs(pivot) < MIN_ERROR){
+        if(fabsl(pivot) < MIN_ERROR){
             printf("Bad Matrix!");
             return;
         }
@@ -147,7 +147,7 @@ Vec jacobianImplementationA(Mat2d coeffmatrix, Vec R1, Vec R2){
     Vec f = vecInitA(0.00005, matrix.cols); //need it dumb
     Vec F = vecInitA(0, matrix.cols); //need it dumb but can free it later
     Vec delta_f = vecInitA(0.000001, matrix.cols); //free it dumb
-    while(fabs(vecMax(delta_f)) > MIN_ERROR){
+    while(fabsl(vecMax(delta_f)) > MIN_ERROR){
         for(size_t i = 0; i < matrix.rows; i++){
             for(size_t j = 0; j < matrix.cols; j++){
                 jacobianMatrix(matrix, coeffmatrix, R1, R2, f, i, j);
