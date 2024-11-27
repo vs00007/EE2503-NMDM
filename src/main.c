@@ -40,72 +40,72 @@ int main()
         (try not to change the master_eqn.c file, just make realllyyy big vector and matrix, and then push it to a new pyvi file) 
     */
 
-    Vec delta_fn = vecInitZerosA(dim);
-    Mat2d delta_E = mat2DInitZerosA(dim, dim);
-    Vec V;
-    for(size_t iter = 0; iter < ITER_MAX; iter++)
-    {
-        // set to prev iter values
-        delta_fn = data.probs;
-        delta_E = E_nm;
+    // Vec delta_fn = vecInitZerosA(dim);
+    // Mat2d delta_E = mat2DInitZerosA(dim, dim);
+    // Vec V;
+    // for(size_t iter = 0; iter < ITER_MAX; iter++)
+    // {
+    //     // set to prev iter values
+    //     delta_fn = data.probs;
+    //     delta_E = E_nm;
 
-        // solve for fn
-        data.probs = jacobianImplementationA(coefficientMatrix, R1, R2);
-        V = poissonWrapper(data, mesh);
+    //     // solve for fn
+    //     data.probs = jacobianImplementationA(coefficientMatrix, R1, R2);
+    //     V = poissonWrapper(data, mesh);
 
-        vecPrint(V);
-        pyviSectionPush(V_vi, V);
+    //     vecPrint(V);
+    //     pyviSectionPush(V_vi, V);
 
-        printf("\nProbabilites[%zu]:", iter);
-        vecPrint(data.probs);
-        // printNL();
+    //     printf("\nProbabilites[%zu]:", iter);
+    //     vecPrint(data.probs);
+    //     // printNL();
 
-        E_nm = matrix_E_n(data, mesh);
+    //     E_nm = matrix_E_n(data, mesh);
         
-        printf("Energies[%zu]:", iter);
-        mat2DPrint(E_nm);
-        printNL();
+    //     printf("Energies[%zu]:", iter);
+    //     mat2DPrint(E_nm);
+    //     printNL();
 
-        R = R_en(data, mesh);
-        R1 = mat2DCol(R, 0);
-        R2 = mat2DCol(R, 1);
+    //     R = R_en(data, mesh);
+    //     R1 = mat2DCol(R, 0);
+    //     R2 = mat2DCol(R, 1);
 
-        // d_m doesn't change? - - Of course it doesn't
-        //d_nm = matrix_d_nm(data);
+    //     // d_m doesn't change? - - Of course it doesn't
+    //     //d_nm = matrix_d_nm(data);
         
-        coefficientMatrix = matrix_r_nm(data, E_nm, d_nm);
-        for(size_t i = 0; i < coefficientMatrix.rows; i++) *mat2DRef(coefficientMatrix, i, i) = 0.0L;
+    //     coefficientMatrix = matrix_r_nm(data, E_nm, d_nm);
+    //     for(size_t i = 0; i < coefficientMatrix.rows; i++) *mat2DRef(coefficientMatrix, i, i) = 0.0L;
         
-        mat2DSub(delta_E, E_nm, &delta_E);
-        vecSub(delta_fn, data.probs, &delta_fn);
+    //     mat2DSub(delta_E, E_nm, &delta_E);
+    //     vecSub(delta_fn, data.probs, &delta_fn);
 
-        long double error_fn = vecMax(delta_fn) / vecMax(data.probs);
-        long double error_E = mat2DMaxAbs(delta_E) / mat2DMaxAbs(E_nm);
+    //     long double error_fn = vecMax(delta_fn) / vecMax(data.probs);
+    //     long double error_E = mat2DMaxAbs(delta_E) / mat2DMaxAbs(E_nm);
 
-        pyviSectionPush(f_n, data.probs);
+    //     pyviSectionPush(f_n, data.probs);
 
-        if(mat2DContainsNan(E_nm))
-        {
-            printf("[Steady-State] Error: E_nm contains nan! Iter : %zu\n", iter);
-            break;
-        }
-        if(vecContainsNan(delta_fn))
-        {
-            printf("[Steady-State] Error: f_n contains nan! Iter : %zu\n", iter);
-            break;
-        }
+    //     if(mat2DContainsNan(E_nm))
+    //     {
+    //         printf("[Steady-State] Error: E_nm contains nan! Iter : %zu\n", iter);
+    //         break;
+    //     }
+    //     if(vecContainsNan(delta_fn))
+    //     {
+    //         printf("[Steady-State] Error: f_n contains nan! Iter : %zu\n", iter);
+    //         break;
+    //     }
 
-        if (error_E < TOL && error_fn < TOL)
-        {
+    //     if (error_E < TOL && error_fn < TOL)
+    //     {
 
-            printf("YAY! Steady state converged ... in ... Iter count : %zu\n", iter);
-            break;
-        }
+    //         printf("YAY! Steady state converged ... in ... Iter count : %zu\n", iter);
+    //         break;
+    //     }
 
-        if (iter == ITER_MAX - 1) printf("Max Iterations reached!\n");
-    }
+    //     if (iter == ITER_MAX - 1) printf("Max Iterations reached!\n");
+    // }
 
-    pyviWrite(vis);
+
     printNL();
 
     data.params.V_0 = 1.0;
@@ -119,30 +119,20 @@ int main()
     config.mesh = mesh;
     config.y_initial = data.probs;
 
-    // size_t slen = 0;
-    // Vec t_result_inf = vecInitZerosA(100);
-    // Mat2d f_res_inf = mat2DInitA(0.0L, data.probs.len, 100);
-    // Vec t_res_act;
-    // Mat2d f_res_act;
+    size_t slen = 0;
+    Vec t_result_inf = vecInitZerosA(100);
+    Mat2d f_res_inf = mat2DInitA(0.0L, data.probs.len, 100);
+    Vec t_res_act;
+    Mat2d f_res_act;
+    solver(config, t_result_inf, f_res_inf);
 
-    // while (true)
-    // {
-    //     solver(config, t_result_inf, f_res_inf);
+    for (size_t i = 1; i < t_result_inf.len; i ++){
+        if (vecGet(t_result_inf, i) < vecGet(t_result_inf, i - 1)) slen = i; 
+    } 
+    t_res_act = vecConstruct(t_result_inf.x, slen);
+    f_res_act = mat2DConstruct(f_res_inf.mat, data.params.num_traps, slen);
 
-    //     for (size_t i = 1; i < t_result_inf.len; i ++){
-    //         if (vecGet(t_result_inf, i) < vecGet(t_result_inf, i - 1)) slen = i; 
-    //     } 
-    //     t_res_act = vecConstruct(t_result_inf.x, slen);
-    //     f_res_act = mat2DConstruct(f_res_inf.mat, data.params.num_traps, slen);
-
-
-        
-    //     // vecPrint(t_result_inf);
-    //     // printNL();
-    //     // mat2DPrint(f_res_act);
-    // }
-
-
+    pyviWrite(vis);
     freePyVi(&vis);
     // int status = system("python3 visualise/visualise.py");
 }
