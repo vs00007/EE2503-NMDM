@@ -4,16 +4,16 @@ relative_permitivity = 3.9
 v_top                = 0
 v_bottom             = 0
 temperature          = 300
-electron_affinity    = 3.9
+electron_affinity    = -1.45
 
 [Oxide.traps]
-locations            = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+locations            = [0.1, 0.9]
 occ_probs            = [0.1, 0.1, 0.1, 0.1, 0.1]
 
 [Oxide.transport]
 mobility             = 5e-2
 m_eff                = 0.42
-nu_0                 = 1
+nu_0                 = 1e13
 relaxation_distance  = 5e-10
 
 [Oxide.SimParams]

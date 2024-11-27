@@ -60,7 +60,11 @@ long double r_nm(InputData input_data , Mat2d mat_E , Mat2d mat_d , size_t n , s
     long double E_nm = mat2DGet(mat_E, n, m);
     long double d_nm = mat2DGet(mat_d, n, m);
 
-    return (nu*(exp((-d_nm/gamma) + (E_nm/kb_T))));
+    long double prob = exp((-d_nm/gamma) - (E_nm/kb_T));
+
+    if (prob > 1.0) prob = 1.0;
+
+    return nu * prob;
 }
 
 Mat2d matrix_r_nm(InputData input_data , Mat2d mat_E , Mat2d mat_d)
@@ -123,19 +127,22 @@ Mat2d R_en(InputData input_data, Vec mesh)
     Vec E = getGridNumE(input_data, mesh);
 
     //Top electrode
-    long double V_0 = input_data.params.V_0 ;
+    long double V_0 = input_data.params.V_0;
+    // Bottom electrode
+    long double V_L = input_data.params.V_L;
 
     for(size_t i = 0 ; i < len ; i++){
         long double t = 1.0; //transmission_param(d.x[i] , input_data , V_0) ;
-        *mat2DRef(mat_R, i, 0) = k * t * kb_T * log(1 + exp(E.x[i] + Q * V_0 )) ;
+        long double e_top_t = k * t * kb_T * log(1 + exp((E.x[i] + Q * V_0) / kb_T));
+        long double e_bottom_t = k * t * kb_T * log(1 + exp((E.x[i] + Q * V_L) / kb_T));
+        *mat2DRef(mat_R, i, 0) = e_top_t + e_bottom_t;
     }
-
-    // Bottom electrode
-    long double V_L = input_data.params.V_L ;
 
     for(size_t i = 0 ; i < len ; i++){
         long double t = 1.0; // transmission_param(d.x[i] , input_data , V_L) ;
-        *mat2DRef(mat_R, i, 1) = k * t * kb_T * log(1 + exp(E.x[i] + Q * V_L )) ;
+        long double e_top_t = k * t * kb_T * log(1 + exp((E.x[i] + Q * V_0) / kb_T));
+        long double e_bottom_t = k * t * kb_T * log(1 + exp((E.x[i] + Q * V_L) / kb_T));
+        *mat2DRef(mat_R, i, 1) = e_top_t + e_bottom_t;
     }
     return mat_R ;
 }
