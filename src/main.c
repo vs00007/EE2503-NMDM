@@ -43,7 +43,7 @@ int main()
     Vec delta_fn = vecInitZerosA(dim);
     Mat2d delta_E = mat2DInitZerosA(dim, dim);
     Vec V;
-    for(size_t iter = 0; iter < 1; iter++)
+    for(size_t iter = 0; iter < ITER_MAX; iter++)
     {
         // set to prev iter values
         delta_fn = data.probs;
