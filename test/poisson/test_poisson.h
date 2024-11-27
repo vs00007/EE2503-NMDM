@@ -9,7 +9,7 @@ void printVecUnits(Vec f_n, char a);
 
 void randF(Vec param, long double min, long double max, int sort);
 
-int comparelong doubles(long double a, long double b, long double epsilon);
+int comparelongdoubles(long double a, long double b, long double epsilon);
 
 int qsort_compare(const void *a, const void *b);
 

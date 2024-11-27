@@ -21,7 +21,7 @@ void testmaster(){
     Vec t_res = vecInitZerosA(N);
     // long double h2 = 0.01;
     Mat2d res = mat2DInitZerosA(n, N);
-    solver(h, t_initial, t_final, y_initial, 1e-8, t_res, res);
+    // solver(h, t_initial, t_final, y_initial, 1e-8, t_res, res);
     
     // printf("%zu\n", 1);    
 

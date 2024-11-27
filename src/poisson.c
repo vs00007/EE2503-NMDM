@@ -152,14 +152,17 @@ Vec generateMesh(Vec d, OxParams oxparams)
         printf("Input Invalid.\n");
         return (Vec){NULL, 0, 0};
     }
-
+    long double eps_dist = 1e-12;
     DynStack mesh = dynStackInit(sizeof(long double));
     long double mesh_point = 0;
     
     // Piecewise mesh creation. Adds all points to the mesh
 
-    // from 0 to d[n]
     long double d_0 = d.x[0];
+    // mesh_point = d_0 - eps_dist;
+    // dynStackPush(&mesh, &mesh_point);
+
+    // from 0 to d[0]
     for(size_t i = 0; i < chunk_size; i++)
     {
         mesh_point = (long double)(i * d_0) / chunk_size; 
@@ -167,9 +170,14 @@ Vec generateMesh(Vec d, OxParams oxparams)
         dynStackPush(&mesh, &mesh_point);
     }
 
+    // mesh_point = d_0 + eps_dist;
+    // dynStackPush(&mesh, &mesh_point);
+
     // Everywhere else
     for (size_t i = 0; i < d.len - 1; i++)
     {
+        // mesh_point = d.x[i] - eps_dist;
+        // dynStackPush(&mesh, &mesh_point);
         long double d_i = fabsl(d.x[i] - d.x[i + 1]);
         for (size_t j = 0; j < chunk_size; j++)
         {
@@ -177,16 +185,25 @@ Vec generateMesh(Vec d, OxParams oxparams)
             // printf("%Lg\n", mesh_point);
             dynStackPush(&mesh, &mesh_point);
         }
+        // mesh_point = d.x[i] + eps_dist;
+        // dynStackPush(&mesh, &mesh_point);
+
     }
 
     // from d[n] to L
     long double d_n = fabsl(d.x[d.len - 1] - oxparams.L);
+
+    // mesh_point = d_n - eps_dist;
+    // dynStackPush(&mesh, &mesh_point);
+
     for(size_t i = 0; i < chunk_size; i++)
     {
         mesh_point = d.x[d.len - 1] + (long double)(i * d_n) / chunk_size; 
         // printf("%Lg\n", mesh_point);
         dynStackPush(&mesh, &mesh_point);
     }
+    // mesh_point = d_n + eps_dist;
+    // dynStackPush(&mesh, &mesh_point);
 
     // Last point
     mesh_point = oxparams.L;

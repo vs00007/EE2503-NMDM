@@ -9,7 +9,7 @@
 #define EPSILON 1e-6
 #define NUM_TESTS 100
 
-int comparelong doubles(long double a, long double b, long double epsilon)
+int comparelongdoubles(long double a, long double b, long double epsilon)
 {
     return fabsl(a - b) < epsilon;
 }
@@ -97,7 +97,7 @@ void test_poisson()
         
         long double expected = Q * K * (1.0/1.0 + 1.0/1.0 + 1.0/1.0 + 1.0/1.0); 
         total_tests++;
-        if (comparelong doubles(sol, expected, EPSILON)) {
+        if (comparelongdoubles(sol, expected, EPSILON)) {
             printf("Expected %Le, got %Le. Test case 1 passed.\n", expected, sol);
             test_passed++;
         } else {
@@ -127,7 +127,7 @@ void test_poisson()
 
         long double expected = Q * K * (1.0 / 1.0);
         total_tests++;
-        if (comparelong doubles(sol, expected, EPSILON)) {
+        if (comparelongdoubles(sol, expected, EPSILON)) {
             printf("Expected %Le, got %Le. Test case 2 passed\n", expected, sol);
             test_passed++;
         } else {
@@ -160,7 +160,7 @@ void test_poisson()
         // Validate result
         long double expected = Q * K * (1.0/3.0 - 2.0/2.0 + 1.5/1.0);
         total_tests++;
-        if (comparelong doubles(sol, expected, EPSILON)) {
+        if (comparelongdoubles(sol, expected, EPSILON)) {
             printf("Expected %Le, got %Le. Test case 3 passed\n", expected, sol);
             test_passed++;
         } else {
@@ -189,7 +189,7 @@ void test_poisson()
         // Validate result
         long double expected = Q * K * (1.0 / 1.0);
         total_tests++;
-        if (comparelong doubles(sol, expected, EPSILON)) {
+        if (comparelongdoubles(sol, expected, EPSILON)) {
             printf("Expected %Le, got %Le. Test case 4a passed\n", expected, sol);
             test_passed++;
         } else {
@@ -222,7 +222,7 @@ void test_poisson()
 
         total_tests++;
         expected = Q * K * (1.0 / 1e-9 + 1.0/ (1 - 1e-9));
-        if (comparelong doubles(sol, expected, EPSILON)) {
+        if (comparelongdoubles(sol, expected, EPSILON)) {
             printf("Expected %Le, got %Le, Test case 4c passed\n", expected, sol);
             test_passed++;
         } else {
@@ -239,7 +239,7 @@ void test_poisson()
         // Should ignore the charge at small distance
         total_tests++;
         expected = Q * K * (1.0/ (1 - 1e-11));
-        if (comparelong doubles(sol, expected, EPSILON)) {
+        if (comparelongdoubles(sol, expected, EPSILON)) {
             printf("Expected %Le, got %Le. Test case 4d passed\n", expected, sol);
             test_passed++;
         } else {
@@ -449,6 +449,7 @@ void testMeshGen()
     pyviWrite(vis);
     // system("python3 visualise/visualise.py");
     // freeVec(&sol), freeVec(&sol2), freeVec(&mesh), freeVec(&f_n), freeVec(&d);
+    freePyVi(&vis);
 }
 
 void testSolver()
