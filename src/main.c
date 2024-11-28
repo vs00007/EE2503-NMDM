@@ -52,34 +52,36 @@ int main()
     */
 
     Vec delta_fn = vecInitZerosA(dim);
+    Vec prev_fn = vecInitZerosA(dim);
     Mat2d delta_E = mat2DInitZerosA(dim, dim);
     Vec V;
     long double w = 0.1L;
     for(size_t iter = 0; iter < ITER_MAX; iter++)
     {
         // set to prev iter values
-        delta_fn = data.probs;
+        prev_fn = data.probs;
+        delta_fn = vecCopyA(prev_fn);
         delta_E = E_nm;
 
         // solve for fn
         data.probs = jacobianImplementationA(coefficientMatrix, R1, R2);
         vecScale(w, data.probs, &data.probs);
-        vecScale(1L - w, delta_fn, &delta_fn);
-        vecAdd(delta_fn, data.probs, &data.probs);
+        vecScale(1L - w, prev_fn, &prev_fn);
+        vecAdd(prev_fn, data.probs, &data.probs);
         V = poissonWrapper(data, mesh);
 
         // vecPrint(V);
         pyviSectionPush(V_vi, V);
 
-        printf("\nProbabilites[%zu]:", iter);
-        vecPrint(data.probs);
-        printNL();
+        //printf("\nProbabilites[%zu]:", iter);
+        //vecPrint(data.probs);
+        //printNL();
 
         E_nm = matrix_E_n(data, mesh);
         
-        printf("\nEnergies[%zu]:", iter);
-        mat2DPrint(E_nm);
-        printNL();
+        //printf("\nEnergies[%zu]:", iter);
+        //mat2DPrint(E_nm);
+        //printNL();
 
         R = R_en(data, mesh);
         R1 = mat2DCol(R, 0);
@@ -108,6 +110,9 @@ int main()
 
         long double error_fn = vecMaxAbs(delta_fn) / vecMaxAbs(data.probs);
         long double error_E = mat2DMaxAbs(delta_E) / mat2DMaxAbs(E_nm);
+
+        printf("Error E[%zu]:%.17Lg\n", iter, error_E);
+        printf("Error Fn[%zu]:%.17Lg\n", iter, error_fn);
 
         pyviSectionPush(f_n, data.probs);
 
@@ -138,47 +143,49 @@ int main()
     data.params.V_0 = v_0_actual;
     data.params.V_L = v_L_actual;
 
-    // RK45Config config;
-    // config.h = 1e-10;
-    // config.t_initial = 0.0;
-    // config.t_final = 10.0;
-    // config.tol = 1e-10;
-    // config.data = data;
-    // config.mesh = mesh;
-    // config.y_initial = data.probs;
+    RK45Config config;
+    config.h = 1e-10;
+    config.t_initial = 0.0;
+    config.t_final = 100000.0;
+    config.tol = 1e-12;
+    config.data = data;
+    config.mesh = mesh;
+    config.y_initial = data.probs;
 
-    // Vec timestamps = vecInitZerosA(1000);
-    // Mat2d fn_t = mat2DInitZerosA(data.probs.len, 1000);
+    Vec timestamps = vecInitZerosA(1000);
+    Mat2d fn_t = mat2DInitZerosA(data.probs.len, 1000);
 
-    // solver(config, timestamps, fn_t);
-    // mat2DPrint(fn_t);
-    // printNL();
-    // size_t slen = 0;    
-    // for (size_t i = 1; i < timestamps.len; i ++)
-    // {
-    //     if (vecGet(timestamps, i) < vecGet(timestamps, i - 1)) slen = i - 1; 
-    // }
+    solver(config, timestamps, fn_t);
+    mat2DPrint(fn_t);
+    printNL();
+    size_t slen = 0;    
+    for (size_t i = 1; i < timestamps.len; i ++)
+    {
+        if (vecGet(timestamps, i) > vecGet(timestamps, i - 1)) slen = i;
+    }
 
+    // TODO: change this temp
+    timestamps = vecConstruct(timestamps.x, slen+1);
 
-
-    // PyVi trans_pyvi = pyviInitA("data/transient.pyvi");
-    // PyViBase x_pyvi = pyviCreateParameter(&trans_pyvi, "t", timestamps);
+    PyVi trans_pyvi = pyviInitA("data/transient.pyvi");
+    PyViBase x_pyvi = pyviCreateParameter(&trans_pyvi, "t", timestamps);
     
-    // for(size_t i = 0; i < data.probs.len; i++)
-    // {
-    //     char buf[16];
-    //     snprintf(buf, sizeof(buf), "f_n[%zu]", i); // Scanf reads from buf, my guy. You need to print to it
-    //     PyViSec f_n_pyvi = pyviCreateSection(&trans_pyvi, buf, x_pyvi);
+    for(size_t i = 0; i < data.probs.len; i++)
+    {
+        char* buf = malloc(32*sizeof(char));
+        snprintf(buf, 32, "f_n[%zu]", i); // Scanf reads from buf, my guy. You need to print to it
+        PyViSec f_n_pyvi = pyviCreateSection(&trans_pyvi, buf, x_pyvi);
 
-    //     Vec sec = mat2DRow(fn_t, i);
-    //     pyviSectionPush(f_n_pyvi, sec);
-    // }
-    // V = poissonWrapper(data, mesh);
-    // PyViBase meshvis = pyviCreateParameter(&trans_pyvi, "mesh", mesh);
-    // PyViSec  V_vis   = pyviCreateSection(&trans_pyvi, "Voltage", meshvis);
+        Vec sec = mat2DRow(fn_t, i);
+        sec.len = slen+1;
+        pyviSectionPush(f_n_pyvi, sec);
+    }
+    V = poissonWrapper(data, mesh);
+    PyViBase meshvis = pyviCreateParameter(&trans_pyvi, "mesh", mesh);
+    PyViSec  V_vis   = pyviCreateSection(&trans_pyvi, "Voltage", meshvis);
 
-    // pyviSectionPush(V_vis, V);
-    // pyviWrite(trans_pyvi);
+    pyviSectionPush(V_vis, V);
+    pyviWrite(trans_pyvi);
 
     freePyVi(&vis);
     // freePyVi(&trans_pyvi);

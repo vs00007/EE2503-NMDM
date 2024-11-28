@@ -59,9 +59,9 @@ long double r_nm(InputData input_data , Mat2d mat_E , Mat2d mat_d , size_t n , s
     long double E_nm = mat2DGet(mat_E, n, m);
     long double d_nm = mat2DGet(mat_d, n, m);
 
-    if(E_nm < 0.0) return nu * exp(-d_nm/gamma);
+    if(E_nm > 0.0) return nu * exp(-d_nm/gamma);
 
-    return nu * exp((-d_nm/gamma) - (E_nm/kb_T));
+    return nu * exp((-d_nm/gamma) + (E_nm/kb_T));
 }
 
 Mat2d matrix_r_nm(InputData input_data , Mat2d mat_E , Mat2d mat_d)
@@ -117,7 +117,7 @@ Mat2d R_en(InputData input_data, Vec mesh)
     Mat2d mat_R = mat2DInitZerosA(len, 2) ;
     Vec d = input_data.locs ;
     long double k = 1e13;
-    long double phi_M = Q * 2.5L;
+    long double phi_M = Q * 3L;
     
     Vec fn = input_data.probs ;
     Vec d1 = input_data.locs ;
@@ -128,23 +128,36 @@ Mat2d R_en(InputData input_data, Vec mesh)
     long double V_0 = input_data.params.V_0;
     // Bottom electrode
     long double V_L = input_data.params.V_L;
-    long double ln_expo;
 
     for(size_t i = 0 ; i < len ; i++){
         long double t = 1.0; //transmission_param(d.x[i] , input_data , V_0) ;
-        ln_expo = -(E.x[i] + Q * V_0 + phi_M) / kb_T;
-        if (ln_expo < 1000) ln_expo = logl(1 + expl(ln_expo));
-        long double e_top_t = k * t * kb_T * ln_expo;
-        long double e_bottom_t = k * t * kb_T * ln_expo;
+
+        long double ln_expo1 = -(E.x[i] + Q * V_0 + phi_M) / kb_T;
+        if (ln_expo1 < 1000) ln_expo1 = logl(1 + expl(ln_expo1));
+        //if(kb_T*ln_expo1 > 1.0) ln_expo1 = 1/kb_T;
+        
+        long double ln_expo2 = -(E.x[i] + Q * V_L + phi_M) / kb_T;
+        if (ln_expo2 < 1000) ln_expo2 = logl(1 + expl(ln_expo2));
+        //if(kb_T*ln_expo2 > 1.0) ln_expo2 = 1/kb_T;
+        
+        long double e_top_t = k * t * kb_T * ln_expo1;
+        long double e_bottom_t = k * t * kb_T * ln_expo2;
         *mat2DRef(mat_R, i, 0) = e_top_t + e_bottom_t;
     }
 
     for(size_t i = 0 ; i < len ; i++){
         long double t = 1.0; // transmission_param(d.x[i] , input_data , V_L) ;
-        ln_expo = (E.x[i] + Q * V_0 + phi_M) / kb_T;
-        if (ln_expo < 100) ln_expo = logl(1 + expl(ln_expo));
-        long double e_top_t = k * t * kb_T * ln_expo;
-        long double e_bottom_t = k * t * kb_T * ln_expo;
+        
+        long double ln_expo1 = (E.x[i] + Q * V_0 + phi_M) / kb_T;
+        if (ln_expo1 < 1000) ln_expo1 = logl(1 + expl(ln_expo1));
+        //if(kb_T*ln_expo1 > 1.0) ln_expo1 = 1/kb_T;
+
+        long double ln_expo2 = (E.x[i] + Q * V_L + phi_M) / kb_T;
+        if (ln_expo2 < 1000) ln_expo2 = logl(1 + expl(ln_expo2));
+        //if(kb_T*ln_expo2 > 1.0) ln_expo2 = 1/kb_T;
+        
+        long double e_top_t = k * t * kb_T * ln_expo1;
+        long double e_bottom_t = k * t * kb_T * ln_expo2;
         *mat2DRef(mat_R, i, 1) = e_top_t + e_bottom_t;
     }
     return mat_R ;
