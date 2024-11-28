@@ -168,7 +168,7 @@ Vec jacobianImplementationA(Mat2d coeffmatrix, Vec R1, Vec R2){
     // }
 
     Vec F = vecInitA(0, matrix.cols); //need it dumb but can free it later
-    Vec delta_f = vecInitA(1, matrix.cols); //free it dumb
+    Vec delta_f = vecInitA(0.1, matrix.cols); //free it dumb
     while(vecMaxAbs(delta_f)/vecMaxAbs(f) > MIN_REL_ERROR){
         for(size_t i = 0; i < matrix.rows; i++){
             for(size_t j = 0; j < matrix.cols; j++){

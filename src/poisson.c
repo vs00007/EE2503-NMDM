@@ -356,17 +356,17 @@ Vec getGridNumV(InputData data, Vec mesh)
 Vec getGridNumE(InputData data, Vec mesh)
 {
     Vec gridV = getGridNumV(data, mesh);
-    Vec EC = vecInitA(0, gridV.len);
+    Vec Et = vecInitA(0, gridV.len);
     
     for(size_t i = 0; i < gridV.len; i++)
     {
-        // EC = -qV - χ - Ed
-        long double EC_val = -Q * (vecGet(gridV, i) - (data.params.electron_affinity) - Q * vecGet(data.energies, i));
-        *vecRef(EC, i) = EC_val;
+        // Et = -qV - χ - Ed
+        long double ET_val = Q * (vecGet(gridV, i) - Q * (data.params.electron_affinity) - vecGet(data.energies, i));
+        *vecRef(Et, i) = ET_val;
     }
     // printVecUnits(EC, 'eV');
 
-    return EC;
+    return Et;
 }
 void printNL()
 {

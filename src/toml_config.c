@@ -104,7 +104,7 @@ int parse_toml_file(const char* filename, OxParams* params, Vec* locations, Vec*
 
     for (size_t i = 0; i < array_size; i++) {
         const char* raw_loc = toml_raw_at(loc_array, i);
-        locations->x[i] = strtod(raw_loc, &endptr);
+        *vecRef(*locations, i) = strtod(raw_loc, &endptr);
         if (*endptr != '\0') {
             fprintf(stderr, "Invalid value in locations or energies array\n");
             free(locations->x);
@@ -115,7 +115,7 @@ int parse_toml_file(const char* filename, OxParams* params, Vec* locations, Vec*
     }
     for (size_t i = 0; i < array_size; i++) {
         const char* raw_e = toml_raw_at(energy_array, i);
-        trap_energies->x[i] = strtod(raw_e, &endptr);
+        *vecRef(*trap_energies, i) = strtod(raw_e, &endptr);
         if (*endptr != '\0') {
             fprintf(stderr, "Invalid value in locations or energies array\n");
             free(locations->x);

@@ -15,6 +15,9 @@ int main()
     long double v_L_actual = data.params.V_L;
     printInputData(&data);
 
+    // vecPrint(data.energies);
+    printNL();
+    // return 0;
     data.params.V_0 = 0;
     data.params.V_L = 0;
 
@@ -68,34 +71,34 @@ int main()
         // vecPrint(V);
         pyviSectionPush(V_vi, V);
 
-        // printf("\nProbabilites[%zu]:", iter);
-        // vecPrint(data.probs);
-        // printNL();
+        printf("\nProbabilites[%zu]:", iter);
+        vecPrint(data.probs);
+        printNL();
 
         E_nm = matrix_E_n(data, mesh);
         
-        // printf("\nEnergies[%zu]:", iter);
-        // mat2DPrint(E_nm);
-        // printNL();
+        printf("\nEnergies[%zu]:", iter);
+        mat2DPrint(E_nm);
+        printNL();
 
         R = R_en(data, mesh);
         R1 = mat2DCol(R, 0);
         R2 = mat2DCol(R, 1);
 
-        // printf("Transmission Coefficients[%zu]:", iter);
-        // mat2DPrint(R);
-        // printf("\n");
+        printf("Transmission Coefficients[%zu]:", iter);
+        mat2DPrint(R);
+        printf("\n");
 
         coefficientMatrix = matrix_r_nm(data, E_nm, d_nm);
         for(size_t i = 0; i < coefficientMatrix.rows; i++) *mat2DRef(coefficientMatrix, i, i) = 0.0L;
         
-        // printf("\nCoeffmatrix[%zu]:", iter);
-        // mat2DPrint(coefficientMatrix);
-        // printNL();
+        printf("\nCoeffmatrix[%zu]:", iter);
+        mat2DPrint(coefficientMatrix);
+        printNL();
 
-        // printf("\ndelta distance[%zu]:", iter);
-        // mat2DPrint(d_nm);
-        // printNL();
+        printf("\ndelta distance[%zu]:", iter);
+        mat2DPrint(d_nm);
+        printNL();
 
         // d_m doesn't change? - - Of course it doesn't
         //d_nm = matrix_d_nm(data);
@@ -135,50 +138,50 @@ int main()
     data.params.V_0 = v_0_actual;
     data.params.V_L = v_L_actual;
 
-    RK45Config config;
-    config.h = 1e-10;
-    config.t_initial = 0.0;
-    config.t_final = 10.0;
-    config.tol = 1e-10;
-    config.data = data;
-    config.mesh = mesh;
-    config.y_initial = data.probs;
+    // RK45Config config;
+    // config.h = 1e-10;
+    // config.t_initial = 0.0;
+    // config.t_final = 10.0;
+    // config.tol = 1e-10;
+    // config.data = data;
+    // config.mesh = mesh;
+    // config.y_initial = data.probs;
 
-    Vec timestamps = vecInitZerosA(1000);
-    Mat2d fn_t = mat2DInitZerosA(data.probs.len, 1000);
+    // Vec timestamps = vecInitZerosA(1000);
+    // Mat2d fn_t = mat2DInitZerosA(data.probs.len, 1000);
 
-    solver(config, timestamps, fn_t);
-    mat2DPrint(fn_t);
-    printNL();
-    size_t slen = 0;    
-    for (size_t i = 1; i < timestamps.len; i ++)
-    {
-        if (vecGet(timestamps, i) < vecGet(timestamps, i - 1)) slen = i - 1; 
-    }
+    // solver(config, timestamps, fn_t);
+    // mat2DPrint(fn_t);
+    // printNL();
+    // size_t slen = 0;    
+    // for (size_t i = 1; i < timestamps.len; i ++)
+    // {
+    //     if (vecGet(timestamps, i) < vecGet(timestamps, i - 1)) slen = i - 1; 
+    // }
 
 
 
-    PyVi trans_pyvi = pyviInitA("data/transient.pyvi");
-    PyViBase x_pyvi = pyviCreateParameter(&trans_pyvi, "t", timestamps);
+    // PyVi trans_pyvi = pyviInitA("data/transient.pyvi");
+    // PyViBase x_pyvi = pyviCreateParameter(&trans_pyvi, "t", timestamps);
     
-    for(size_t i = 0; i < data.probs.len; i++)
-    {
-        char buf[16];
-        snprintf(buf, sizeof(buf), "f_n[%zu]", i); // Scanf reads from buf, my guy. You need to print to it
-        PyViSec f_n_pyvi = pyviCreateSection(&trans_pyvi, buf, x_pyvi);
+    // for(size_t i = 0; i < data.probs.len; i++)
+    // {
+    //     char buf[16];
+    //     snprintf(buf, sizeof(buf), "f_n[%zu]", i); // Scanf reads from buf, my guy. You need to print to it
+    //     PyViSec f_n_pyvi = pyviCreateSection(&trans_pyvi, buf, x_pyvi);
 
-        Vec sec = mat2DRow(fn_t, i);
-        pyviSectionPush(f_n_pyvi, sec);
-    }
-    V = poissonWrapper(data, mesh);
-    PyViBase meshvis = pyviCreateParameter(&trans_pyvi, "mesh", mesh);
-    PyViSec  V_vis   = pyviCreateSection(&trans_pyvi, "Voltage", meshvis);
+    //     Vec sec = mat2DRow(fn_t, i);
+    //     pyviSectionPush(f_n_pyvi, sec);
+    // }
+    // V = poissonWrapper(data, mesh);
+    // PyViBase meshvis = pyviCreateParameter(&trans_pyvi, "mesh", mesh);
+    // PyViSec  V_vis   = pyviCreateSection(&trans_pyvi, "Voltage", meshvis);
 
-    pyviSectionPush(V_vis, V);
-    pyviWrite(trans_pyvi);
+    // pyviSectionPush(V_vis, V);
+    // pyviWrite(trans_pyvi);
 
     freePyVi(&vis);
-    freePyVi(&trans_pyvi);
+    // freePyVi(&trans_pyvi);
 
     return 0;
     // int status = system("python3 visualise/visualise.py");
