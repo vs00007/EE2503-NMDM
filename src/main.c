@@ -73,34 +73,34 @@ int main()
         // vecPrint(V);
         pyviSectionPush(V_vi, V);
 
-        //printf("\nProbabilites[%zu]:", iter);
-        //vecPrint(data.probs);
-        //printNL();
+        // printf("\nProbabilites[%zu]:", iter);
+        // vecPrint(data.probs);
+        // printNL();
 
         E_nm = matrix_E_n(data, mesh);
         
-        //printf("\nEnergies[%zu]:", iter);
-        //mat2DPrint(E_nm);
-        //printNL();
+        // printf("\nEnergies[%zu]:", iter);
+        // mat2DPrint(E_nm);
+        // printNL();
 
         R = R_en(data, mesh);
         R1 = mat2DCol(R, 0);
         R2 = mat2DCol(R, 1);
 
-        printf("Transmission Coefficients[%zu]:", iter);
-        mat2DPrint(R);
-        printf("\n");
+        // printf("Transmission Coefficients[%zu]:", iter);
+        // mat2DPrint(R);
+        // printf("\n");
 
         coefficientMatrix = matrix_r_nm(data, E_nm, d_nm);
         for(size_t i = 0; i < coefficientMatrix.rows; i++) *mat2DRef(coefficientMatrix, i, i) = 0.0L;
         
-        printf("\nCoeffmatrix[%zu]:", iter);
-        mat2DPrint(coefficientMatrix);
-        printNL();
+        // printf("\nCoeffmatrix[%zu]:", iter);
+        // mat2DPrint(coefficientMatrix);
+        // printNL();
 
-        printf("\ndelta distance[%zu]:", iter);
-        mat2DPrint(d_nm);
-        printNL();
+        // printf("\ndelta distance[%zu]:", iter);
+        // mat2DPrint(d_nm);
+        // printNL();
 
         // d_m doesn't change? - - Of course it doesn't
         //d_nm = matrix_d_nm(data);
@@ -156,7 +156,7 @@ int main()
     Mat2d fn_t = mat2DInitZerosA(data.probs.len, 1000);
 
     solver(config, timestamps, fn_t);
-    mat2DPrint(fn_t);
+    // mat2DPrint(fn_t);
     printNL();
     size_t slen = 0;    
     for (size_t i = 1; i < timestamps.len; i ++)

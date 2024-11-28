@@ -133,12 +133,12 @@ Mat2d R_en(InputData input_data, Vec mesh)
         long double t = 1.0; //transmission_param(d.x[i] , input_data , V_0) ;
 
         long double ln_expo1 = -(E.x[i] + Q * V_0 + phi_M) / kb_T;
-        if (ln_expo1 < 1000) ln_expo1 = logl(1 + expl(ln_expo1));
-        //if(kb_T*ln_expo1 > 1.0) ln_expo1 = 1/kb_T;
+        if (ln_expo1 < 100) ln_expo1 = logl(1 + expl(ln_expo1));
+        if(kb_T*ln_expo1 > 1.0) ln_expo1 = 1/kb_T;
         
         long double ln_expo2 = -(E.x[i] + Q * V_L + phi_M) / kb_T;
-        if (ln_expo2 < 1000) ln_expo2 = logl(1 + expl(ln_expo2));
-        //if(kb_T*ln_expo2 > 1.0) ln_expo2 = 1/kb_T;
+        if (ln_expo2 < 100) ln_expo2 = logl(1 + expl(ln_expo2));
+        if(kb_T*ln_expo2 > 1.0) ln_expo2 = 1/kb_T;
         
         long double e_top_t = k * t * kb_T * ln_expo1;
         long double e_bottom_t = k * t * kb_T * ln_expo2;
@@ -149,12 +149,12 @@ Mat2d R_en(InputData input_data, Vec mesh)
         long double t = 1.0; // transmission_param(d.x[i] , input_data , V_L) ;
         
         long double ln_expo1 = (E.x[i] + Q * V_0 + phi_M) / kb_T;
-        if (ln_expo1 < 1000) ln_expo1 = logl(1 + expl(ln_expo1));
-        //if(kb_T*ln_expo1 > 1.0) ln_expo1 = 1/kb_T;
+        if (ln_expo1 < 100) ln_expo1 = logl(1 + expl(ln_expo1));
+        if(kb_T*ln_expo1 > 1.0) ln_expo1 = 1/kb_T;
 
         long double ln_expo2 = (E.x[i] + Q * V_L + phi_M) / kb_T;
-        if (ln_expo2 < 1000) ln_expo2 = logl(1 + expl(ln_expo2));
-        //if(kb_T*ln_expo2 > 1.0) ln_expo2 = 1/kb_T;
+        if (ln_expo2 < 100) ln_expo2 = logl(1 + expl(ln_expo2));
+        if(kb_T*ln_expo2 > 1.0) ln_expo2 = 1/kb_T;
         
         long double e_top_t = k * t * kb_T * ln_expo1;
         long double e_bottom_t = k * t * kb_T * ln_expo2;
