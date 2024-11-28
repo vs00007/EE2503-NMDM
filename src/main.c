@@ -52,34 +52,36 @@ int main()
     */
 
     Vec delta_fn = vecInitZerosA(dim);
+    Vec prev_fn = vecInitZerosA(dim);
     Mat2d delta_E = mat2DInitZerosA(dim, dim);
     Vec V;
     long double w = 0.1L;
     for(size_t iter = 0; iter < ITER_MAX; iter++)
     {
         // set to prev iter values
-        delta_fn = data.probs;
+        prev_fn = data.probs;
+        delta_fn = vecCopyA(prev_fn);
         delta_E = E_nm;
 
         // solve for fn
         data.probs = jacobianImplementationA(coefficientMatrix, R1, R2);
         vecScale(w, data.probs, &data.probs);
-        vecScale(1L - w, delta_fn, &delta_fn);
-        vecAdd(delta_fn, data.probs, &data.probs);
+        vecScale(1L - w, prev_fn, &prev_fn);
+        vecAdd(prev_fn, data.probs, &data.probs);
         V = poissonWrapper(data, mesh);
 
         // vecPrint(V);
         pyviSectionPush(V_vi, V);
 
-        printf("\nProbabilites[%zu]:", iter);
-        vecPrint(data.probs);
-        printNL();
+        //printf("\nProbabilites[%zu]:", iter);
+        //vecPrint(data.probs);
+        //printNL();
 
         E_nm = matrix_E_n(data, mesh);
         
-        printf("\nEnergies[%zu]:", iter);
-        mat2DPrint(E_nm);
-        printNL();
+        //printf("\nEnergies[%zu]:", iter);
+        //mat2DPrint(E_nm);
+        //printNL();
 
         R = R_en(data, mesh);
         R1 = mat2DCol(R, 0);
@@ -108,6 +110,9 @@ int main()
 
         long double error_fn = vecMaxAbs(delta_fn) / vecMaxAbs(data.probs);
         long double error_E = mat2DMaxAbs(delta_E) / mat2DMaxAbs(E_nm);
+
+        printf("Error E[%zu]:%.17Lg\n", iter, error_E);
+        printf("Error Fn[%zu]:%.17Lg\n", iter, error_fn);
 
         pyviSectionPush(f_n, data.probs);
 

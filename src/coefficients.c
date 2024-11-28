@@ -36,8 +36,7 @@ Mat2d matrix_E_n(InputData input_data, Vec mesh)
 
     Mat2d Mat_E_n = mat2DInitZerosA(len,len);
     
-    Vec E = getGridNumV(input_data, mesh);
-    vecScale(-Q, E, &E);
+    Vec E = getGridNumE(input_data, mesh);
     
     for(size_t i = 0; i < len    ; i++){
         // if (isnan(E.x[i])) printf("Found Bad E. i = %zu\n", i);
@@ -60,9 +59,9 @@ long double r_nm(InputData input_data , Mat2d mat_E , Mat2d mat_d , size_t n , s
     long double E_nm = mat2DGet(mat_E, n, m);
     long double d_nm = mat2DGet(mat_d, n, m);
 
-    if(E_nm < 0.0) return nu * exp(-d_nm/gamma);
+    if(E_nm > 0.0) return nu * exp(-d_nm/gamma);
 
-    return nu * exp((-d_nm/gamma) - (E_nm/kb_T));
+    return nu * exp((-d_nm/gamma) + (E_nm/kb_T));
 }
 
 Mat2d matrix_r_nm(InputData input_data , Mat2d mat_E , Mat2d mat_d)

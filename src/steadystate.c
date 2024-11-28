@@ -1,6 +1,6 @@
 #include <include/steadystate.h>
 #define MIN_ERROR 1e-15
-#define MIN_REL_ERROR 1e-12
+#define MIN_REL_ERROR 1e-5
 
 //returns elementwise product as a vector 
 void vecMultiply(Vec a, Vec b, Vec* result){

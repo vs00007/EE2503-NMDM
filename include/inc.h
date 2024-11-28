@@ -12,4 +12,4 @@
 #include <include/utils.h>
 
 #define ITER_MAX 1000
-#define TOL 1e-13
+#define TOL 1e-6
