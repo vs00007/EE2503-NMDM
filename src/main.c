@@ -15,9 +15,8 @@ int main()
     long double v_L_actual = data.params.V_L;
     printInputData(&data);
 
-    // vecPrint(data.energies);
     printNL();
-    // return 0;
+
     data.params.V_0 = 0;
     data.params.V_L = 0;
 
@@ -40,16 +39,9 @@ int main()
 
     Mat2d E_nm = matrix_E_n(data, mesh);
     Mat2d d_nm = matrix_d_nm(data);
+
     Mat2d coefficientMatrix = matrix_r_nm(data, E_nm, d_nm);
-
     for(size_t i = 0; i < coefficientMatrix.rows; i++) *mat2DRef(coefficientMatrix, i, i) = 0.0L;
-
-    // q1: What are R1 and R2??
-    /*
-        Mihir, I added code for transient analysis. Check if it is working once.
-        (the solver function needs vec and mat, but the vec and mat dimensions cannot be figured out beforehand)
-        (try not to change the master_eqn.c file, just make realllyyy big vector and matrix, and then push it to a new pyvi file) 
-    */
 
     Vec delta_fn = vecInitZerosA(dim);
     Vec prev_fn = vecInitZerosA(dim);
@@ -111,8 +103,7 @@ int main()
         long double error_fn = vecMaxAbs(delta_fn) / vecMaxAbs(data.probs);
         long double error_E = mat2DMaxAbs(delta_E) / mat2DMaxAbs(E_nm);
 
-        printf("Error E[%zu]:%.17Lg\n", iter, error_E);
-        printf("Error Fn[%zu]:%.17Lg\n", iter, error_fn);
+        printf("Iteration[%4zu] Errors: Energy:%-25.17Lg Probability: %-25.3Lg\n", iter, error_E, error_fn);
 
         pyviSectionPush(f_n, data.probs);
 
@@ -183,6 +174,20 @@ int main()
     V = poissonWrapper(data, mesh);
     PyViBase meshvis = pyviCreateParameter(&trans_pyvi, "mesh", mesh);
     PyViSec  V_vis   = pyviCreateSection(&trans_pyvi, "Voltage", meshvis);
+
+    PyVi trans_pyvi = pyviInitA("data/transient.pyvi");
+    PyViBase x_pyvi = pyviCreateParameter(&trans_pyvi, "t", timestamps);
+    
+    for(size_t i = 0; i < data.probs.len; i++)
+    {
+        char* buf = malloc(32*sizeof(char));
+        snprintf(buf, 32, "f_n[%zu]", i); // Scanf reads from buf, my guy. You need to print to it
+        PyViSec f_n_pyvi = pyviCreateSection(&trans_pyvi, buf, x_pyvi);
+
+        Vec sec = mat2DRow(fn_t, i);
+        sec.len = slen+1;
+        pyviSectionPush(f_n_pyvi, sec);
+    }
 
     pyviSectionPush(V_vis, V);
     pyviWrite(trans_pyvi);

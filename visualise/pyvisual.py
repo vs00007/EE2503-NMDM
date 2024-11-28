@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 from matplotlib.widgets import Button
 from functools import partial
-
+import os
 
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (
@@ -106,6 +106,23 @@ class PyVi:
     def get_high_lim(self, data):
         maxval = np.max(data)
         return maxval + 0.05 * np.abs(maxval)
+    
+    def save_section_plots(self, iter_no:int, folder:str):
+        os.makedirs(folder, exist_ok=True)
+
+        for (key, section), i in zip(self.sections.items(), range(1, len(self.sections))):
+            fig, ax = plt.subplots()
+
+            ccolor = mcolors.TABLEAU_COLORS[list(mcolors.TABLEAU_COLORS.keys())[i % len(mcolors.TABLEAU_COLORS)]]
+            
+            p, = plt.plot(self.params[section.param], section.iterations[iter_no], color=ccolor)
+
+            ax.title.set_text(f'{section.name} at iteration={iter_no}')
+            ax.set_xlabel(f'{section.param}')
+            ax.set_ylabel(f'{section.name}')
+            #plt.tight_layout()
+            plt.savefig(f'{folder}/{section.name}')
+            #plt.clf()
 
     # displays all sections 
     def display_all_sections(self):

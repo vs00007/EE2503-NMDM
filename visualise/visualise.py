@@ -6,4 +6,6 @@ import subprocess
 
 pyvi = PyVi("data/transient.pyvi")
 
+#pyvi.save_section_plots(0, 'figs/')
+
 sec = pyvi.display_all_sections()
