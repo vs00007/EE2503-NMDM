@@ -138,7 +138,7 @@ int main()
     RK45Config config;
     config.h = 1e-10;
     config.t_initial = 0.0;
-    config.t_final = 5.0;
+    config.t_final = 10.0;
     config.tol = 1e-10;
     config.data = data;
     config.mesh = mesh;
@@ -156,6 +156,8 @@ int main()
         if (vecGet(timestamps, i) < vecGet(timestamps, i - 1)) slen = i - 1; 
     }
 
+
+
     PyVi trans_pyvi = pyviInitA("data/transient.pyvi");
     PyViBase x_pyvi = pyviCreateParameter(&trans_pyvi, "t", timestamps);
     
@@ -167,10 +169,13 @@ int main()
 
         Vec sec = mat2DRow(fn_t, i);
         pyviSectionPush(f_n_pyvi, sec);
-        pyviWrite(trans_pyvi);
     }
+    V = poissonWrapper(data, mesh);
+    PyViBase meshvis = pyviCreateParameter(&trans_pyvi, "mesh", mesh);
+    PyViSec  V_vis   = pyviCreateSection(&trans_pyvi, "Voltage", meshvis);
 
-
+    pyviSectionPush(V_vis, V);
+    pyviWrite(trans_pyvi);
 
     freePyVi(&vis);
     freePyVi(&trans_pyvi);
