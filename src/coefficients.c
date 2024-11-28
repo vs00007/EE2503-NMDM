@@ -118,7 +118,7 @@ Mat2d R_en(InputData input_data, Vec mesh)
     Mat2d mat_R = mat2DInitZerosA(len, 2) ;
     Vec d = input_data.locs ;
     long double k = 1e13;
-    long double phi_M = Q * 4L;
+    long double phi_M = Q * 2.5L;
     
     Vec fn = input_data.probs ;
     Vec d1 = input_data.locs ;
@@ -133,8 +133,8 @@ Mat2d R_en(InputData input_data, Vec mesh)
 
     for(size_t i = 0 ; i < len ; i++){
         long double t = 1.0; //transmission_param(d.x[i] , input_data , V_0) ;
-        ln_expo = -(E.x[i] + Q * V_0) / kb_T;
-        if (ln_expo < 1000) ln_expo = logl(1 + expl(-(E.x[i] + Q * V_0 - phi_M) / kb_T));
+        ln_expo = -(E.x[i] + Q * V_0 + phi_M) / kb_T;
+        if (ln_expo < 1000) ln_expo = logl(1 + expl(ln_expo));
         long double e_top_t = k * t * kb_T * ln_expo;
         long double e_bottom_t = k * t * kb_T * ln_expo;
         *mat2DRef(mat_R, i, 0) = e_top_t + e_bottom_t;
@@ -142,8 +142,8 @@ Mat2d R_en(InputData input_data, Vec mesh)
 
     for(size_t i = 0 ; i < len ; i++){
         long double t = 1.0; // transmission_param(d.x[i] , input_data , V_L) ;
-        ln_expo = (E.x[i] + Q * V_0) / kb_T;
-        if (ln_expo < 100) ln_expo = logl(1 + expl((E.x[i] + Q * V_0 - phi_M) / kb_T));
+        ln_expo = (E.x[i] + Q * V_0 + phi_M) / kb_T;
+        if (ln_expo < 100) ln_expo = logl(1 + expl(ln_expo));
         long double e_top_t = k * t * kb_T * ln_expo;
         long double e_bottom_t = k * t * kb_T * ln_expo;
         *mat2DRef(mat_R, i, 1) = e_top_t + e_bottom_t;

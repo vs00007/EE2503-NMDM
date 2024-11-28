@@ -1,6 +1,6 @@
 #include <include/steadystate.h>
 #define MIN_ERROR 1e-15
-#define MIN_REL_ERROR 1e-10
+#define MIN_REL_ERROR 1e-12
 
 //returns elementwise product as a vector 
 void vecMultiply(Vec a, Vec b, Vec* result){
@@ -160,7 +160,7 @@ Vec masterEquationCoeffA(Vec f, Vec R1, Vec R2, Mat2d coeffmatrix){
 Vec jacobianImplementationA(Mat2d coeffmatrix, Vec R1, Vec R2){
     srand(time(NULL));
     Mat2d matrix = mat2DInitZerosA(coeffmatrix.rows, coeffmatrix.cols); //don't forget to remove it dumb
-    Vec f = vecInitA(1e-15, matrix.cols); //need it dumb
+    Vec f = vecInitA(1e-10, matrix.cols); //need it dumb
 
     // for(size_t i = 0; i < f.len; i++)
     // {
