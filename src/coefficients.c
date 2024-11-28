@@ -117,7 +117,7 @@ Mat2d R_en(InputData input_data, Vec mesh)
     Mat2d mat_R = mat2DInitZerosA(len, 2) ;
     Vec d = input_data.locs ;
     long double k = 1e13;
-    long double phi_M = Q * 2.85L;
+    long double phi_M = Q * 3L;
     
     Vec fn = input_data.probs ;
     Vec d1 = input_data.locs ;
