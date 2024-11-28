@@ -36,8 +36,7 @@ Mat2d matrix_E_n(InputData input_data, Vec mesh)
 
     Mat2d Mat_E_n = mat2DInitZerosA(len,len);
     
-    Vec E = getGridNumV(input_data, mesh);
-    vecScale(-Q, E, &E);
+    Vec E = getGridNumE(input_data, mesh);
     
     for(size_t i = 0; i < len    ; i++){
         // if (isnan(E.x[i])) printf("Found Bad E. i = %zu\n", i);
