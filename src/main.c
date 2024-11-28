@@ -47,7 +47,7 @@ int main()
     Vec prev_fn = vecInitZerosA(dim);
     Mat2d delta_E = mat2DInitZerosA(dim, dim);
     Vec V;
-    long double w = 0.1L;
+    long double w = 0.05L;
     for(size_t iter = 0; iter < ITER_MAX; iter++)
     {
         // set to prev iter values
@@ -137,7 +137,7 @@ int main()
     RK45Config config;
     config.h = 1e-10;
     config.t_initial = 0.0;
-    config.t_final = 100000.0;
+    config.t_final = 1e7;
     config.tol = 1e-12;
     config.data = data;
     config.mesh = mesh;
@@ -175,25 +175,29 @@ int main()
     PyViBase meshvis = pyviCreateParameter(&trans_pyvi, "mesh", mesh);
     PyViSec  V_vis   = pyviCreateSection(&trans_pyvi, "Voltage", meshvis);
 
-    PyVi trans_pyvi = pyviInitA("data/transient.pyvi");
-    PyViBase x_pyvi = pyviCreateParameter(&trans_pyvi, "t", timestamps);
-    
-    for(size_t i = 0; i < data.probs.len; i++)
-    {
-        char* buf = malloc(32*sizeof(char));
-        snprintf(buf, 32, "f_n[%zu]", i); // Scanf reads from buf, my guy. You need to print to it
-        PyViSec f_n_pyvi = pyviCreateSection(&trans_pyvi, buf, x_pyvi);
-
-        Vec sec = mat2DRow(fn_t, i);
-        sec.len = slen+1;
-        pyviSectionPush(f_n_pyvi, sec);
-    }
-
     pyviSectionPush(V_vis, V);
     pyviWrite(trans_pyvi);
 
+    PyVi evolve_pyvi = pyviInitA("data/transient.pyvi");
+    PyViBase evol_traps_pyvi = pyviCreateParameter(&evolve_pyvi, "x-traps", data.locs);
+    PyViBase evol_mesh_pyvi = pyviCreateParameter(&evolve_pyvi, "x-mesh", mesh);
+    PyViSec f_n_evol_pyvi = pyviCreateSection(&evolve_pyvi, "f_n", evol_traps_pyvi);
+    PyViSec V_evol_pyvi = pyviCreateSection(&evolve_pyvi, "V", evol_mesh_pyvi);
+
+    for(size_t i = 0; i < slen+1; i++)
+    {
+        Vec sec = mat2DCol(fn_t, i);
+        pyviSectionPush(f_n_evol_pyvi, sec);
+        data.probs = sec;
+        V = poissonWrapper(data, mesh);
+        pyviSectionPush(V_evol_pyvi, V);
+    }
+
+    pyviWrite(evolve_pyvi);
+
     freePyVi(&vis);
-    // freePyVi(&trans_pyvi);
+    freePyVi(&trans_pyvi);
+    freePyVi(&evolve_pyvi);
 
     return 0;
     // int status = system("python3 visualise/visualise.py");
