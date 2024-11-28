@@ -220,7 +220,7 @@ void printInputData(const InputData* data)
     printf("Index    Location (m)    Occupation Prob.    Trap Energies (Ed)\n");
     printf("----------------------------------------\n");
     for(size_t i = 0; i < data->locs.len; i++) {
-        printf("%-8zu %-14.3Le %-14.3Lf %-14.3Le\n", 
+        printf("%-8zu %-14.3Le %-14.3Lf %-9Le\n", 
                 i, 
                 vecGet(data->locs, i), 
                 vecGet(data->probs, i));
@@ -238,12 +238,13 @@ InputData getInput(char *filename) {
         fprintf(stderr, "Failed to parse TOML file\n");
         return (InputData){0};
     }
-
+    vecPrint(trap_energies);
     InputData data;
     data.params = params;
     data.locs = locations;
     data.probs = vecInitZerosA(params.num_traps);
     data.energies = trap_energies;
+    vecPrint(data.energies);
     return data;
 }
 

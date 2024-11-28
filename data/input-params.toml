@@ -1,7 +1,7 @@
 [Oxide]
 length               = 1e-7
 relative_permitivity = 3.9
-v_top                = 0
+v_top                = 1
 v_bottom             = 0
 temperature          = 300
 electron_affinity    = 0

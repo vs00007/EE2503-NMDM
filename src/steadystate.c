@@ -106,6 +106,8 @@ void gaussianElimination(Mat2d A/*jacobian matrix*/, Vec b/*coefficient vector*/
             }
         }
     }
+    freeVec(&tempVec);
+    freeMat2D(&temp);
 }
 
 //does backsubstitutin for gaussian elimination
