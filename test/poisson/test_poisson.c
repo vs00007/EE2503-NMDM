@@ -386,17 +386,10 @@ void test_getGridV()
 void testMeshGen()
 {
     PyVi vis = pyviInitA("visualise/data.pyvi");
-
-    OxParams params;
-    params.L = 1;
-    params.V_0 = 1;
-    params.eps_r = 11.7;
-    params.chunk_size = 100;
-
-    Vec d = vecInitZerosA(100);
+    Vec d = vecInitZerosA(10);
     for (size_t i = 0; i < d.len; i++)
     {
-        d.x[i] = (long double)(i + 1) / 101;
+        d.x[i] = (long double)(i + 1) / 11;
     }
 
     // vecScale(1.0/3 *1e-9, d, &d);
@@ -407,7 +400,7 @@ void testMeshGen()
 
 
     Vec f_n = vecInitOnesA(d.len);
-    randF(f_n, 1e-6, 1e-7, 0);
+    randF(f_n, 0, 0, 0);
 
     InputData data = getInput("data/input-params.toml");
     // *vecRef(d, 0) = 0.33 * data.params.L;
@@ -416,12 +409,16 @@ void testMeshGen()
     // printNL();
     // vecPrint(d);
     // printNL();
-
+    OxParams params;
+    params.L = 1;
+    params.V_0 = 1;
+    params.eps_r = 11.7;
+    params.chunk_size = 100;
     printNL();
     vecPrint(d);
     printNL();
     
-    Vec mesh = generateMesh(data.locs, data.params);
+    Vec mesh = generateMesh(d, params);
     
     // printNL();
     // vecPrint(mesh);
@@ -439,11 +436,6 @@ void testMeshGen()
 
     Vec sol = poissonWrapper(data, mesh);
     // pyviSectionPush(analytical, solA);
-    Vec sol2 = getGridNumV(data, mesh);
-
-    printNL();
-    vecPrint(sol2);
-    printNL();
 
     pyviSectionPush(sec, sol);
     pyviWrite(vis);

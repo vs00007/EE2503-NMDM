@@ -21,11 +21,11 @@ int run_all_tests()
     // test_toml();
     // testmaster();
     // test_interpolation();
-    //testMeshGen();
+    testMeshGen();
     // testSteadystate();
     // testSolver();
 
-    test_gaussianElimination();
+    // test_gaussianElimination();
 
     return 0;
 }
