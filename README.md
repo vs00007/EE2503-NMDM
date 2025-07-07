@@ -3,6 +3,8 @@ This repo contains codes and Final Project Submission of the Group <b><em>Ghanta
 
 All the members of this project are requested to write documentation as they write or test the code, so as to ensure a nice time for everyone involved.
 
+The docs are in docs/
+
 ## Guidelines
 1. Please write comments on top of a function describing the function's input, output and quirks.
 2. Try not to use heap allocation, if you do then any heap allocation must be freed at the end of the function.
