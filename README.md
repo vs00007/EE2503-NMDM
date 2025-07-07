@@ -3,10 +3,6 @@ This repo contains codes and Final Project Submission of the Group <b><em>Ghanta
 
 All the members of this project are requested to write documentation as they write or test the code, so as to ensure a nice time for everyone involved.
 
-Mihir : @Soham, please take care of the makefile.
-
-Soham : Sure, done.
-
 ## Guidelines
 1. Please write comments on top of a function describing the function's input, output and quirks.
 2. Try not to use heap allocation, if you do then any heap allocation must be freed at the end of the function.
@@ -93,11 +89,11 @@ will run the test cases.
 
 | Task |   | Status |
 |:---------|:---------------:|:-----------|
-| Interpolation, File Management | Prajwal | TODO |
-| Matrix Stuff, Algorithm Research | Soham | TODO |
+| Interpolation, File Management | Prajwal | (Done) |
+| Matrix Stuff, Algorithm Research | Soham | (Done) |
 | *Poisson's Eqn* | *Mihir* | (Done) | 
-| Steady State Solver| Manoj | TODO |
-| Initial Value Problem (Master's Equation)| Siddhartha | TODO |
-| Coefficient Generator | Kaustubh | TODO |
+| Steady State Solver| Manoj | (Done) |
+| Initial Value Problem (Master's Equation)| Siddhartha | (Done) |
+| Coefficient Generator | Kaustubh | (Done) |
 
 
